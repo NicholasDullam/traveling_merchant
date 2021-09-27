@@ -5,8 +5,8 @@ var Order = require('./ordermodel')
 // Review Schema
 
 const reviewSchema = new mongoose.Schema({
-    reviewer: {type:mongoose.Schema.Types.ObjectId,ref:'User'},
-    seller: {type:mongoose.Schema.Types.ObjectId,ref:'User'},
+    reviewer: {type:mongoose.Types.ObjectId,ref:'User'},
+    seller: {type:mongoose.Types.ObjectId,ref:'User'},
     rating: Number,
     content: String,
     verfied: Boolean,

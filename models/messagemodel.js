@@ -3,8 +3,8 @@ var mongoose = require('mongoose');
 // Message Schema
 
 const messageSchema = new mongoose.Schema({
-    to: {type:mongoose.Schema.Types.ObjectId,ref:'User'},
-    from: {type:mongoose.Schema.Types.ObjectId,ref:'User'},
+    to: {type:mongoose.Types.ObjectId,ref:'User'},
+    from: {type:mongoose.Types.ObjectId,ref:'User'},
     content: String,
     attachments: [ String ],
     read: Boolean,

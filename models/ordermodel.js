@@ -3,15 +3,15 @@ var mongoose = require('mongoose');
 // Order Schema
 
 const orderSchema = new mongoose.Schema({
-    buyer: {type:mongoose.Schema.Types.ObjectId,ref:'User'},
-    seller: {type:mongoose.Schema.Types.ObjectId,ref:'User'},
+    buyer: {type:mongoose.Types.ObjectId,ref:'User'},
+    seller: {type:mongoose.Types.ObjectId,ref:'User'},
     status: String,
     custom: Boolean,
     delivered: Boolean,
     delivered_at: Date,
     total: Number,
     products: [{
-        product_id: {type:mongoose.Schema.Types.ObjectId,ref:'Product'},
+        product_id: {type:mongoose.Types.ObjectId,ref:'Product'},
         quantity: Number
     }],
     requirements: {
