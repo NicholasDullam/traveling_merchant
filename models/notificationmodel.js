@@ -3,8 +3,8 @@ var mongoose = require('mongoose');
 // Notification Schema
 
 const notificationSchema = new mongoose.Schema({
-    receiver: userSchema,
-    sender: userSchema,
+    receiver: {type:mongoose.Schema.Types.ObjectId,ref:'User'},
+    sender: {type:mongoose.Schema.Types.ObjectId,ref:'User'},
     content: String,
     seen: Boolean,
     seen_at: Date,

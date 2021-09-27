@@ -3,8 +3,8 @@ var mongoose = require('mongoose');
 // Follower Schema
 
 const followerSchema = new mongoose.Schema({
-    follower: userSchema,
-    following: userSchema,
+    follower: {type:mongoose.Schema.Types.ObjectId,ref:'User'},
+    following: {type:mongoose.Schema.Types.ObjectId,ref:'User'},
     created_at: Date
 });
 
