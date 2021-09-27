@@ -268,7 +268,7 @@ function generateToken(username) {
   return jwt.sign(username, t, { expiresIn: ''});
 }
 
-// Token Authentication
+// Token Authentication, middle thing
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
