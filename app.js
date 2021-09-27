@@ -270,7 +270,7 @@ app.get("/", function (req, res) {
 app.post('/createUser', function (req, res) {
   User.find({ email: req.email}, function (err, docs) {
     if (docs) {
-      res.json = { status: "ERROR", message: "USER EXISTS WITH THAT EMAIL"};
+      res.status(500).json({ error: "USER EXISTS WITH THAT EMAIL"});
     }
   });
   const u = new User;
@@ -286,9 +286,9 @@ app.post('/createUser', function (req, res) {
   u.updated_at = new Date();
   await u.save().then(function(err) {
     if (err) {
-      res.json = { status: "ERROR", message: "ERROR CREATING ACCOUNT"};
+      res.status(500).json({ error: "ERROR CREATING ACCOUNT"});
     } else {
-      res.json = { status: "OK", message: "SUCCESS"};
+      res.status(200).json({ error: "SUCCESS"});
     }
   })
 });
@@ -297,12 +297,12 @@ app.post('/createUser', function (req, res) {
 app.post('/login', function (req, res) {
   User.findOne({ email: req.email}, function (err, doc) {
     if (err) {
-      res.json = { status: "ERROR", message: "USERNAME OR PASSWORD IS INCORRECT"};
+      res.status(500).json({ error: "USERNAME OR PASSWORD IS INCORRECT"});
     } else {
       if (doc.validPassword(req.password)) {
-        res.json = { status: "OK", message: "SUCCESS"};
+        res.status(200).json({error:"SUCCESS"})
       } else {
-        res.json = { status: "ERROR", message: "USERNAME OR PASSWORD IS INCORRECT"};
+        res.status(500).json({ error: "USERNAME OR PASSWORD IS INCORRECT"});
       }
     }
   })
