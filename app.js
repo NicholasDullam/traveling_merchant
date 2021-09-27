@@ -5,6 +5,12 @@ const mongoose = require('mongoose');
 // crypto set-up
 var crypto = require('crypto');
 
+// Database key
+var db = 'databaseKey';
+
+// connect to database and add models
+mongoose.connect(db);
+
 /* Schemas
  * User, Product, Order, Message, Review, Follower, Favorite, Notification
  */
@@ -47,6 +53,7 @@ UserSchema.methods.setPassword = function(password) {
  }; 
 
 userSchema.methods.init = function () {};
+const User = mongoose.model('User', userSchema);
 
 // Product Schema
 
@@ -98,6 +105,7 @@ productSchema.methods.removeMedia = function removeMedia(v) {
 };
 
 productSchema.methods.init = function () {};
+const Product = mongoose.model('Product', productSchema);
 
 // Order Schema
 
@@ -157,6 +165,7 @@ orderSchema.methods.findByBuyerSeller = function findByBuyerSeller(b, s) {
 }
 
 orderSchema.methods.init = function () {};
+const Order = mongoose.model('Order', orderSchema);
 
 // Message Schema
 
@@ -178,6 +187,7 @@ messageSchema.methods.markAsRead = function markAsRead() {
 };
 
 messageSchema.methods.init = function () {};
+const Message = mongoose.model('Message', messageSchema);
 
 // Review Schema
 
@@ -193,7 +203,7 @@ const reviewSchema = new mongoose.Schema({
 
 // method to verify purchase
 reviewSchema.methods.verifyPurchase = function () {
-  var order = orderSchema.findByBuyerSeller(this.reviewer, this.seller);
+  var order = Order.findByBuyerSeller(this.reviewer, this.seller);
   if (order) {
     this.verfied = true;
   } else {
@@ -202,6 +212,7 @@ reviewSchema.methods.verifyPurchase = function () {
 };
 
 reviewSchema.methods.init = function () {};
+const Review = mongoose.model('Review', reviewSchema);
 
 // Follower Schema
 
@@ -212,6 +223,7 @@ const followerSchema = new mongoose.Schema({
 });
 
 followerSchema.methods.init = function () {};
+const Follower = mongoose.model('Follower', followerSchema);
 
 // Favorite Schema
 
@@ -222,6 +234,7 @@ const favoriteSchema = new mongoose.Schema({
 });
 
 favoriteSchema.methods.init = function () {};
+const Favorite = mongoose.model('Favorite', favoriteSchema);
 
 // Notification Schema
 
@@ -241,16 +254,6 @@ notificationSchema.methods.markAsSeen = function markAsSeen() {
 }
 
 notificationSchema.methods.init = function () {};
-
-// connect to database and add models
-mongoose.connect('mongodb://localhost:27017/test');
-const User = mongoose.model('User', userSchema);
-const Product = mongoose.model('Product', productSchema);
-const Order = mongoose.model('Order', orderSchema);
-const Review = mongoose.model('Review', reviewSchema);
-const Message = mongoose.model('Message', messageSchema);
-const Favorite = mongoose.model('Favorite', favoriteSchema);
-const Follower = mongoose.model('Follower', followerSchema);
 const Notification = mongoose.model('Notification', notificationSchema);
 
 // create an express app
