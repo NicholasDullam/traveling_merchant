@@ -22,7 +22,6 @@ app.get("/", function (req, res) {
 // User Schema
 
 const userSchema = new mongoose.Schema({
-  _id: ObjectId,
   seller_id: String,
   customer_id: String,
   first: String,
@@ -42,7 +41,6 @@ userSchema.methods.init = function () {};
 // Product Schema
 
 const productSchema = new mongoose.Schema({
-  _id: ObjectId,
   user_id: userSchema,
   name: String,
   type: String,
@@ -90,7 +88,6 @@ productSchema.methods.removeMedia = function removeMedia(v) {
 productSchema.methods.init = function () {};
 
 const orderSchema = new mongoose.Schema({
-  _id: ObjectId,
   buyer: userSchema,
   seller: userSchema,
   status: String,
@@ -144,7 +141,6 @@ orderSchema.methods.findByBuyerSeller = function findByBuyerSeller(b, s) {
 orderSchema.methods.init = function () {};
 
 const messageSchema = new mongoose.Schema({
-  _id: ObjectId,
   to: userSchema,
   from: userSchema,
   content: String,
@@ -163,7 +159,6 @@ messageSchema.methods.markAsRead = function markAsRead() {
 messageSchema.methods.init = function () {};
 
 const reviewSchema = new mongoose.Schema({
-  _id: ObjectId,
   reviewer: userSchema,
   seller: userSchema,
   rating: Number,
@@ -185,7 +180,6 @@ reviewSchema.methods.verifyPurchase = function () {
 reviewSchema.methods.init = function () {};
 
 const followerSchema = new mongoose.Schema({
-  _id: ObjectId,
   follower: userSchema,
   following: userSchema,
   created_at: Date
@@ -194,7 +188,6 @@ const followerSchema = new mongoose.Schema({
 followerSchema.methods.init = function () {};
 
 const favoriteSchema = new mongoose.Schema({
-  _id: ObjectId,
   user_id: userSchema,
   product_id: productSchema,
   created_at: Date
@@ -203,7 +196,6 @@ const favoriteSchema = new mongoose.Schema({
 favoriteSchema.methods.init = function () {};
 
 const notificationSchema = new mongoose.Schema({
-  _id: ObjectId,
   receiver: userSchema,
   sender: userSchema,
   content: String,
@@ -221,9 +213,17 @@ notificationSchema.methods.init = function () {};
 
 main().catch(err => console.log(err));
 
-async function main() {
+function main() {
 
-  await mongoose.connect('mongodb://localhost:27017/test');
+  mongoose.connect('mongodb://localhost:27017/test');
+  mongoose.model('User', userSchema);
+  mongoose.model('Product', productSchema);
+  mongoose.model('Order', orderSchema);
+  mongoose.model('Review', reviewSchema);
+  mongoose.model('Message', messageSchema);
+  mongoose.model('Favorite', favoriteSchema);
+  mongoose.model('Follower', followerSchema);
+  mongoose.model('Notification', notificationSchema);
 
   // start the server listening for requests
   app.listen(process.env.PORT || 3000, 
