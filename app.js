@@ -2,18 +2,8 @@
 // mongoose set-up
 const mongoose = require('mongoose');
 
-// create an express app
-const express = require("express");
-const { ObjectId } = require('bson');
-const app = express()
-
-// use the express-static middleware
-app.use(express.static("public"))
-
-// define the first route
-app.get("/", function (req, res) {
-  res.send("<h1>Hello World!</h1>")
-})
+// crypto set-up
+var crypto = require('crypto');
 
 /* Schemas
  * User, Product, Order, Message, Review, Follower, Favorite, Notification
@@ -27,7 +17,8 @@ const userSchema = new mongoose.Schema({
   first: String,
   last: String,
   email: String,
-  password: String,
+  hash : String,
+  salt : String,
   profile_img: String,
   settings: {
     // ...
@@ -35,6 +26,25 @@ const userSchema = new mongoose.Schema({
   created_at: Date,
   updated_at: Date
 });
+
+// Method to set salt and hash the password for a user 
+UserSchema.methods.setPassword = function(password) { 
+     
+  // Creating a unique salt for a particular user 
+     this.salt = crypto.randomBytes(16).toString('hex'); 
+   
+     // Hashing user's salt and password with 1000 iterations, 
+      
+     this.hash = crypto.pbkdf2Sync(password, this.salt,  
+     1000, 64, `sha512`).toString(`hex`); 
+ }; 
+   
+ // Method to check the entered password is correct or not 
+ UserSchema.methods.validPassword = function(password) { 
+     var hash = crypto.pbkdf2Sync(password,  
+     this.salt, 1000, 64, `sha512`).toString(`hex`); 
+     return this.hash === hash; 
+ }; 
 
 userSchema.methods.init = function () {};
 
@@ -211,22 +221,71 @@ notificationSchema.methods.markAsSeen = function markAsSeen() {
 
 notificationSchema.methods.init = function () {};
 
-main().catch(err => console.log(err));
+mongoose.connect('mongodb://localhost:27017/test');
+const User = mongoose.model('User', userSchema);
+const Product = mongoose.model('Product', productSchema);
+const Order = mongoose.model('Order', orderSchema);
+const Review = mongoose.model('Review', reviewSchema);
+const Message = mongoose.model('Message', messageSchema);
+const Favorite = mongoose.model('Favorite', favoriteSchema);
+const Follower = mongoose.model('Follower', followerSchema);
+const Notification = mongoose.model('Notification', notificationSchema);
 
-function main() {
+// create an express app
+const express = require("express");
+const { ObjectId } = require('bson');
+const app = express()
 
-  mongoose.connect('mongodb://localhost:27017/test');
-  mongoose.model('User', userSchema);
-  mongoose.model('Product', productSchema);
-  mongoose.model('Order', orderSchema);
-  mongoose.model('Review', reviewSchema);
-  mongoose.model('Message', messageSchema);
-  mongoose.model('Favorite', favoriteSchema);
-  mongoose.model('Follower', followerSchema);
-  mongoose.model('Notification', notificationSchema);
+// use the express-static middleware
+app.use(express.static("public"))
 
-  // start the server listening for requests
-  app.listen(process.env.PORT || 3000, 
-    () => console.log("Server is running..."));
+// define the first route
+app.get("/", function (req, res) {
+  res.send("<h1>Hello World!</h1>")
+});
 
-}
+// create User Route
+app.post('/createUser', function (req, res) {
+  User.find({ email: req.email}, function (err, docs) {
+    if (docs) {
+      res.json = { status: "ERROR", message: "USER EXISTS WITH THAT EMAIL"};
+    }
+  });
+  const u = new User;
+  u.seller_id = req.seller_id;
+  u.customer_id = req.customer_id;
+  u.first = req.first;
+  u.last = req.last;
+  u.email = req.email;
+  u.password = u.setPassword(req.password);
+  u.profile_img = req.profile_img;
+  u.settings = req.settings;
+  u.created_at = new Date();
+  u.updated_at = new Date();
+  await u.save().then(function(err) {
+    if (err) {
+      res.json = { status: "ERROR", message: "ERROR CREATING ACCOUNT"};
+    } else {
+      res.json = { status: "OK", message: "SUCCESS"};
+    }
+  })
+});
+
+// Login Route
+app.post('/login', function (req, res) {
+  User.findOne({ email: req.email}, function (err, doc) {
+    if (err) {
+      res.json = { status: "ERROR", message: "USERNAME OR PASSWORD IS INCORRECT"};
+    } else {
+      if (doc.validPassword(req.password)) {
+        res.json = { status: "OK", message: "SUCCESS"};
+      } else {
+        res.json = { status: "ERROR", message: "USERNAME OR PASSWORD IS INCORRECT"};
+      }
+    }
+  })
+})
+
+// start the server listening for requests
+app.listen(process.env.PORT || 3000, 
+  () => console.log("Server is running..."));
