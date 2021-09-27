@@ -1,3 +1,7 @@
+// Secret env variables
+const dotenv = require('dotenv');
+dotenv.config();
+var t = process.env.TOKEN_SECRET;
 
 // mongoose set-up
 const mongoose = require('mongoose');
@@ -7,6 +11,9 @@ var crypto = require('crypto');
 
 // Database key
 var db = 'databaseKey';
+
+// jwt
+const jwt = require('jsonwebtoken');
 
 // connect to database and add models
 mongoose.connect(db);
@@ -255,6 +262,29 @@ notificationSchema.methods.markAsSeen = function markAsSeen() {
 
 notificationSchema.methods.init = function () {};
 const Notification = mongoose.model('Notification', notificationSchema);
+
+// Token Creation function
+function generateToken(username) {
+  return jwt.sign(username, t, { expiresIn: ''});
+}
+
+// Token Authentication
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization']
+  const token = authHeader && authHeader.split(' ')[1]
+
+  if (token == null) return res.sendStatus(401)
+
+  jwt.verify(token, t, function(err, user){
+    console.log(err)
+
+    if (err) return res.sendStatus(403)
+
+    req.user = user
+
+    next()
+  })
+}
 
 // create an express app
 const express = require("express");
