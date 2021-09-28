@@ -17,7 +17,7 @@ const reviewSchema = new mongoose.Schema({
 // method to verify purchase
 reviewSchema.methods.verifyPurchase = function () {
     Order.findOne({buyer:this.reviewer,seller:this.seller}, function (err, order) {
-        if (order) {
+        if (!err) {
             this.verfied = true;
         } else {
             this.verfied = false;

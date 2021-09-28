@@ -25,10 +25,41 @@ var Review = require('./models/reviewmodel');
 var Follower = require('./models/followermodel');
 var Favorite = require('./models/favoritemodel');
 var Notification = require('./models/notificationmodel');
+var ViewHistory = require('./models/viewhistorymodel')
 
 // Token Creation function
-function generateToken(username) {
-  return jwt.sign(username, t, { expiresIn: '30days'});
+function generateViewHistoryToken(email) {
+  var token = crypto.randomBytes(128).toString;
+  var f = 0;
+  while (f == 0) {
+    ViewHistory.findOne({token:token}).then(function(err, vh){
+      if (!err) {
+        token = crypto.randomBytes(128).toString;
+      } else {
+        f = 1;
+      }
+    });
+  }
+  var user;
+  User.findOne({email:email}).then(function(err, u){
+    if (err) {
+      user = null;
+    } else {
+      user = u;
+    }
+  });
+  var view = new ViewHistory();
+  if (user) {
+    view.user = user;
+  }
+  view.token = token;
+  view.save().then(function(err) {
+    if (err) {
+      return "ERROR CREATING TOKEN";
+    }
+  });
+
+  return jwt.sign({email:email,token:token}, t, { expiresIn: '30days'});
 }
 
 // Token Authentication, middle thing
@@ -54,6 +85,8 @@ const express = require("express");
 const { ObjectId } = require('bson');
 const app = express()
 
+app.use(express.json);
+
 // use the express-static middleware
 app.use(express.static("public"))
 
@@ -69,7 +102,7 @@ app.post('/createUser', function (req, res) {
       res.status(500).json({ error: "USER EXISTS WITH THAT EMAIL"});
     }
   });
-  const u = new User;
+  const u = new User();
   u.seller_id = req.seller_id;
   u.customer_id = req.customer_id;
   u.first = req.first;
@@ -80,7 +113,7 @@ app.post('/createUser', function (req, res) {
   u.settings = req.settings;
   u.created_at = new Date();
   u.updated_at = new Date();
-  await u.save().then(function(err) {
+  u.save().then(function(err) {
     if (err) {
       res.status(500).json({ error: "ERROR CREATING ACCOUNT"});
     } else {
