@@ -11,7 +11,9 @@ var db = process.env.DATABASE_SECRET;
 // jwt
 const jwt = require('jsonwebtoken');
 // connect to database
-mongoose.connect(db);
+mongoose.connect(db).catch(error => function(error) {
+  console.log(error);
+});
 
 /* Models
  * User, Product, Order, Message, Review, Follower, Favorite, Notification
@@ -92,7 +94,7 @@ app.use(express.static("public"))
 
 // define the first route
 app.get("/", function (req, res) {
-  res.send("<h1>Hello World!</h1>")
+  res.send('./html/index.html');
 });
 
 // create User Route
