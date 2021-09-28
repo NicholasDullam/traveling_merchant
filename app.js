@@ -94,7 +94,7 @@ app.use(express.static("public"))
 
 // define the first route
 app.get("/", function (req, res) {
-  res.send('./html/index.html');
+  res.send('html/index.html');
 });
 
 // create User Route
