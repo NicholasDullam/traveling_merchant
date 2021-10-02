@@ -31,5 +31,13 @@ const authRouter = require('./routes/authRouter')
 app.use('/api', userRouter)
 app.use('/api', authRouter)
 
+if (process.env.NODE_ENV === 'production') {
+  app.use(sslRedirect.default());
+  app.use(express.static('../client/build'));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, '../client', 'build', 'index.html'));
+  });
+}
+
 // start the server listening for requests
 app.listen(port, () => console.log(`Server running on port ${port}`));
