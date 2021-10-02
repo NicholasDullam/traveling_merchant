@@ -1,0 +1,12 @@
+var mongoose = require('mongoose');
+
+// Favorite Schema
+
+const Favorite = new mongoose.Schema({
+    user_id: {type:mongoose.Types.ObjectId,ref:'User'},
+    product_id: {type:mongoose.Types.ObjectId,ref:'User'},
+    created_at: Date
+});
+
+Favorite.methods.init = function () {};
+module.exports = mongoose.model('Favorite', Favorite);
