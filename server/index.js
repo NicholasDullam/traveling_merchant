@@ -3,6 +3,7 @@ require('dotenv').config();
 
 // general imports
 const express = require('express');
+const sslRedirect = require('heroku-ssl-redirect');
 const crypto = require('crypto');
 
 const db = require('./db')
