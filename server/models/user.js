@@ -8,9 +8,9 @@ const User = new mongoose.Schema({
     first: String,
     last: String,
     email: String,
-    hash : String,
-    salt : String,
+    password: String,
     profile_img: String,
+    admin: Boolean,
     settings: {
       // ...
     }
