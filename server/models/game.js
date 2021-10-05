@@ -13,7 +13,6 @@ const Game = new mongoose.Schema({
         createdAt: 'created_at',
         updatedAt: 'updated_at'
     }
-});
+})
 
-Game.methods.init = function () {};
 module.exports = mongoose.model('Game', Game);
