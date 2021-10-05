@@ -3,9 +3,9 @@ var mongoose = require('mongoose');
 // view history schema
 
 const View = new mongoose.Schema({
-    products: [{type:mongoose.Types.ObjectId,ref:'Product'}],
-    token: String,
-    user: {type:mongoose.Types.ObjectId,ref:'User'}
+    user: { type: mongoose.Types.ObjectId, ref:'User' },
+    products: [{ type: mongoose.Types.ObjectId, ref: 'Product' }],
+    token: String
 });
 
 View.methods.addProduct = function addProduct(p) {

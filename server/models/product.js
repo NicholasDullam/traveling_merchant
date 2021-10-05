@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 // Product Schema
 
 const Product = new mongoose.Schema({
-    user_id: {type:mongoose.Types.ObjectId,ref:'User'},
+    user_id: { type: mongoose.Types.ObjectId, ref:'User' },
     name: String,
     type: String,
     delivery_type: String,
@@ -22,9 +22,12 @@ const Product = new mongoose.Schema({
     },
     metadata: {
         //...
-    },
-    created_at: Date,
-    updated_at: Date
+    }
+}, { 
+    timestamps: {
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
+    }
 });
 
 // Method to add media

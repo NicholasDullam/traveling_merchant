@@ -3,12 +3,16 @@ var mongoose = require('mongoose');
 // Notification Schema
 
 const Notification = new mongoose.Schema({
-    receiver: {type:mongoose.Types.ObjectId,ref:'User'},
-    sender: {type:mongoose.Types.ObjectId,ref:'User'},
+    sender: { type: mongoose.Types.ObjectId, ref:'User' },
+    receiver: { type: mongoose.Types.ObjectId, ref:'User' },
     content: String,
     seen: Boolean,
     seen_at: Date,
-    created_at: Date
+}, {
+    timestamps: {
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
+    }
 });
 
 // Method to mark as seen

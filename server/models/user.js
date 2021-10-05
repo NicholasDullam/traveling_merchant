@@ -13,9 +13,12 @@ const User = new mongoose.Schema({
     profile_img: String,
     settings: {
       // ...
-    },
-    created_at: Date,
-    updated_at: Date
+    }
+}, { 
+    timestamps: {
+        createdAt: 'created_at',
+        updatedAt: 'updated_at'
+    }
 });
   
 // Method to set salt and hash the password for a user 
