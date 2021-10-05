@@ -6,7 +6,7 @@
   "directories": {
     "doc": "docs"
   },
-  "scripts": {    
+  "scripts": {
     "postinstall": "npm install --prefix server && npm install --prefix client && npm run build --prefix client",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/NicholasDullam/traveling_merchant/issues"
   },
-  "homepage": "https://github.com/NicholasDullam/traveling_merchant#readme"
+  "homepage": "https://github.com/NicholasDullam/traveling_merchant#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.5"
+  }
 }

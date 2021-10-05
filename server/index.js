@@ -12,6 +12,8 @@ const db = require('./db')
 const app = express()
 const port = process.env.PORT || 8000
 
+app.use(cookieParser());
+
 app.use(express.json({
   verify: (req, res, buf) => {
     var url = req.originalUrl
