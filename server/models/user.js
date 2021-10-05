@@ -12,7 +12,7 @@ const User = new mongoose.Schema({
     salt : String,
     profile_img: String,
     settings: {
-      // ...
+      admin: Boolean
     }
 }, { 
     timestamps: {

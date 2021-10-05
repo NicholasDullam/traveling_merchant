@@ -1,5 +1,6 @@
 const User = require('../models/user')
 
+// assume req has seller_id, customer_id, first and last name, email, password, profile_img, and settings
 const createUser = async (req, res) => {
     User.find({ email: req.email}, function (err, docs) {
         if (docs) {

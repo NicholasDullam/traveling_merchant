@@ -9,6 +9,7 @@ const auth = async (req, res, next) => {
   try {
     const data = jwt.verify(token, token_secret);
     req.email = data.email;
+    req.admin = data.admin;
     return next();
   } catch {
     return res.sendStatus(403);

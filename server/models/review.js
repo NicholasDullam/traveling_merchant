@@ -17,12 +17,12 @@ const Review = new mongoose.Schema({
 });
 
 // method to verify purchase
-Review.methods.verifyPurchase = function () {
-    Order.findOne({buyer:this.reviewer,seller:this.seller}, function (err, order) {
+Review.methods.verifyPurchase = function (r) {
+    Order.findOne({buyer:r.reviewer,seller:r.seller}, function (err, order) {
         if (!err) {
-            this.verfied = true;
+            r.verfied = true;
         } else {
-            this.verfied = false;
+            r.verfied = false;
         }
     })
 };

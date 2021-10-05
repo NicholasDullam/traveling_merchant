@@ -1,5 +1,6 @@
 const View = require("../models/view")
 
+// assume req has email
 const viewController = async (req, res) => {
     const token = req.cookies.view_history;
     if (!token) {

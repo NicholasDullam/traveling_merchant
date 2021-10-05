@@ -28,11 +28,11 @@ db.on('error', console.error.bind(console, 'MongoDB Connection Error:'))
 
 // route imports
 const userRouter = require('./routes/userRouter')
-const authRouter = require('./routes/authRouter')
+const loginRouter = require('./routes/loginRouter')
 
 // generate routes
 app.use('/api', userRouter)
-app.use('/api', authRouter)
+app.use('/api', loginRouter)
 
 if (process.env.NODE_ENV === 'production') {
   app.use(sslRedirect.default());

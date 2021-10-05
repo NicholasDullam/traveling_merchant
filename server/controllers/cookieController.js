@@ -1,5 +1,6 @@
 const View = require("../models/view")
 
+// assume request has product
 const cookieController = async (req, res) => {
     const token = req.cookies.view_history;
     if (!token) {
