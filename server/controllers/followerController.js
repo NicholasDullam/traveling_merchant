@@ -18,7 +18,7 @@ const addFollower = async (req, res) => {
     })
     f.save().then(function(err) {
         if (err) {
-          res.status(500).json({ error: "ERROR CREATING REVIEW"});
+          res.status(500).json({ error: "ERROR CREATING FOLLOWER"});
         } else {
           res.status(200).json({ error: "SUCCESS"});
         }
