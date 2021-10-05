@@ -2,10 +2,12 @@
 /server/node_modules
 /server/config
 /.pnp
+/node_modules
 .pnp.js
 
 # testing
 /coverage
+
 
 # production
 /client/build
