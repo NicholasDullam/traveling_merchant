@@ -12,5 +12,4 @@ const Follower = new mongoose.Schema({
     }
 });
 
-Follower.methods.init = function () {};
-module.exports = mongoose.model('Follower', Follower);
+module.exports = mongoose.model('Follower', Follower)
