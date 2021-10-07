@@ -13,7 +13,7 @@ const Product = new mongoose.Schema({
     min_quantity: Number,
     stock: Number,
     private: Boolean,
-    followers_only: Boolean,
+    follower_only: Boolean,
     requirements: {
         //...
     },
@@ -32,25 +32,12 @@ const Product = new mongoose.Schema({
 
 // Method to add media
 Product.methods.addMedia = function addMedia(v) {
-    this.media[this.media.length] = v;
+    this.media.append(v)
 };
 
 // Method to remove media
 Product.methods.removeMedia = function removeMedia(v) {
-    var i;
-    for (i = 0; i < this.media.length; i++) {
-        if (v = this.media[i]) {
-        this.media[i] = null;
-        break;
-        }
-    }
-    if (i != this.media.length) {
-        while (i != this.media.length - 1) {
-        this.media[i] = this.media[i+1];
-        i++;
-        }
-    }
-};
+    this.media = this.media.filter((media) => media != v)
+}
 
-Product.methods.init = function () {};
 module.exports = mongoose.model('Product', Product);

@@ -21,5 +21,4 @@ Notification.methods.markAsSeen = function markAsSeen() {
     this.seen_at = new Date();
 }
 
-Notification.methods.init = function () {};
 module.exports = mongoose.model('Notification', Notification);
