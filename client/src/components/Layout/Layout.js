@@ -4,13 +4,18 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import $ from 'jquery';
 import Popper from 'popper.js';
+import Navbar from '../Navbar/Navbar';
 
 const Layout = (props) => {
 
    return (
-       <div className="container">
-           <h1> Hey you </h1>
-           {props.children}
+       <div>
+        <Navbar/>
+        <div className="container">
+            {props.children}
+        </div>
        </div>
    ) 
 }
+
+export default Layout;
