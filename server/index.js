@@ -3,8 +3,8 @@ require('dotenv').config();
 
 // general imports
 const express = require('express');
+const cookieParser = require('cookie-parser')
 const sslRedirect = require('heroku-ssl-redirect');
-const crypto = require('crypto');
 
 const db = require('./db')
 
@@ -29,10 +29,12 @@ db.on('error', console.error.bind(console, 'MongoDB Connection Error:'))
 // route imports
 const userRouter = require('./routes/userRouter')
 const loginRouter = require('./routes/loginRouter')
+const gameRouter = require('./routes/gameRouter')
 
 // generate routes
 app.use('/api', userRouter)
 app.use('/api', loginRouter)
+app.use('/api', gameRouter)
 
 if (process.env.NODE_ENV === 'production') {
   app.use(sslRedirect.default());
