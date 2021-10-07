@@ -9,12 +9,9 @@ const Order = new mongoose.Schema({
     custom: Boolean,
     delivered: Boolean,
     delivered_at: Date,
-    total: Number,
-    products: [{
-        product_id: { type: mongoose.Types.ObjectId, ref: 'Product' },
-        unit_price: Number,
-        quantity: Number
-    }],
+    product_id: { type: mongoose.Types.ObjectId, ref: 'Product' },
+    unit_price: Number,
+    quantity: Number,
     requirements: {
         //...
     },
