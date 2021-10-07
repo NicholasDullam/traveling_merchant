@@ -21,11 +21,5 @@
   },
   "homepage": "https://github.com/NicholasDullam/traveling_merchant#readme",
   "dependencies": {
-    "cookie-parser": "^1.4.5"
-  },
-  "devDependencies": {
-    "bootstrap": "^5.1.2",
-    "jquery": "^3.6.0",
-    "popper.js": "^1.16.1"
   }
 }
