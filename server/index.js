@@ -28,7 +28,7 @@ db.on('error', console.error.bind(console, 'MongoDB Connection Error:'))
 
 // route imports
 const userRouter = require('./routes/userRouter')
-const loginRouter = require('./routes/loginRouter')
+const authRouter = require('./routes/authRouter')
 const gameRouter = require('./routes/gameRouter')
 const productRouter = require('./routes/productRouter')
 const orderRouter = require('./routes/orderRouter')
@@ -36,7 +36,7 @@ const stripeRouter = require('./routes/stripeRouter')
 
 // generate routes
 app.use('/api', userRouter)
-app.use('/api', loginRouter)
+app.use('/api', authRouter)
 app.use('/api', gameRouter)
 app.use('/api', productRouter)
 app.use('/api', orderRouter)
