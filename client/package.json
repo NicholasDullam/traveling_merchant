@@ -9,7 +9,11 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-scripts": "4.0.3",
-    "web-vitals": "^1.1.2"
+    "web-vitals": "^1.1.2",
+    "react-router-dom": "^5.3.0",
+    "bootstrap": "^5.1.2",
+    "jquery": "^3.6.0",
+    "popper.js": "^1.16.1"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -34,8 +38,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "react-router-dom": "^5.3.0"
   }
 }
