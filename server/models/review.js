@@ -27,5 +27,4 @@ Review.methods.verifyPurchase = function (r) {
     })
 };
 
-Review.methods.init = function () {};
 module.exports = mongoose.model('Review', Review);

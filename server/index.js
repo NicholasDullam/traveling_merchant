@@ -30,12 +30,19 @@ db.on('error', console.error.bind(console, 'MongoDB Connection Error:'))
 const userRouter = require('./routes/userRouter')
 const loginRouter = require('./routes/loginRouter')
 const gameRouter = require('./routes/gameRouter')
+const productRouter = require('./routes/productRouter')
+const orderRouter = require('./routes/orderRouter')
+const stripeRouter = require('./routes/stripeRouter')
 
 // generate routes
 app.use('/api', userRouter)
 app.use('/api', loginRouter)
 app.use('/api', gameRouter)
+app.use('/api', productRouter)
+app.use('/api', orderRouter)
+app.use('/api', stripeRouter)
 
+// attach non-api requests to client build; redirect non-ssl traffic
 if (process.env.NODE_ENV === 'production') {
   app.use(sslRedirect.default());
   app.use(express.static('../client/build'));

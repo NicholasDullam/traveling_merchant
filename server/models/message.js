@@ -22,5 +22,4 @@ Message.methods.markAsRead = function markAsRead() {
     this.read_at = new Date();
 };
 
-messageSchema.methods.init = function () {};
 module.exports = mongoose.model('Message', Message);

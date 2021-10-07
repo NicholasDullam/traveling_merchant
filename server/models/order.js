@@ -9,11 +9,9 @@ const Order = new mongoose.Schema({
     custom: Boolean,
     delivered: Boolean,
     delivered_at: Date,
-    total: Number,
-    products: [{
-        product_id: { type: mongoose.Types.ObjectId, ref: 'Product' },
-        quantity: Number
-    }],
+    product_id: { type: mongoose.Types.ObjectId, ref: 'Product' },
+    unit_price: Number,
+    quantity: Number,
     requirements: {
         //...
     },
@@ -29,24 +27,12 @@ const Order = new mongoose.Schema({
 
 // Method to add product
 Order.methods.addProduct = function addProduct(p, n) {
-    this.products[this.products.length] = {product_id:p,quantity:n};
+    this.products.append({ product_id: p, quantity: n })
 };
 
 // Method to remove product
 Order.methods.removeProduct = function removeProduct(v) {
-    var i;
-    for (i = 0; i < this.products.length; i++) {
-        if (v = this.products[i]) {
-        this.products[i] = null;
-        break;
-        }
-    }
-    if (i != this.products.length) {
-        while (i != this.products.length - 1) {
-        this.products[i] = this.products[i+1];
-        i++;
-        }
-    }
+    this.products = this.products.filter((product) => product != v)
 };
 
 // Method to mark as delivered
@@ -55,5 +41,4 @@ Order.methods.markAsDelivered = function markAsDelivered() {
     this.delivered_at = new Date();
 };
 
-Order.methods.init = function () {};
 module.exports = mongoose.model('Order', Order);

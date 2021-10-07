@@ -6,7 +6,7 @@ const { auth } = require('../middleware/auth')
 
 const router = express.Router()
 
-router.post('/game', GameController.createGame)
-router.get('/game', GameController.getGames)
+router.post('/game', auth, GameController.createGame)
+router.get('/game', auth, GameController.getGames)
 
 module.exports = router
