@@ -14,7 +14,8 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #4f1874; 
+  /* bc my color is better than drew's */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
