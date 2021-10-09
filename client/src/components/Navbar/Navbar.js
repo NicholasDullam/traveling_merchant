@@ -3,9 +3,12 @@ import React from 'react'
 import $ from 'jquery';
 import Popper from 'popper.js';
 
+import './Navbar.css'
+
 const Navbar = (props) => {
 // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
     return (
+      <div className="navbar">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">Navbar</a>
@@ -42,6 +45,11 @@ const Navbar = (props) => {
           </div>
         </div>
       </nav>
+
+      <h1 className="green-header"> Green header </h1>
+
+      </div>
+  
     )
 
 } 

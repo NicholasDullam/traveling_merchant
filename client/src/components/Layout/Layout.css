@@ -1,8 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap');
 /* General styling and styling variables will be stored here */
 :root {
-    --green: "#8BAF83";
-    --teal-green: "#68B2AO";
+    --color-green: #8BAF83;
+    --color-teal-green: #68B2AO;
+    --color-black: black;
+    --color-dark-grey: #4E4E4E;
+    --color-light-grey:#C4C4C4;
     font-family: 'Source Sans Pro', sans-serif;
 }
 
