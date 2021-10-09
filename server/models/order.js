@@ -5,40 +5,24 @@ var mongoose = require('mongoose');
 const Order = new mongoose.Schema({
     buyer: { type: mongoose.Types.ObjectId, ref: 'User' },
     seller: { type: mongoose.Types.ObjectId, ref: 'User' },
+    product_id: { type: mongoose.Types.ObjectId, ref: 'Product' },
+    pr_id: String,
     status: String,
     custom: Boolean,
-    delivered: Boolean,
-    delivered_at: Date,
-    product_id: { type: mongoose.Types.ObjectId, ref: 'Product' },
+    refunded: Boolean,
+    last_delivered_at: Date,
+    auto_confirm_at: Date,
+    confirmed_at: Date,
     unit_price: Number,
     quantity: Number,
-    requirements: {
-        //...
-    },
-    metadata: {
-        //...
-    }
+    earnings: Number,
+    requirements: Object,
+    metadata: Object
 }, { 
     timestamps: {
         createdAt: 'created_at',
         updatedAt: 'updated_at'
     }
 });
-
-// Method to add product
-Order.methods.addProduct = function addProduct(p, n) {
-    this.products.append({ product_id: p, quantity: n })
-};
-
-// Method to remove product
-Order.methods.removeProduct = function removeProduct(v) {
-    this.products = this.products.filter((product) => product != v)
-};
-
-// Method to mark as delivered
-Order.methods.markAsDelivered = function markAsDelivered() {
-    this.delivered = true;
-    this.delivered_at = new Date();
-};
 
 module.exports = mongoose.model('Order', Order);

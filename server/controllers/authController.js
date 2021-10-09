@@ -12,8 +12,8 @@ const login = async (req, res) => {
     let valid = await bcrypt.compare(password, user.password)
     if (!valid) return res.status(400).json({ error: 'Password incorrect'})
     
-    const token = jwt.sign({ email:req.email }, token_secret)
-    return res.cookie("access_token", token, { httpOnly: true, secure:process.env.NODE_ENV === "production",}).status(200).json({ error: "SUCCESS" })
+    const token = jwt.sign({ id: user._id, acct_id: user.acct_id || null }, token_secret)
+    return res.cookie("access_token", token, { httpOnly: true, secure:process.env.NODE_ENV === "production" }).status(200).json({ error: "SUCCESS" })
 }
 
 const logout = async (req, res) => {
