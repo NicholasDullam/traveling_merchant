@@ -20,6 +20,7 @@
     "url": "https://github.com/NicholasDullam/traveling_merchant/issues"
   },
   "homepage": "https://github.com/NicholasDullam/traveling_merchant#readme",
-  "dependencies": {
+  "devDependencies": {
+    "prettier": "2.4.1"
   }
 }

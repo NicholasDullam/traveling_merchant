@@ -1,3 +1,17 @@
 .navbar {
   background-color: var(--color-black);
 }
+.nav-link {
+  color:white;
+  font-weight: 600;
+}
+.navbar-brand{
+  color:white;
+  font-weight: 800;
+}
+
+.search-bar input {
+border-radius: 100px;
+}
+
+
