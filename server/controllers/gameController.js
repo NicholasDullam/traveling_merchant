@@ -1,7 +1,7 @@
 const Game = require('../models/game')
 
 const createGame = (req, res) => {
-    let { name, developer, product_types, platforms, img } = req.body
+    let { name, developer, product_types, platforms, img } = req.fields
     let game = new Game({ name, developer, product_types, platforms, img })
     game.save().then((response) => {
         return res.status(200).json(response)

@@ -1,9 +1,10 @@
+const order = require('../models/order')
 const Order = require('../models/order')
 const Product = require('../models/product')
 const { transferToSellerFromOrder, createPaymentIntentFromOrder } = require('./stripeController')
 
 const createOrder = async (req, res) => {
-    let { product_id, quantity, requirements } = req.body
+    let { product_id, quantity, requirements } = req.fields
     
     if (!product_id) return res.status(400).json({ error: 'No products in order'})
     let product = await Product.findById(product_id)
@@ -102,7 +103,8 @@ const getOrders = async (req, res) => {
         return res.status(400).json({ error: error.message })
     })
 }
- 
+
+
 module.exports = { 
     createOrder,
     deliverOrder,

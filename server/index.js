@@ -5,6 +5,7 @@ require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser')
 const sslRedirect = require('heroku-ssl-redirect');
+const formidable = require('express-formidable');
 
 const db = require('./db')
 
@@ -13,6 +14,7 @@ const app = express()
 const port = process.env.PORT || 8000
 
 app.use(cookieParser());
+app.use(formidable());
 
 app.use(express.json({
   verify: (req, res, buf) => {
@@ -33,6 +35,10 @@ const gameRouter = require('./routes/gameRouter')
 const productRouter = require('./routes/productRouter')
 const orderRouter = require('./routes/orderRouter')
 const stripeRouter = require('./routes/stripeRouter')
+const favoriteRouter = require('./routes/favoriteRouter')
+const followerRouter = require('./routes/followerRouter')
+const reviewRouter = require('./routes/reviewRouter')
+const viewHistoryRouter = require('./routes/viewHistoryRouter')
 
 // generate routes
 app.use('/api', userRouter)
@@ -41,6 +47,10 @@ app.use('/api', gameRouter)
 app.use('/api', productRouter)
 app.use('/api', orderRouter)
 app.use('/api', stripeRouter)
+app.use('/api', favoriteRouter)
+app.use('/api', followerRouter)
+app.use('/api', reviewRouter)
+app.use('/api', viewHistoryRouter)
 
 // attach non-api requests to client build; redirect non-ssl traffic
 if (process.env.NODE_ENV === 'production') {

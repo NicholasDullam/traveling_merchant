@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 
 const Favorite = new mongoose.Schema({
     user_id: { type: mongoose.Types.ObjectId, ref: 'User' },
-    product_id: { type: mongoose.Types.ObjectId, ref: 'User' },
+    product_id: { type: mongoose.Types.ObjectId, ref: 'Product' },
 }, {
     timestamps: {
         createdAt: 'created_at',

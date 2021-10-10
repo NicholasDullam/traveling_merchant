@@ -16,15 +16,4 @@ const Review = new mongoose.Schema({
     }
 });
 
-// method to verify purchase
-Review.methods.verifyPurchase = function () {
-    Order.findOne({buyer:this.reviewer,seller:this.seller}, function (err, order) {
-        if (!err) {
-            this.verfied = true;
-        } else {
-            this.verfied = false;
-        }
-    })
-};
-
 module.exports = mongoose.model('Review', Review);

@@ -79,8 +79,6 @@ const transferToSellerFromOrder = async (order_id) => {
     })
 }
 
-
-
 module.exports = {
     createAccount,
     getAccountOnboarding,

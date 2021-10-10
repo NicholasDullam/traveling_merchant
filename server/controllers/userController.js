@@ -1,6 +1,7 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
 
+// assume req has seller_id, customer_id, first and last name, email, password, profile_img, and settings
 const createUser = async (req, res) => {
     let { email, first, last, password } = req.body
     let existing = await User.find({ email })
