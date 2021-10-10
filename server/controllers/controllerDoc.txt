@@ -1,0 +1,42 @@
+req.body
+auth:
+    login: email, password
+    logout:
+    banUser: id
+    removeUser: id
+cookie:
+    cookieController: email, p(product)
+    getCookies:
+favorite:
+    addfavorite: p(product), email
+follower:
+    addFollower: follower(email), following(email)
+    getFollowers:
+    getUserFollowers:
+game:
+    createGame: name, developer, product_types, platforms, img
+    getGames:
+order:
+    createOrder: product_id, quantity, requirements
+    deliverOrder: order_id
+    confirmDelivery: order_id
+    denyDelivery: order_id
+    cancelOrder: order_id
+    getOrders:
+    getUserOrders:
+product:
+    createProduct: name, type, delivery_type, description, unit_price, min_quantity, stock
+    getProducts:
+review:
+    addReview: user(email), seller(email), rating, content
+    getReviews:
+user:
+    createUser: email, first, last, password
+    setEmail: email
+    setFirst: first
+    setLast: last
+    setPassword: password
+    getUsers:
+view:
+    userViewHistory: user(email)
+    getViews:
