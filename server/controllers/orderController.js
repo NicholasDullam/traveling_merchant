@@ -96,19 +96,11 @@ const getUserOrders = (req, res) => {
     const user = User.findById(req.user.id).exec();
     if (!user) return res.status(400).json({ error: 'Account not found'});
 
-    const orders = Order.find({buyer:user}).exec();
-    if (!orders) return res.status(400).json({ error: 'Orders not found'});
-    var retJson = "{\"products\" : [";
-    // {"products": [{}, {},]}
-    var i;
-    for (i = 0; i < orders.length; i++) {
-        retJson += "{ \"name\" : \"" + orders[i].product_id.name + "\", \"quantity\" : " + orders[i].quantity + ", \"status\" : \"" + orders[i].status + "\"}";
-        if (i < orders.length - 1) {
-            retJson += ","
-        }
-    }
-    retJson += "]}"
-    res.json(retJson).status(200);
+    Order.find({buyer:user}).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
     
 }
 

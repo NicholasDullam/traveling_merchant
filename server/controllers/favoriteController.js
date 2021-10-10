@@ -35,7 +35,20 @@ const getFavorites = (req, res) => {
   })
 }
 
+const getUserFavorites = (req, res) => {
+  const user = User.findById(req.user.id).exec();
+  if (!user) return res.status(400).json({ error: 'Account not found'});
+
+  favorite.find({user_id:user}).then((response) => {
+      return res.status(200).json(response)
+  }).catch((error) => {
+      return res.status(400).json({ error: error.message })
+  })
+  
+}
+
 module.exports = {
     addfavorite,
-    getFavorites
+    getFavorites,
+    getUserFavorites
 }
