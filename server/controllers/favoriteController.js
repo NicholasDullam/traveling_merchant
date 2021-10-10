@@ -1,9 +1,9 @@
-const favorite = require("../models/favorite");
+const Favorite = require("../models/favorite");
 const User = require("../models/user");
 
 // Assume request has product and user's email
-const addfavorite = async (req, res) => {
-    const f = new favorite();
+const createFavorite = async (req, res) => {
+    const f = new Favorite();
     f.product_id = req.body.p;
     User.findOne({email:req.body.email}, function(err,u){
         if (err) {
@@ -23,7 +23,7 @@ const addfavorite = async (req, res) => {
 const getFavorites = (req, res) => {
   let query = { ...req.query }, reserved = ['sort', 'limit']
   reserved.forEach((el) => delete query[el])
-  let queryPromise = favorite.find(query)
+  let queryPromise = Favorite.find(query)
 
   if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
   if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
@@ -35,20 +35,27 @@ const getFavorites = (req, res) => {
   })
 }
 
-const getUserFavorites = (req, res) => {
-  const user = User.findById(req.user.id).exec();
-  if (!user) return res.status(400).json({ error: 'Account not found'});
+const getFavoriteById = (req, res) => {
+  let { _id } = req.params
+  Favorite.findById(_id).then((response) => {
+      return res.status(200).json(response)
+  }).catch((error) => {
+      return res.status(200).json({ error: error.message })
+  })
+}
 
-  favorite.find({user_id:user}).then((response) => {
+const deleteFavoriteById = (req, res) => {
+  let { _id } = req.params
+  Favorite.findByIdAndDelete(_id).then((response) => {
       return res.status(200).json(response)
   }).catch((error) => {
       return res.status(400).json({ error: error.message })
   })
-  
 }
 
 module.exports = {
-    addfavorite,
+    createFavorite,
     getFavorites,
-    getUserFavorites
+    getFavoriteById,
+    deleteFavoriteById
 }

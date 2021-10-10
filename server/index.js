@@ -36,7 +36,7 @@ const stripeRouter = require('./routes/stripeRouter')
 const favoriteRouter = require('./routes/favoriteRouter')
 const followerRouter = require('./routes/followerRouter')
 const reviewRouter = require('./routes/reviewRouter')
-const viewHistoryRouter = require('./routes/viewHistoryRouter')
+const viewRouter = require('./routes/viewRouter')
 
 // generate routes
 app.use('/api', userRouter)
@@ -48,7 +48,7 @@ app.use('/api', stripeRouter)
 app.use('/api', favoriteRouter)
 app.use('/api', followerRouter)
 app.use('/api', reviewRouter)
-app.use('/api', viewHistoryRouter)
+app.use('/api', viewRouter)
 
 // attach non-api requests to client build; redirect non-ssl traffic
 if (process.env.NODE_ENV === 'production') {

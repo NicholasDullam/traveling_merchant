@@ -15,5 +15,10 @@ router.post('/users', UserController.createUser) // create user
 
 // PUT requests
 router.put('/users/:_id', auth, UserController.updateUserById) // update user by id
+router.put('/users/:_id/ban', auth, UserController.banUser)
+router.put('/users/:_id/unban', auth, UserController.unbanUser)
+
+// DELETE requests
+router.put('/users/:_id', auth, UserController.deleteUserById)
 
 module.exports = router
