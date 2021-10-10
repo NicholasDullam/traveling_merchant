@@ -1,4 +1,4 @@
-req.body
+req.fields
 /api
 auth:
     post(/auth/login)login: email, password

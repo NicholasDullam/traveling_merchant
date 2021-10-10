@@ -4,13 +4,13 @@ const User = require("../models/user");
 // Assume request has follower's and following's email
 const addFollower = async (req, res) => {
     const f = new follower();
-    User.findOne({email:req.body.follower}, function(err,follower){
+    User.findOne({email:req.fields.follower}, function(err,follower){
         if (err) {
             return req.status(500).json({message:"Invalid Follower"})
         }
         f.follower = follower
     })
-    User.findOne({email:req.body.following}, function(err,following){
+    User.findOne({email:req.fields.following}, function(err,following){
         if (err) {
             return req.status(500).json({message:"Invalid Following"})
         }

@@ -1,7 +1,7 @@
 const Product = require('../models/product')
 
 const createProduct = (req, res) => {
-    let { name, type, delivery_type, description, unit_price, min_quantity, stock } = req.body
+    let { name, type, delivery_type, description, unit_price, min_quantity, stock } = req.fields
     let product = new Product({
         user_id: req.user.id,
         name,

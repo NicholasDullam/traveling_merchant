@@ -4,7 +4,7 @@ const Product = require('../models/product')
 const User = require('../models/user')
 
 const createOrder = async (req, res) => {
-    let { product_id, quantity, requirements } = req.body
+    let { product_id, quantity, requirements } = req.fields
     
     if (!product_id) return res.status(400).json({ error: 'No products in order'})
     let product = await Product.findById(product_id)
@@ -29,7 +29,7 @@ const createOrder = async (req, res) => {
 }
 
 const deliverOrder = async (req, res) => {
-    let { order_id } = req.body
+    let { order_id } = req.fields
     if (!order_id) return res.status(400).json({ error: 'Missing order_id' })
     let order = await Order.findById(order_id)
     if (req.user.id !== order.seller.toString()) return res.status(402).json({ error: 'Invalid permissions' })
@@ -41,7 +41,7 @@ const deliverOrder = async (req, res) => {
 }
 
 const confirmDelivery = async (req, res) => {
-    let { order_id } = req.body
+    let { order_id } = req.fields
     if (!order_id) return res.status(400).json({ error: 'Missing order_id' })
     let order = await Order.findById(order_id)
     if (req.user.id !== order.buyer.toString()) return res.status(402).json({ error: 'Invalid permissions' })
@@ -53,7 +53,7 @@ const confirmDelivery = async (req, res) => {
 }
 
 const denyDelivery = async (req, res) => {
-    let { order_id } = req.body
+    let { order_id } = req.fields
     if (!order_id) return res.status(400).json({ error: 'Missing order_id' }) 
     let order = await Order.findById(order_id)
     if (req.user.id !== order.buyer.toString()) return res.status(402).json({ error: 'Invalid permissions' })
@@ -65,7 +65,7 @@ const denyDelivery = async (req, res) => {
 }
 
 const cancelOrder = async (req, res) => {
-    let { order_id } = req.body
+    let { order_id } = req.fields
     if (!order_id) return res.status(400).json({ error: 'Missing order_id' })
     let order = await Order.findById(order_id)
     if (req.user.id !== order.seller) return res.status(402).json({ error: 'Invalid permissions' })

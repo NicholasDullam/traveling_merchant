@@ -4,7 +4,7 @@ const View = require("../models/view")
 const cookieController = async (req, res) => {
     const token = req.cookies.view_history;
     if (!token) {
-        token = generateViewToken(req.body.email);
+        token = generateViewToken(req.fields.email);
         if (!token) {
             return req.status(404).json({error:"Could not create cookie"})
         } else {

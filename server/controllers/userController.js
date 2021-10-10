@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 
 // assume req has seller_id, customer_id, first and last name, email, password, profile_img, and settings
 const createUser = async (req, res) => {
-    let { email, first, last, password } = req.body
+    let { email, first, last, password } = req.fields
     let existing = await User.find({ email })
     if (existing.length) return res.status(500).json({ error: "USER EXISTS WITH THAT EMAIL"})
     const user = new User({ email, first, last })
@@ -20,7 +20,7 @@ const createUser = async (req, res) => {
 const setEmail = async (req, res) => {
   const user = User.findById(req.user.id);
   if (!user) return res.status(400).json({ error: 'Account not found'});
-  user.email = req.body.email;
+  user.email = req.fields.email;
   user.save().then((response) => {
     return res.status(200).json(response)
   }).catch((error) => {
@@ -31,7 +31,7 @@ const setEmail = async (req, res) => {
 const setFirst = async (req, res) => {
   const user = User.findById(req.user.id);
   if (!user) return res.status(400).json({ error: 'Account not found'});
-  user.first = req.body.first;
+  user.first = req.fields.first;
   user.save().then((response) => {
     return res.status(200).json(response)
   }).catch((error) => {
@@ -42,7 +42,7 @@ const setFirst = async (req, res) => {
 const setLast = async (req, res) => {
   const user = User.findById(req.user.id);
   if (!user) return res.status(400).json({ error: 'Account not found'});
-  user.last = req.body.last;
+  user.last = req.fields.last;
   user.save().then((response) => {
     return res.status(200).json(response)
   }).catch((error) => {
@@ -51,7 +51,7 @@ const setLast = async (req, res) => {
 }
 
 const setPassword = async (req, res) => {
-  let { password } = req.body
+  let { password } = req.fields
   const user = User.findById(req.user.id);
   if (!user) return res.status(400).json({ error: 'Account not found'});
   let salt = await bcrypt.genSalt(10)
