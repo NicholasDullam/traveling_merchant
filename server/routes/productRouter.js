@@ -6,7 +6,7 @@ const { auth } = require('../middleware/auth')
 
 const router = express.Router()
 
-router.post('/product', auth, ProductController.createProduct)
+router.post('/products', auth, ProductController.createProduct) // create product
 router.get('/product', auth, ProductController.getProducts)
 
 module.exports = router

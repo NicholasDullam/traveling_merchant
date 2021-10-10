@@ -2,6 +2,8 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET)
 const User = require('../models/user')
 const Order = require('../models/order')
 
+// route controllers
+
 const createAccount = async (req, res) => {
     if (req.user.acct_id) return res.status(400).json({ error: 'Stripe account already created'})
     let account = await stripe.accounts.create({
@@ -30,11 +32,22 @@ const getAccountOnboarding = (req, res) => {
     })
 }
 
-const createPaymentIntentFromOrder = async (req, res) => {
-    let { order_id } = req.fields
+const getClientSecret = async (req, res) => {
+    let { pr_id } = req.query
+    if (!pr_id) return res.status(400).json({ error: 'Missing payment request id'})
+    stripe.paymentIntents.retrieve(pr_id).then((response) => {
+        return res.status(200).json({ client_secret: response.client_secret })
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
+// helper functions
+
+const createPaymentIntentFromOrder = async (order_id) => {
     const order = await Order.findById(order_id)
     if (!order) return res.status(400).json({ error: 'Order not found' })
-    const amount = order.products.reduce((a, b) => a + (b.unit_price * b.quantity), 0)
+    const amount = order.quantity * order.unit_price
 
     let payment_intent = await stripe.paymentIntents.create({
         amount,
@@ -44,18 +57,13 @@ const createPaymentIntentFromOrder = async (req, res) => {
         metadata: { order_id }
     })
     
-    Order.findOneAndUpdate({ _id: order_id }, { pi_id: payment_intent.id }, { new: true }).then((response) => {
-        return res.status(200).json(response)
-    }).catch((error) => {
-        return res.status(400).json({ error: error.message })
-    })
+    return Order.findOneAndUpdate({ _id: order_id }, { pr_id: payment_intent.id }, { new: true })
 }
 
-const transferToSellerFromOrder = async (req, res) => {
-    let { order_id } = req.fields
+const transferToSellerFromOrder = async (order_id) => {
     const order = await Order.findById(order_id).populate('seller')
     if (!order) return res.status(400).json({ error: 'Order not found' })
-    const amount = order.products.reduce((a, b) => a + (b.unit_price * b.quantity), 0)
+    const amount = order.quantity * order.unit_price 
     const commission = amount * .1
 
     stripe.transfers.create({
@@ -71,11 +79,10 @@ const transferToSellerFromOrder = async (req, res) => {
     })
 }
 
-
-
 module.exports = {
     createAccount,
     getAccountOnboarding,
+    getClientSecret,
     createPaymentIntentFromOrder,
     transferToSellerFromOrder
 }
