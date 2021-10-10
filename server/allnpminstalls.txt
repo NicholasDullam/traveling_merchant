@@ -1,1 +1,0 @@
-stripe jsonwebtoken bcrypt mongoose heroku-ssl-redirect cookie-parser express dotenv express-formidable

@@ -1,16 +1,16 @@
-const follower = require("../models/follower");
+const Follower = require("../models/follower");
 const User = require("../models/user");
 
 // Assume request has follower's and following's email
-const addFollower = async (req, res) => {
+const createFollower = async (req, res) => {
     const f = new follower();
-    User.findOne({email:req.fields.follower}, function(err,follower){
+    User.findOne({email:req.body.follower}, function(err, follower){
         if (err) {
             return req.status(500).json({message:"Invalid Follower"})
         }
         f.follower = follower
     })
-    User.findOne({email:req.fields.following}, function(err,following){
+    User.findOne({email:req.body.following}, function(err,following){
         if (err) {
             return req.status(500).json({message:"Invalid Following"})
         }
@@ -28,7 +28,7 @@ const addFollower = async (req, res) => {
 const getFollowers = (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'limit']
     reserved.forEach((el) => delete query[el])
-    let queryPromise = follower.find(query)
+    let queryPromise = Follower.find(query)
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
@@ -40,20 +40,27 @@ const getFollowers = (req, res) => {
     })
 }
 
-const getUserFollowers = (req, res) => {
-    const user = User.findById(req.user.id).exec();
-    if (!user) return res.status(400).json({ error: 'Account not found'});
-  
-    follower.find({follower:user}).then((response) => {
+const getFollowerById = (req, res) => {
+    let { _id } = req.params
+    Follower.findById(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(200).json({ error: error.message })
+    })
+}
+
+const deleteFollowerById = (req, res) => {
+    let { _id } = req.params
+    Follower.findByIdAndDelete(_id).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })
-    
-  }
+}
 
 module.exports = {
-    addFollower,
+    createFollower,
     getFollowers,
-    getUserFollowers
+    getFollowerById,
+    deleteFollowerById
 }

@@ -21,31 +21,7 @@ const logout = async (req, res) => {
     return res.clearCookie("access_token").status(200).json({ message: "Successfully logged out" });
 }
 
-const banUser = async (req, res) => {
-    if (req.user.admin) {
-        const user = await User.findById(req.body.id)
-        if (!user) return res.status(400).json({ error: 'Account not found'})
-        user.banned = true;
-        user.save().then((response) => {
-          return res.status(200).json(response)
-        }).catch((error) => {
-          return res.status(400).json({ error: error.message })
-        })
-    }
-}
-
-const removeUser = async (req, res) => {
-    if (req.user.admin) {
-        User.findByIdAndDelete(req.body.id, function (err) {
-            if(err) return res.status(400).json({ error: 'Account not found'});
-            return res.status(200).json({ error: 'Account deleted'});
-        });
-    }
-}
-
 module.exports = {
     login,
-    logout,
-    banUser,
-    removeUser
+    logout
 }
