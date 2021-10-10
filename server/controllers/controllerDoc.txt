@@ -1,44 +1,45 @@
 req.body
+/api
 auth:
-    login: email, password
-    logout:
-    banUser: id
-    removeUser: id
+    post(/auth/login)login: email, password
+    post(/auth/logout)logout:
+    post(/auth/banUser)banUser: id
+    post(/auth/removeUser)removeUser: id
 cookie:
     cookieController: email, p(product)
     getCookies:
 favorite:
-    addfavorite: p(product), email
-    getFavorites:
-    getUserFavorites:
+    post(/favorite)addfavorite: p(product), email
+    get(/favorite)getFavorites:
+    get(/userfavorite)getUserFavorites:
 follower:
-    addFollower: follower(email), following(email)
-    getFollowers:
-    getUserFollowers:
+    post(/follower)addFollower: follower(email), following(email)
+    get(/follower)getFollowers:
+    get(/userfollower)getUserFollowers:
 game:
-    createGame: name, developer, product_types, platforms, img
-    getGames:
+    post(/game)createGame: name, developer, product_types, platforms, img
+    get(/game)getGames:
 order:
-    createOrder: product_id, quantity, requirements
-    deliverOrder: order_id
-    confirmDelivery: order_id
-    denyDelivery: order_id
-    cancelOrder: order_id
-    getOrders:
-    getUserOrders:
+    post(/order)createOrder: product_id, quantity, requirements
+    post(/order/deliver)deliverOrder: order_id
+    post(/order/confirm)confirmDelivery: order_id
+    post(/order/deny)denyDelivery: order_id
+    post(/order/cancel)cancelOrder: order_id
+    get(/order)getOrders:
+    get(/userOrders)getUserOrders:
 product:
-    createProduct: name, type, delivery_type, description, unit_price, min_quantity, stock
-    getProducts:
+    post(/product)createProduct: name, type, delivery_type, description, unit_price, min_quantity, stock
+    get(/product)getProducts:
 review:
-    addReview: user(email), seller(email), rating, content
-    getReviews:
+    post(/review)addReview: user(email), seller(email), rating, content
+    get(/review)getReviews:
 user:
-    createUser: email, first, last, password
-    setEmail: email
-    setFirst: first
-    setLast: last
-    setPassword: password
-    getUsers:
+    post(/user)createUser: email, first, last, password
+    post(/changeEmail)setEmail: email
+    post(/changeFirst)setFirst: first
+    post(/changeLast)setLast: last
+    post(/changePassword)setPassword: password
+    get(/user)getUsers:
 view:
-    userViewHistory: user(email)
-    getViews:
+    post(/addView)userViewHistory: user(email)
+    get(/userViewHistory)getViews:
