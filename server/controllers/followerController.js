@@ -40,7 +40,20 @@ const getFollowers = (req, res) => {
     })
 }
 
+const getUserFollowers = (req, res) => {
+    const user = User.findById(req.user.id).exec();
+    if (!user) return res.status(400).json({ error: 'Account not found'});
+  
+    follower.find({follower:user}).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+    
+  }
+
 module.exports = {
     addFollower,
-    getFollowers
+    getFollowers,
+    getUserFollowers
 }
