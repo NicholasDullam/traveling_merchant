@@ -6,7 +6,14 @@ const { auth } = require('../middleware/auth')
 
 const router = express.Router()
 
-router.post('/game', auth, GameController.createGame)
-router.get('/game', auth, GameController.getGames)
+// GET requests
+router.get('/games', auth, GameController.getGames) // get games
+router.get('/games/:_id', auth, GameController.getGameById) // get game by id
+
+// POST requests
+router.post('/games', auth, GameController.createGame) // create game
+
+// PUT requests
+router.put('/games/:_id', auth, GameController.updateGameById) // update game by id
 
 module.exports = router
