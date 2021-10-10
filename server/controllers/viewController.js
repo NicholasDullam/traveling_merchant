@@ -2,9 +2,10 @@ const View = require("../models/view")
 
 // assume req has email
 const userViewHistory = async (req, res) => {
+    let { user } = req.body
     const token = req.cookies.view_history;
     if (!token) {
-        View.findOne({email:req.body.email}).then(function(err, vh){
+        View.findOne({email:user}).then(function(err, vh){
             return req.view_history = vh
         });
     } else {

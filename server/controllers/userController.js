@@ -51,6 +51,7 @@ const setLast = async (req, res) => {
 }
 
 const setPassword = async (req, res) => {
+  let { password } = req.body
   const user = User.findById(req.user.id);
   if (!user) return res.status(400).json({ error: 'Account not found'});
   let salt = await bcrypt.genSalt(10)
