@@ -18,15 +18,29 @@ const addReview = async (req, res) => {
     })
     r.rating = req.body.rating;
     r.content = req.body.cont;
-    r.save().then(function(err) {
-        if (err) {
-          res.status(500).json({ error: "ERROR CREATING REVIEW"});
-        } else {
-            Review.verifyPurchase(r)
-          res.status(200).json({ error: "SUCCESS"});
-        }
-      })
+    if (verifyPurchase(r)) {
+        r.save().then(function(err) {
+            if (err) {
+            res.status(500).json({ error: "ERROR CREATING REVIEW"});
+            } else {
+            res.status(200).json({ error: "SUCCESS"});
+            }
+        })
+    } else {
+        res.status(500).json({ error: "ERROR CREATING REVIEW, NOT VERIFIED"});
+    }
 }
+
+// method to verify purchase
+const verifyPurchase = function (r) {
+    Order.findOne({buyer:r.reviewer,seller:r.seller}, function (err, order) {
+        if (!err) {
+            return true;
+        } else {
+            return false;
+        }
+    })
+};
 
 const getReviews = (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'limit']

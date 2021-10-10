@@ -23,19 +23,22 @@ const logout = async (req, res) => {
 
 const banUser = async (req, res) => {
     if (req.user.admin) {
-        const user = await User.findOne({ email })
+        const user = await User.findById(req.user.id)
         if (!user) return res.status(400).json({ error: 'Account not found'})
         user.banned = true;
+        user.save().then((response) => {
+          return res.status(200).json(response)
+        }).catch((error) => {
+          return res.status(400).json({ error: error.message })
+        })
     }
 }
 
 const removeUser = async (req, res) => {
     if (req.user.admin) {
-        const user = await User.findOne({ email })
-        if (!user) return res.status(400).json({ error: 'Account not found'})
-        ProductModel.findByIdAndDelete(user._id, function (err) {
-            if(err) console.log(err);
-            console.log("Successful deletion");
+        User.findByIdAndDelete(user._id, function (err) {
+            if(err) return res.status(400).json({ error: 'Account not found'});
+            return res.status(200).json({ error: 'Account deleted'});
         });
     }
 }
