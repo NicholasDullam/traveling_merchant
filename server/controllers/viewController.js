@@ -1,7 +1,7 @@
 const View = require("../models/view")
 
 // assume req has email
-const viewController = async (req, res) => {
+const userViewHistory = async (req, res) => {
     const token = req.cookies.view_history;
     if (!token) {
         View.findOne({email:req.body.email}).then(function(err, vh){
@@ -30,6 +30,6 @@ const getViews = (req, res) => {
 }
   
   module.exports = {
-      viewController,
+      userViewHistory,
       getViews
   }
