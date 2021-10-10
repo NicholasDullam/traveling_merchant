@@ -14,7 +14,7 @@ const viewController = async (req, res) => {
     }
   }
 
-  const getViews = (req, res) => {
+const getViews = (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'limit']
     reserved.forEach((el) => delete query[el])
     let queryPromise = View.find(query)
