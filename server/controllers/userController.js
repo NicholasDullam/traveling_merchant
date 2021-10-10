@@ -79,5 +79,9 @@ const getUsers = (req, res) => {
 
 module.exports = {
     createUser,
-    getUsers
+    getUsers,
+    setEmail,
+    setFirst,
+    setLast,
+    setPassword
 }
