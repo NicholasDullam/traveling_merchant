@@ -25,7 +25,27 @@ const getGames = (req, res) => {
     })
 }
 
+const getGameById = (req, res) => {
+    let { _id } = req.params
+    Game.findById(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
+const updateGameById = (req, res) => {
+    let { _id } = req.params
+    Game.findByIdAndUpdate(_id, req.body, { new: true }).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
 module.exports = {
     createGame,
-    getGames
+    getGames,
+    getGameById,
+    updateGameById
 }
