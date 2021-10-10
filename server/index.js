@@ -5,7 +5,6 @@ require('dotenv').config();
 const express = require('express');
 const cookieParser = require('cookie-parser')
 const sslRedirect = require('heroku-ssl-redirect');
-//const formidable = require('express-formidable');
 
 const db = require('./db')
 
@@ -14,7 +13,6 @@ const app = express()
 const port = process.env.PORT || 8000
 
 app.use(cookieParser());
-//app.use(formidable());
 
 app.use(express.json({
   verify: (req, res, buf) => {
