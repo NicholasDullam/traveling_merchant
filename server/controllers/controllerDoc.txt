@@ -9,6 +9,8 @@ cookie:
     getCookies:
 favorite:
     addfavorite: p(product), email
+    getFavorites:
+    getUserFavorites:
 follower:
     addFollower: follower(email), following(email)
     getFollowers:
