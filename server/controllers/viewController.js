@@ -69,8 +69,28 @@ const getViews = (req, res) => {
         return res.status(400).json({ error: error.message })
     })
 }
-  
-  module.exports = {
-      createView,
-      getViews
+
+const getViewById = (req, res) => {
+    let { _id } = req.params
+    View.findById(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(200).json({ error: error.message })
+    })
   }
+  
+const deleteViewById = (req, res) => {
+    let { _id } = req.params
+    View.findByIdAndDelete(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+  
+module.exports = {
+    createView,
+    getViews,
+    getViewById,
+    deleteViewById
+}
