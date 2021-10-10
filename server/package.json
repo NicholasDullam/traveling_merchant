@@ -30,6 +30,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.1.2",
     "mongoose": "^6.0.8",
-    "stripe": "^8.178.0"
+    "stripe": "^8.178.0",
+    "traveling_merchant": "file:.."
   }
 }

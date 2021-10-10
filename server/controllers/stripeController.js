@@ -31,7 +31,7 @@ const getAccountOnboarding = (req, res) => {
 }
 
 const createPaymentIntentFromOrder = async (req, res) => {
-    let { order_id } = req.fields
+    let { order_id } = req.body
     const order = await Order.findById(order_id)
     if (!order) return res.status(400).json({ error: 'Order not found' })
     const amount = order.products.reduce((a, b) => a + (b.unit_price * b.quantity), 0)
@@ -52,7 +52,7 @@ const createPaymentIntentFromOrder = async (req, res) => {
 }
 
 const transferToSellerFromOrder = async (req, res) => {
-    let { order_id } = req.fields
+    let { order_id } = req.body
     const order = await Order.findById(order_id).populate('seller')
     if (!order) return res.status(400).json({ error: 'Order not found' })
     const amount = order.products.reduce((a, b) => a + (b.unit_price * b.quantity), 0)

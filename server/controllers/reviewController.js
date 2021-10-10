@@ -3,7 +3,7 @@ const User = require("../models/user");
 
 // Assume request has user's email, the sellers email, the rating, and the content
 const addReview = async (req, res) => {
-    let { user, seller, rating, content } = req.fields;
+    let { user, seller, rating, content } = req.body;
     const r = new Review();
     User.findOne({email:user}, function(err,reviewer){
         if (err) {
@@ -20,8 +20,8 @@ const addReview = async (req, res) => {
     r.rating = rating;
     r.content = content;
     if (verifyPurchase(r)) {
-        r.save().then(function(err) {
-            if (err) {
+        r.save().then(function(r) {
+            if (!r) {
             res.status(500).json({ error: "ERROR CREATING REVIEW"});
             } else {
             res.status(200).json({ error: "SUCCESS"});
