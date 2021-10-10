@@ -11,5 +11,7 @@ router.post('/order/deliver', auth, OrderController.deliverOrder)
 router.post('/order/confirm', auth, OrderController.confirmDelivery)
 router.post('/order/deny', auth, OrderController.denyDelivery)
 router.post('/order/cancel', auth, OrderController.cancelOrder)
+router.get('/order', auth, OrderController.getOrders)
+router.get('/userOrders', auth, OrderController.getUserOrders)
 
 module.exports = router

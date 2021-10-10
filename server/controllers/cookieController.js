@@ -1,9 +1,10 @@
 const View = require("../models/view")
 
+// assume request has product and user email
 const cookieController = async (req, res) => {
     const token = req.cookies.view_history;
     if (!token) {
-        token = generateViewToken(req.email);
+        token = generateViewToken(req.body.email);
         if (!token) {
             return req.status(404).json({error:"Could not create cookie"})
         } else {
@@ -52,7 +53,12 @@ const cookieController = async (req, res) => {
       }
     });
   }
+
+  const getCookies = async (req,res) => {
+    return res.json(res.cookies).status(200);
+  }
   
   module.exports = {
-      cookieController
+      cookieController,
+      getCookies
   }
