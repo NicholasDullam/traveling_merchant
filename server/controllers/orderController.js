@@ -31,15 +31,9 @@ const createOrder = async (req, res) => {
 }
 
 const deliverOrder = async (req, res) => {
-<<<<<<< HEAD
-    let { order_id } = req.body
-    if (!order_id) return res.status(400).json({ error: 'Missing order_id' })
-    let order = await Order.findById(order_id)
-=======
     let { _id } = req.params
     if (!_id) return res.status(400).json({ error: 'Missing order_id' })
     let order = await Order.findById(_id)
->>>>>>> 470023e86fd9a1ae4ed62b288762db2f5d5a0ced
     if (req.user.id !== order.seller.toString()) return res.status(402).json({ error: 'Invalid permissions' })
     Order.findOneAndUpdate({ _id }, { status: 'confirmation_pending', delivered_at: Date.now(), auto_confirm_at: Date.now() + 259200 }, { new: true }).then((response) => {
         return res.status(200).json(response)
