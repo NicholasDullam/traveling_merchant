@@ -9,13 +9,21 @@ Run the server by using ```npm start``` within ```~/server```
 ---
 
 ## **Routes**
+
 [Auth](#auth)
+
 [Users](#users)
+
 [Products](#products)
+
 [Orders](#orders)
+
 [Games](#games)
+
 [Favorites](#favorites)
+
 [Followers](#followers)
+
 [Views](#views)
 
 ---
@@ -42,6 +50,8 @@ Run the server by using ```npm start``` within ```~/server```
 
 ### **Products**
 ```POST /products```
+
+```GET /products```
 
 ### **Orders**
 ```POST /orders```
