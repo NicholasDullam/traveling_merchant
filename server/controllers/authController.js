@@ -13,7 +13,7 @@ const login = async (req, res) => {
     let valid = await bcrypt.compare(password, user.password)
     if (!valid) return res.status(400).json({ error: 'Password incorrect'})
     
-    const token = jwt.sign({ id: user._id, acct_id: user.acct_id || null }, token_secret)
+    const token = jwt.sign({ id: user._id, acct_id: user.acct_id, admin: user.admin, banned: user.banned || null }, token_secret)
     return res.cookie("access_token", token, { httpOnly: true, secure:process.env.NODE_ENV === "production" }).status(200).json({ error: "SUCCESS" })
 }
 
@@ -21,7 +21,28 @@ const logout = async (req, res) => {
     return res.clearCookie("access_token").status(200).json({ message: "Successfully logged out" });
 }
 
+const banUser = async (req, res) => {
+    if (req.user.admin) {
+        const user = await User.findOne({ email })
+        if (!user) return res.status(400).json({ error: 'Account not found'})
+        user.banned = true;
+    }
+}
+
+const removeUser = async (req, res) => {
+    if (req.user.admin) {
+        const user = await User.findOne({ email })
+        if (!user) return res.status(400).json({ error: 'Account not found'})
+        ProductModel.findByIdAndDelete(user._id, function (err) {
+            if(err) console.log(err);
+            console.log("Successful deletion");
+        });
+    }
+}
+
 module.exports = {
     login,
-    logout
+    logout,
+    banUser,
+    removeUser
 }

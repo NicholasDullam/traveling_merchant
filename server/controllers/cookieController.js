@@ -53,7 +53,12 @@ const cookieController = async (req, res) => {
       }
     });
   }
+
+  const getCookies = async (req,res) => {
+    return res.json(res.cookies).status(200);
+  }
   
   module.exports = {
-      cookieController
+      cookieController,
+      getCookies
   }

@@ -13,6 +13,7 @@ const User = new mongoose.Schema({
     profile_img: String,
     acct_details_submitted: Boolean,
     admin: Boolean,
+    banned: Boolean,
     settings: {
       admin: Boolean
     }
