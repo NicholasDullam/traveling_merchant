@@ -23,7 +23,7 @@ const logout = async (req, res) => {
 
 const banUser = async (req, res) => {
     if (req.user.admin) {
-        const user = await User.findById(req.user.id)
+        const user = await User.findById(req.body.id)
         if (!user) return res.status(400).json({ error: 'Account not found'})
         user.banned = true;
         user.save().then((response) => {
@@ -36,7 +36,7 @@ const banUser = async (req, res) => {
 
 const removeUser = async (req, res) => {
     if (req.user.admin) {
-        User.findByIdAndDelete(user._id, function (err) {
+        User.findByIdAndDelete(req.body.id, function (err) {
             if(err) return res.status(400).json({ error: 'Account not found'});
             return res.status(200).json({ error: 'Account deleted'});
         });
