@@ -11,12 +11,12 @@ const Navbar = (props) => {
   // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
   return (
     <nav className="navbar navbar-expand-md">
-      <div class="container-fluid">
+      <div className="container-fluid">
         <h1 className="brand">
           <Link to="/" className="navbar-brand">TM</Link>
         </h1>
         <button
-          class="navbar-toggler"
+          className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarSupportedContent"y
@@ -24,23 +24,23 @@ const Navbar = (props) => {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span class="navbar-toggler-icon"></span>
+          <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div className="collapse navbar-collapse" id="navbarSupportedContent">
           {/* mx-auto isn't the right class for the spacing I want, will fix it later. -Victoire */}
-          <div class="search-bar mx-auto col-md-6 col-lg-4"> 
-          <form class="d-flex">
-            <div class="input-group">
+          <div className="search-bar mx-auto col-md-6 col-lg-4"> 
+          <form className="d-flex">
+            <div className="input-group">
             <input
-              class="form-control me-2"
+              className="form-control me-2"
               type="search"
               placeholder="Search games, game assets..."
               aria-label="Search"
             />
             </div>
         
-            <button class="btn btn-outline-success" type="submit">
+            <button className="btn btn-outline-success" type="submit">
               Search
             </button>
           </form>
