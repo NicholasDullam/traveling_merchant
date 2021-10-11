@@ -3,7 +3,7 @@ import Layout from '../components/Layout/Layout';
 import { Link } from "react-router-dom";
 
 
-import gamer1 from '../images/gamer_1.png'
+import gamer2 from '../images/gamer_2.png'
 
 const Login = () => {
     
@@ -21,17 +21,17 @@ const Login = () => {
             <input type="email" class="form-control" id="emailInput" placeholder="name@domain.com"></input>
             
             <label for="passwordInput" class="form-label">Password</label>
-            <input type="password" class="form-control" id="passwordInput" ></input>
+            <input type="password" class="form-control" id="passwordInput" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"></input>
 
          
             <input type="checkbox" class="form-check-input" id=""/>
                 <label>Keep me logged in</label>
-            <button>Log in</button>
+            <button  type="submit" class="btn btn-primary">Log in</button>
             <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
         </form>
         </div>
         <div class="col col-picture">
-            <img src={gamer1} class="img-fluid"></img>
+            <img src={gamer2} class="img-fluid"></img>
             </div>
         </div>
         </Layout>

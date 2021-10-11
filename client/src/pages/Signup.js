@@ -23,16 +23,16 @@ const Signup = () => {
             <input type="email" class="form-control" id="emailInput" placeholder="name@domain.com"></input>
             
             <label for="passwordInput" class="form-label">Password</label>
-            <input type="password" class="form-control" id="passwordInput" ></input>
+            <input type="password" class="form-control" id="passwordInput" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"></input>
 
             <label for="reenterPasswordInput" class="form-label">Re-enter password</label>
-            <input type="password" class="form-control" id="reenterPasswordInput" ></input>
+            <input type="password" class="form-control" id="reenterPasswordInput" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" ></input>
 
             <input type="checkbox" class="form-check-input" ></input>
             <label> Agree to Terms and Conditions</label>
             <input type="checkbox" class="form-check-input" id=""/>
                 <label>Sign up for newsletter and exclusive discounts</label>
-            <button>Sign up</button>
+            <button  type="submit" class="btn btn-primary">Sign up</button>
             <p>Already have an account? <Link to="/login">Log in</Link></p>
         </form>
         </div>

@@ -10,7 +10,7 @@ import "../Layout/Layout.css"; // reason for this is to get all global variables
 const Navbar = (props) => {
   // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
   return (
-    <nav className="navbar navbar-expand-lg">
+    <nav className="navbar navbar-expand-md">
       <div class="container-fluid">
         <h1 className="brand">
           <Link to="/" className="navbar-brand">TM</Link>
@@ -28,16 +28,18 @@ const Navbar = (props) => {
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          
-
-          <div class="search-bar">
+          {/* mx-auto isn't the right class for the spacing I want, will fix it later. -Victoire */}
+          <div class="search-bar mx-auto col-md-6 col-lg-4"> 
           <form class="d-flex">
+            <div class="input-group">
             <input
               class="form-control me-2"
               type="search"
               placeholder="Search games, game assets..."
               aria-label="Search"
             />
+            </div>
+        
             <button class="btn btn-outline-success" type="submit">
               Search
             </button>
