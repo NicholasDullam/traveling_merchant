@@ -20,6 +20,9 @@
     "url": "https://github.com/NicholasDullam/traveling_merchant/issues"
   },
   "homepage": "https://github.com/NicholasDullam/traveling_merchant#readme",
+  "devDependencies": {
+    "prettier": "2.4.1"
+  },
   "dependencies": {
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.0",
@@ -32,4 +35,4 @@
     "mongoose": "^6.0.10",
     "stripe": "^8.179.0"
   }
-}
+

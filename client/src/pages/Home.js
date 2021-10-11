@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import GameCard from '../components/GameCard/GameCard'
+import GameGallery from '../components/GameGallery/GameGallery'
 import Layout from '../components/Layout/Layout'
 const Home = (props) => {
     const [count, setCount] = useState(0)
@@ -8,8 +10,16 @@ const Home = (props) => {
         setCount(count + 1)
     }
 
+ 
+
+
     return (
-        <Layout>
+        <Layout navbar>
+           
+    
+        <GameGallery/>
+           
+           
             <h1 onClick={() => setCount(count + 1)}> Home page! {count} </h1>
             <input value={search} onChange={(event) => {
                 console.log(event.target)
