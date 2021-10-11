@@ -4,12 +4,19 @@ import logo from "./logo.svg";
 import "./App.css";
 
 import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 
 function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/login" />
+        <Route path="/login" >
+        <Login></Login>
+          </Route>
+        <Route path="/signup">
+    <Signup></Signup>
+          </Route>
         <Route path="/logout" />
         <Route path="/game" />
         <Route path="/user" />

@@ -33,6 +33,10 @@ const gameRouter = require('./routes/gameRouter')
 const productRouter = require('./routes/productRouter')
 const orderRouter = require('./routes/orderRouter')
 const stripeRouter = require('./routes/stripeRouter')
+const favoriteRouter = require('./routes/favoriteRouter')
+const followerRouter = require('./routes/followerRouter')
+const reviewRouter = require('./routes/reviewRouter')
+const viewRouter = require('./routes/viewRouter')
 
 // generate routes
 app.use('/api', userRouter)
@@ -41,6 +45,10 @@ app.use('/api', gameRouter)
 app.use('/api', productRouter)
 app.use('/api', orderRouter)
 app.use('/api', stripeRouter)
+app.use('/api', favoriteRouter)
+app.use('/api', followerRouter)
+app.use('/api', reviewRouter)
+app.use('/api', viewRouter)
 
 // attach non-api requests to client build; redirect non-ssl traffic
 if (process.env.NODE_ENV === 'production') {

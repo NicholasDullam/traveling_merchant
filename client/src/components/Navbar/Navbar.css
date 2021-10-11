@@ -4,7 +4,17 @@
 .nav-link {
   color:white;
   font-weight: 600;
+  transition: 0.3s;
 }
+.nav-item:hover {
+  /* Ideally something animated but for now, I'll do easy stuff*/
+background-color: white;
+
+}
+.nav-link:hover {
+  color:black;
+}
+
 .navbar-brand{
   color:white;
   font-weight: 800;

@@ -3,6 +3,7 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt')
 const token_secret = process.env.TOKEN_SECRET;
 
+//assume req has email and password
 const login = async (req, res) => {
     let { email, password } = req.body
 
@@ -12,7 +13,7 @@ const login = async (req, res) => {
     let valid = await bcrypt.compare(password, user.password)
     if (!valid) return res.status(400).json({ error: 'Password incorrect'})
     
-    const token = jwt.sign({ id: user._id, acct_id: user.acct_id || null }, token_secret)
+    const token = jwt.sign({ id: user._id, acct_id: user.acct_id, admin: user.admin, banned: user.banned || null }, token_secret)
     return res.cookie("access_token", token, { httpOnly: true, secure:process.env.NODE_ENV === "production" }).status(200).json({ error: "SUCCESS" })
 }
 
