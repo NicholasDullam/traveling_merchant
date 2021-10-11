@@ -6,6 +6,7 @@ import "./App.css";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ProductListing from "./pages/ProductListing";
 
 function App() {
   return (
@@ -16,6 +17,11 @@ function App() {
           </Route>
         <Route path="/signup">
     <Signup></Signup>
+          </Route>
+
+        <Route path="/listing">
+          {/* ^ this is a dummy route path */}
+          <ProductListing/>
           </Route>
         <Route path="/logout" />
         <Route path="/game" />
