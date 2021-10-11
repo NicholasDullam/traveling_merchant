@@ -9,7 +9,7 @@ const Home = (props) => {
     }
 
     return (
-        <Layout>
+        <Layout navbar>
             <h1 onClick={() => setCount(count + 1)}> Home page! {count} </h1>
             <input value={search} onChange={(event) => {
                 console.log(event.target)

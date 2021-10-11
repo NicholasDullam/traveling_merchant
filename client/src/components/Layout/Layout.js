@@ -10,7 +10,7 @@ import Navbar from "../Navbar/Navbar";
 const Layout = (props) => {
   return (
     <div>
-      <Navbar />
+      {props.navbar?<Navbar />:null}
       <div className="container">{props.children}</div>
     </div>
   );
