@@ -3,9 +3,12 @@ const User = require("../models/user");
 
 // Assume request has product and user's email
 const addfavorite = async (req, res) => {
+    let { user_id, name, email } = req.body;
     const f = new favorite();
-    f.product_id = req.body.p;
-    User.findOne({email:req.body.email}, function(err,u){
+    var p;
+    Product.findOne({user_id:user_id,name:name}).then(function(pr){p=pr});
+    f.product_id = p;
+    User.findOne({email:email}, function(err,u){
         if (err) {
             return req.status(500).json({message:"Invalid User"});
         }

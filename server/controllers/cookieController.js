@@ -1,21 +1,25 @@
 const View = require("../models/view")
+const Product = require("../models/product")
 
 // assume request has product and user email
 const cookieController = async (req, res) => {
+    let { user_id, name, email } = req.body;
     const token = req.cookies.view_history;
+    var p;
+    Product.findOne({user_id:user_id,name:name}).then(function(pr){p=pr});
     if (!token) {
-        token = generateViewToken(req.body.email);
+        token = generateViewToken(email);
         if (!token) {
             return req.status(404).json({error:"Could not create cookie"})
         } else {
             req.cookie("view_history", token)
             View.findOne({token:token.token}).then(function(err, vh){
-                vh.addProduct(req.p)
+                vh.addProduct(p)
             });
         }
     } else {
         View.findOne({token:token.token}).then(function(err, vh){
-            vh.addProduct(req.p)
+            vh.addProduct(p)
         });
     }
   }
