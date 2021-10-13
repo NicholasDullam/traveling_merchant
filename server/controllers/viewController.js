@@ -1,52 +1,28 @@
 const View = require("../models/view")
-const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 
 // assume request has product
 const createView = async (req, res) => {
-    let { p } = req.body;
-    var token = req.cookies.view_history;
-    if (!token) {
-        token = generateViewToken(req.user.id);
-        if (!token) {
-            return req.status(404).json({error:"Could not create cookie"})
-        } else {
-            req.cookie("view_history", token)
-            View.findOne({token:token.token}).then(function(err, vh){
-                vh.addProduct(p)
-            });
-        }
-    } else {
-        View.findOne({token:token.token}).then(function(err, vh){
-            vh.addProduct(p)
-        });
+    let { product_id } = req.body; token = req.cookies.view_history
+    let view = new View({ product_id })
+    if (req.user.id) view.user_id = req.user.id
+    else if (token) view.token = token
+    else {
+        token = jwt.sign({}, process.env.TOKEN_SECRET)
+        res.cookie('view_history', token)
+        view.token = token
     }
-}
 
-async function generateViewToken(id) {
-    var token = crypto.randomBytes(128).toString;
-    var f = 0;
-    while (f == 0) {
-        const v = await View.findOne({token:token});
-        console.log(v)
-        if (!v) {
-            break;
-        }
-    }
-    var view = new View();
-    view.user = id;
-    view.token = token;
-    view.save().then(function(err) {
-        if (err) {
-        return null;
-        } else {
-        return {email:email,token:token};
-        }
-    });
+    view.save().then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
 }
 
 const getViews = (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'limit']
-    if (req.cookies.view_history) query.token = req.cookies.view_history
+    if (req.cookies.view_history && !req.user.id) query.token = req.cookies.view_history
     reserved.forEach((el) => delete query[el])
     let queryPromise = View.find(query)
 
@@ -61,7 +37,7 @@ const getViews = (req, res) => {
 }
 
 const getViewById = (req, res) => {
-    let { _id } = req.body
+    let { _id } = req.params
     View.findById(_id).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
@@ -70,7 +46,7 @@ const getViewById = (req, res) => {
   }
   
 const deleteViewById = (req, res) => {
-    let { _id } = req.body
+    let { _id } = req.params
     View.findByIdAndDelete(_id).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
