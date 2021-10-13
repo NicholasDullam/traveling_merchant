@@ -33,7 +33,7 @@ const getAccountOnboarding = (req, res) => {
 }
 
 const getClientSecret = async (req, res) => {
-    let { pr_id } = req.query
+    let { pr_id } = req.params
     if (!pr_id) return res.status(400).json({ error: 'Missing payment request id'})
     stripe.paymentIntents.retrieve(pr_id).then((response) => {
         return res.status(200).json({ client_secret: response.client_secret })
