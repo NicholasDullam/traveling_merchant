@@ -1,27 +1,18 @@
 const Review = require("../models/review");
 const User = require("../models/user");
+const Order = require("../models/order")
 
 // Assume request has user's email, the sellers email, the rating, and the content
 const addReview = async (req, res) => {
-    let { user, seller, rating, content } = req.body;
+    let { seller, rating, content } = req.body;
     const r = new Review();
-    User.findOne({email:user}, function(err,reviewer){
-        if (err) {
-            return req.status(500).json({message:"Invalid User"})
-        }
-        r.reviewer = reviewer
-    })
-    User.findOne({email:seller}, function(err,seller){
-        if (err) {
-            return req.status(500).json({message:"Invalid Seller"})
-        }
-        r.seller = seller
-    })
+    r.reviewer = req.user.id
+    r.seller = seller
     r.rating = rating;
     r.content = content;
     if (verifyPurchase(r)) {
-        r.save().then(function(err) {
-            if (err) {
+        r.save().then(function(r) {
+            if (!r) {
             res.status(500).json({ error: "ERROR CREATING REVIEW"});
             } else {
             res.status(200).json({ error: "SUCCESS"});
@@ -33,14 +24,12 @@ const addReview = async (req, res) => {
 }
 
 // method to verify purchase
-const verifyPurchase = function (r) {
-    Order.findOne({buyer:r.reviewer,seller:r.seller}, function (err, order) {
-        if (!err) {
-            return true;
-        } else {
-            return false;
-        }
-    })
+const verifyPurchase = async function (r) {
+    const o = await Order.findOne({buyer:r.reviewer,seller:r.seller})
+    if (!o) {
+        return false
+    }
+    return true
 };
 
 const getReviews = (req, res) => {

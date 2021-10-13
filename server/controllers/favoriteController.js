@@ -3,16 +3,12 @@ const User = require("../models/user");
 
 // Assume request has product and user's email
 const createFavorite = async (req, res) => {
+    let { p } = req.body;
     const f = new Favorite();
-    f.product_id = req.body.p;
-    User.findOne({email:req.body.email}, function(err,u){
-        if (err) {
-            return req.status(500).json({message:"Invalid User"});
-        }
-        f.user_id = u;
-    })
-    f.save().then(function(err) {
-        if (err) {
+    f.product_id = p;
+    f.user_id = req.user.id;
+    f.save().then(function(f) {
+        if (!f) {
           res.status(500).json({ error: "ERROR CREATING FAVORITE"});
         } else {
           res.status(200).json({ error: "SUCCESS"});
@@ -53,9 +49,15 @@ const deleteFavoriteById = (req, res) => {
   })
 }
 
+const getUserFavorites = async (req, res) => {
+  const f = await Favorite.find({user_id:req.user.id});
+  return res.status(200).json(f);
+}
+
 module.exports = {
     createFavorite,
     getFavorites,
     getFavoriteById,
-    deleteFavoriteById
+    deleteFavoriteById,
+    getUserFavorites
 }
