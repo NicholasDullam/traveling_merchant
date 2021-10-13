@@ -3,20 +3,10 @@ const User = require("../models/user");
 
 // Assume request has follower's and following's email
 const createFollower = async (req, res) => {
-    let {follower,following} = req.body;
+    let {following} = req.body;
     const f = new Follower();
-    User.findOne({email:follower}, function(err,follower){
-        if (err) {
-            return req.status(500).json({message:"Invalid Follower"})
-        }
-        f.follower = follower
-    })
-    User.findOne({email:following}, function(err,following){
-        if (err) {
-            return req.status(500).json({message:"Invalid Following"})
-        }
-        f.following = following
-    })
+    f.follower = req.user.id;
+    f.following = following;
     f.save().then(function(f) {
         if (!f) {
           res.status(500).json({ error: "ERROR CREATING FOLLOWER"});
