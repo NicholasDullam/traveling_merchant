@@ -49,9 +49,15 @@ const deleteFollowerById = (req, res) => {
     })
 }
 
+const getUserFollowers = async (req, res) => {
+    const f = await Follower.find({follower:req.user.id});
+    return res.status(200).json(f);
+  }
+
 module.exports = {
     createFollower,
     getFollowers,
     getFollowerById,
-    deleteFollowerById
+    deleteFollowerById,
+    getUserFollowers
 }
