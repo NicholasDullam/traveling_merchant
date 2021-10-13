@@ -98,6 +98,35 @@ const updateUserById = async (req, res) => {
     })
 }
 
+const deleteUserById = async (req, res) => {
+    let { _id } = req.params
+    User.findByIdAndDelete(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.staus(400).json({ error: error.message })
+    })
+}
+
+const banUser = async (req, res) => {
+    let { _id } = req.params
+    if (!req.user.admin) return res.status(400).json({ error: 'Invalid permissions' })
+    User.findByIdAndUpdate(_id, { banned: true }, { new: true }).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
+const unbanUser = async (req, res) => {
+    let { _id } = req.params
+    if (!req.user.admin) return res.status(400).json({ error: 'Invalid permissions' })
+    User.findByIdAndUpdate(_id, { banned: false }, { new: true }).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
 module.exports = {
     createUser,
     setFirst,
@@ -106,5 +135,8 @@ module.exports = {
     setPassword,
     getUsers,
     getUserById,
-    updateUserById
+    updateUserById,
+    deleteUserById,
+    banUser,
+    unbanUser
 }

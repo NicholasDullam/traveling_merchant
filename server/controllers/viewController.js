@@ -1,22 +1,62 @@
 const View = require("../models/view")
 
-// assume req has email
-const userViewHistory = async (req, res) => {
-    let { user } = req.body
+// assume request has product and user email
+const createView = async (req, res) => {
     const token = req.cookies.view_history;
     if (!token) {
-        View.findOne({email:user}).then(function(err, vh){
-            return req.view_history = vh
-        });
+        token = generateViewToken(req.fields.email);
+        if (!token) {
+            return req.status(404).json({error:"Could not create cookie"})
+        } else {
+            req.cookie("view_history", token)
+            View.findOne({token:token.token}).then(function(err, vh){
+                vh.addProduct(req.p)
+            });
+        }
     } else {
         View.findOne({token:token.token}).then(function(err, vh){
-            return req.view_history = vh
+            vh.addProduct(req.p)
         });
     }
-  }
+}
+
+const generateViewToken = (email) => {
+    var token = crypto.randomBytes(128).toString;
+    var f = 0;
+    while (f == 0) {
+        View.findOne({token:token}).then(function(err, vh){
+        if (!err) {
+            token = crypto.randomBytes(128).toString;
+        } else {
+            f = 1;
+        }
+        });
+    }
+    var user;
+    User.findOne({email:email}).then(function(err, u){
+        if (err) {
+        user = null;
+        } else {
+        user = u;
+        }
+    });
+    var view = new View();
+    if (user) {
+        view.user = user;
+    }
+    view.token = token;
+    view.save().then(function(err) {
+        if (err) {
+        return null;
+        } else {
+        return {email:email,token:token};
+        }
+    });
+}
 
 const getViews = (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'limit']
+    if (req.cookies.view_history) query.token = req.cookies.view_history
     reserved.forEach((el) => delete query[el])
     let queryPromise = View.find(query)
 
@@ -29,8 +69,28 @@ const getViews = (req, res) => {
         return res.status(400).json({ error: error.message })
     })
 }
-  
-  module.exports = {
-      userViewHistory,
-      getViews
+
+const getViewById = (req, res) => {
+    let { _id } = req.params
+    View.findById(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(200).json({ error: error.message })
+    })
   }
+  
+const deleteViewById = (req, res) => {
+    let { _id } = req.params
+    View.findByIdAndDelete(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+  
+module.exports = {
+    createView,
+    getViews,
+    getViewById,
+    deleteViewById
+}

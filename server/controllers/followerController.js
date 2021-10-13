@@ -29,7 +29,7 @@ const addFollower = async (req, res) => {
 const getFollowers = (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'limit']
     reserved.forEach((el) => delete query[el])
-    let queryPromise = follower.find(query)
+    let queryPromise = Follower.find(query)
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
@@ -41,20 +41,27 @@ const getFollowers = (req, res) => {
     })
 }
 
-const getUserFollowers = (req, res) => {
-    const user = User.findById(req.user.id).exec();
-    if (!user) return res.status(400).json({ error: 'Account not found'});
-  
-    follower.find({follower:user}).then((response) => {
+const getFollowerById = (req, res) => {
+    let { _id } = req.params
+    Follower.findById(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(200).json({ error: error.message })
+    })
+}
+
+const deleteFollowerById = (req, res) => {
+    let { _id } = req.params
+    Follower.findByIdAndDelete(_id).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })
-    
-  }
+}
 
 module.exports = {
-    addFollower,
+    createFollower,
     getFollowers,
-    getUserFollowers
+    getFollowerById,
+    deleteFollowerById
 }
