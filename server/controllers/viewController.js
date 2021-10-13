@@ -2,20 +2,23 @@ const View = require("../models/view")
 
 // assume request has product and user email
 const createView = async (req, res) => {
+    let { user_id, name, email } = req.body;
     const token = req.cookies.view_history;
+    var p;
+    Product.findOne({user_id:user_id,name:name}).then(function(pr){p=pr});
     if (!token) {
-        token = generateViewToken(req.fields.email);
+        token = generateViewToken(email);
         if (!token) {
             return req.status(404).json({error:"Could not create cookie"})
         } else {
             req.cookie("view_history", token)
             View.findOne({token:token.token}).then(function(err, vh){
-                vh.addProduct(req.p)
+                vh.addProduct(p)
             });
         }
     } else {
         View.findOne({token:token.token}).then(function(err, vh){
-            vh.addProduct(req.p)
+            vh.addProduct(p)
         });
     }
 }
@@ -71,7 +74,7 @@ const getViews = (req, res) => {
 }
 
 const getViewById = (req, res) => {
-    let { _id } = req.params
+    let { _id } = req.body
     View.findById(_id).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
@@ -80,11 +83,20 @@ const getViewById = (req, res) => {
   }
   
 const deleteViewById = (req, res) => {
-    let { _id } = req.params
+    let { _id } = req.body
     View.findByIdAndDelete(_id).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
+    })
+}
+
+const getUserViews = (req, res) => {
+    let { _id } = req.body
+    View.find({user:_id}).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(200).json({ error: error.message })
     })
 }
   
@@ -92,5 +104,6 @@ module.exports = {
     createView,
     getViews,
     getViewById,
-    deleteViewById
+    deleteViewById,
+    getUserViews
 }

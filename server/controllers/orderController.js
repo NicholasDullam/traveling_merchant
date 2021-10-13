@@ -81,8 +81,8 @@ const cancelOrder = async (req, res) => {
 }
 
 const getOrderById = async (req, res) => {
-    let { _id } = req.params
-    Order.findById(_id).then((response) => {
+    let { _id } = req.body
+    Order.find({buyer:_id}).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })

@@ -2,7 +2,7 @@ const Follower = require("../models/follower");
 const User = require("../models/user");
 
 // Assume request has follower's and following's email
-const addFollower = async (req, res) => {
+const createFollower = async (req, res) => {
     let {follower,following} = req.body;
     const f = new Follower();
     User.findOne({email:follower}, function(err,follower){
