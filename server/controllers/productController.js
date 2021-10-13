@@ -3,9 +3,8 @@ const User = require('../models/user')
 
 const createProduct = async (req, res) => {
     let { name, type, delivery_type, description, unit_price, min_quantity, stock } = req.body
-    const u = await User.findById(req.user.id)
     let product = new Product({
-        user_id: u,
+        user_id: req.user.id,
         name,
         type,
         delivery_type,

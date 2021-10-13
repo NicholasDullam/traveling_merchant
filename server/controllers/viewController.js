@@ -1,13 +1,12 @@
 const View = require("../models/view")
+const crypto = require('crypto')
 
-// assume request has product and user email
+// assume request has product
 const createView = async (req, res) => {
-    let { user_id, name, email } = req.body;
-    const token = req.cookies.view_history;
-    var p;
-    Product.findOne({user_id:user_id,name:name}).then(function(pr){p=pr});
+    let { p } = req.body;
+    var token = req.cookies.view_history;
     if (!token) {
-        token = generateViewToken(email);
+        token = generateViewToken(req.user.id);
         if (!token) {
             return req.status(404).json({error:"Could not create cookie"})
         } else {
@@ -23,30 +22,18 @@ const createView = async (req, res) => {
     }
 }
 
-const generateViewToken = (email) => {
+async function generateViewToken(id) {
     var token = crypto.randomBytes(128).toString;
     var f = 0;
     while (f == 0) {
-        View.findOne({token:token}).then(function(err, vh){
-        if (!err) {
-            token = crypto.randomBytes(128).toString;
-        } else {
-            f = 1;
+        const v = await View.findOne({token:token});
+        console.log(v)
+        if (!v) {
+            break;
         }
-        });
     }
-    var user;
-    User.findOne({email:email}).then(function(err, u){
-        if (err) {
-        user = null;
-        } else {
-        user = u;
-        }
-    });
     var view = new View();
-    if (user) {
-        view.user = user;
-    }
+    view.user = id;
     view.token = token;
     view.save().then(function(err) {
         if (err) {
@@ -92,12 +79,14 @@ const deleteViewById = (req, res) => {
 }
 
 const getUserViews = (req, res) => {
-    let { _id } = req.body
-    View.find({user:_id}).then((response) => {
-        return res.status(200).json(response)
-    }).catch((error) => {
-        return res.status(200).json({ error: error.message })
-    })
+    const token = req.cookies.view_history;
+    if (token) {
+        View.find({token:token.token}).then((response) => {
+            return res.status(200).json(response)
+        }).catch((error) => {
+            return res.status(200).json({ error: error.message })
+        })
+    }
 }
   
 module.exports = {

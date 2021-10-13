@@ -12,9 +12,9 @@ const createOrder = async (req, res) => {
     if (!product) return res.status(400).json({ error: 'Product not found'})
     if (quantity < product.min_quantity) return res.status(400).json({ error: 'Quantity less than minimum'})
 
-    const user = await User.findById(req.user.id)
+    
     let order = new Order({
-        buyer: user,
+        buyer: req.user.id,
         seller: product.user_id,
         status: 'payment_pending',
         product_id,
@@ -110,6 +110,10 @@ const getOrders = async (req, res) => {
     })
 }
 
+const getUserOrders = async (req, res) => {
+    const o = await Order.find({buyer:req.user.id});
+    return res.status(200).json(o);
+}
 
 module.exports = { 
     createOrder,
@@ -118,5 +122,6 @@ module.exports = {
     denyDelivery,
     cancelOrder,
     getOrderById,
-    getOrders
+    getOrders,
+    getUserOrders
 }
