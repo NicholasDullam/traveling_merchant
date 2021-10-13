@@ -1,13 +1,17 @@
-import React from "react";
+import React, {useContext} from "react";
 
 import { Link } from "react-router-dom";
 
 import $ from "jquery";
 import Popper from "popper.js";
 
+import AuthContext from "../../context/auth-context";
+
 import "./Navbar.css";
 import "../Layout/Layout.css"; // reason for this is to get all global variables (colors, font weights, etc...)
 const Navbar = (props) => {
+  const auth = useContext(AuthContext);
+
   // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
   return (
     <nav className="navbar navbar-expand-md">
@@ -47,6 +51,11 @@ const Navbar = (props) => {
           </div>
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0  ">
             <li className="nav-item">
+            {auth.isLoggedIn && (
+              <li className="nav-item">
+              <Link className="nav-link" to="/signup">My account</Link>
+            </li>
+            )}
               <Link className="nav-link" to="/login">Log in</Link>
             </li>
             <li className="nav-item">

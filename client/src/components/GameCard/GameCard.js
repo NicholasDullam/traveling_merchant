@@ -9,10 +9,10 @@ const GameCard = (props) => {
 
 return (
     <div className="game-card container">
-        <h3 className="game-name">{props.gameName}</h3>
+        <p className="game-name semi-bold">{props.gameName}</p>
         <p> {props.description}</p>
 
-        <button className="btn  discover-more"> Discover more <span>TODO: import arrow</span></button>
+        <button className="btn  discover-more"> Discover more <span>→</span></button>
     </div>
 )
 
