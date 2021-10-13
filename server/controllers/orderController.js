@@ -1,6 +1,7 @@
 const order = require('../models/order')
 const Order = require('../models/order')
 const Product = require('../models/product')
+const User = require('../models/user')
 const { transferToSellerFromOrder, createPaymentIntentFromOrder } = require('./stripeController')
 
 const createOrder = async (req, res) => {
@@ -11,8 +12,9 @@ const createOrder = async (req, res) => {
     if (!product) return res.status(400).json({ error: 'Product not found'})
     if (quantity < product.min_quantity) return res.status(400).json({ error: 'Quantity less than minimum'})
 
+    const user = await User.findById(req.user.id)
     let order = new Order({
-        buyer: req.user.id,
+        buyer: user,
         seller: product.user_id,
         status: 'payment_pending',
         product_id,
@@ -21,13 +23,17 @@ const createOrder = async (req, res) => {
         unit_price: product.unit_price,
     })
 
-    order = await order.save()
-
-    createPaymentIntentFromOrder(order._id).then((response) => {
+    order = await order.save().then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })
+
+    /*createPaymentIntentFromOrder(order._id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })*/
 }
 
 const deliverOrder = async (req, res) => {

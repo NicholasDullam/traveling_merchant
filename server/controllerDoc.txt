@@ -31,7 +31,7 @@ product:
     post(/product)createProduct: name, type, delivery_type, description, unit_price, min_quantity, stock
     get(/product)getProducts:
 review:
-    post(/review)addReview: user(email), seller(email), rating, content
+    post(/review)addReview: seller(email), rating, content
     get(/review)getReviews:
 user:
     post(/user)createUser: email, first, last, password

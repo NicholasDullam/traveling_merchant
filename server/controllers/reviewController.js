@@ -1,22 +1,21 @@
 const Review = require("../models/review");
 const User = require("../models/user");
+const Order = require("../models/order")
 
 // Assume request has user's email, the sellers email, the rating, and the content
 const addReview = async (req, res) => {
-    let { user, seller, rating, content } = req.body;
+    let { seller, rating, content } = req.body;
     const r = new Review();
-    User.findOne({email:user}, function(err,reviewer){
-        if (err) {
-            return req.status(500).json({message:"Invalid User"})
-        }
-        r.reviewer = reviewer
-    })
-    User.findOne({email:seller}, function(err,seller){
-        if (err) {
-            return req.status(500).json({message:"Invalid Seller"})
-        }
-        r.seller = seller
-    })
+    r.reviewer = await User.findById(req.user.id);
+    if (!r.reviewer) {
+        return req.status(500).json({message:"Invalid User"})
+    }
+    r.seller = await User.findOne({email:seller});
+    if (!r.seller) {
+        return req.status(500).json({message:"Invalid Seller"})
+    }
+    console.log(r.reviewer)
+    console.log(r.seller)
     r.rating = rating;
     r.content = content;
     if (verifyPurchase(r)) {
