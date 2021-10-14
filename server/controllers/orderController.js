@@ -23,17 +23,13 @@ const createOrder = async (req, res) => {
         unit_price: product.unit_price,
     })
 
-    order = await order.save().then((response) => {
+    order = await order.save()
+
+    createPaymentIntentFromOrder(order._id).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })
-
-    /*createPaymentIntentFromOrder(order._id).then((response) => {
-        return res.status(200).json(response)
-    }).catch((error) => {
-        return res.status(400).json({ error: error.message })
-    })*/
 }
 
 const deliverOrder = async (req, res) => {
@@ -87,8 +83,8 @@ const cancelOrder = async (req, res) => {
 }
 
 const getOrderById = async (req, res) => {
-    let { _id } = req.body
-    Order.find({buyer:_id}).then((response) => {
+    let { _id } = req.params
+    Order.findById(_id).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
@@ -110,11 +106,6 @@ const getOrders = async (req, res) => {
     })
 }
 
-const getUserOrders = async (req, res) => {
-    const o = await Order.find({buyer:req.user.id});
-    return res.status(200).json(o);
-}
-
 module.exports = { 
     createOrder,
     deliverOrder,
@@ -123,5 +114,4 @@ module.exports = {
     cancelOrder,
     getOrderById,
     getOrders,
-    getUserOrders
 }

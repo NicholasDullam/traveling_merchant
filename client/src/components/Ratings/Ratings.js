@@ -8,7 +8,7 @@ for(var i = 0; i < props.count; i++) {
 }
 
     return (
-        <p>{arr}</p>
+        <div>{arr}</div>
     )
 
 }
