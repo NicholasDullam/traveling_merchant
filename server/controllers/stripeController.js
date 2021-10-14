@@ -19,9 +19,10 @@ const createAccount = async (req, res) => {
 }
 
 const getAccountOnboarding = (req, res) => {
-    if (!req.user.acct_id) return res.status(400).json({ error: `No stripe account registered for user ${req.user.id}` })
+    let { acct_id } = req.params
+    if (!req.user.admin && req.user.acct_id !== acct_id) return res.status(402).json({ message: 'Invalid Permissions' })
     stripe.accountLinks.create({
-        account: req.user.acct_id,
+        account: acct_id,
         refresh_url: 'http://localhost:8000/api/game',
         return_url: 'http://localhost:8000/api/game',
         type: 'account_onboarding'
