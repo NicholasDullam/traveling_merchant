@@ -20,6 +20,7 @@ import ViewingHistory from './pages/ViewingHistory';
 import Orders from "./pages/Orders";
 import Billing from './pages/Billing';
 import Preferences from "./pages/Preferences";
+import QueryResultsPage from "./pages/QueryResultsPage";
 
 let logoutTimer;
 
@@ -98,6 +99,10 @@ logged = true;
 
        <Route path="/favorites" >
         <Favorites/>
+        </Route> 
+
+        <Route path="/query_results" >
+        <QueryResultsPage/>
         </Route> 
         <Route path="/reviews" >
         <Reviews/>
