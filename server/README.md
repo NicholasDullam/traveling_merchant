@@ -26,12 +26,16 @@ Run the server by using ```npm start``` within ```~/server```
 
 [Views](#views)
 
+[Stripe](#stripe)
+
 ---
 
 ### **Auth**
 ```POST /auth/login```
 
 ```POST /auth/logout```
+
+```POST /auth/token```
 
 ### **Users**
 ```POST /users```
@@ -52,6 +56,12 @@ Run the server by using ```npm start``` within ```~/server```
 ```POST /products```
 
 ```GET /products```
+
+```GET /products/:id```
+
+```PUT /products/:id```
+
+```DELETE /products/:id```
 
 ### **Orders**
 ```POST /orders```
@@ -103,3 +113,10 @@ Run the server by using ```npm start``` within ```~/server```
 ```GET /views/:id```
 
 ```DELETE /views/:id```
+
+### **Stripe**
+```POST /stripe/account```
+
+```GET /stripe/account/:id/onboarding```
+
+```GET /stripe/payment-requests/:id/secret```

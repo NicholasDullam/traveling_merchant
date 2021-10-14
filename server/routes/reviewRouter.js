@@ -6,7 +6,7 @@ const { auth } = require('../middleware/auth')
 
 const router = express.Router()
 
-router.post('/review', auth, reviewController.addReview)
-router.get('/review', auth, reviewController.getReviews)
+router.post('/reviews', auth, reviewController.addReview)
+router.get('/reviews', reviewController.getReviews)
 
 module.exports = router
