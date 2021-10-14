@@ -47,37 +47,35 @@ const getClientSecret = async (req, res) => {
 
 const createPaymentIntentFromOrder = async (order_id) => {
     const order = await Order.findById(order_id)
-    if (!order) return res.status(400).json({ error: 'Order not found' })
     const amount = order.quantity * order.unit_price
 
     let payment_intent = await stripe.paymentIntents.create({
         amount,
         currency: 'usd',
         payment_method_types: ['card'],
-        transfer_group: `${order_id}`,
+        transfer_group: order_id,
         metadata: { order_id }
     })
     
     return Order.findOneAndUpdate({ _id: order_id }, { pi_id: payment_intent.id }, { new: true })
 }
 
-const transferToSellerFromOrder = async (order_id) => {
-    const order = await Order.findById(order_id).populate('seller')
-    if (!order) return res.status(400).json({ error: 'Order not found' })
+const transferToSellerFromOrder = async (order) => {
     const amount = order.quantity * order.unit_price 
     const commission = amount * .1
 
-    stripe.transfers.create({
+    let paymentIntent = await stripe.paymentIntents.retrieve(order.pi_id)
+
+    let transfer = await stripe.transfers.create({
         amount: amount - commission,
         currency: 'usd',
         destination: order.seller.acct_id,
-        transfer_group: `${order_id}`,
-        metadata: { order_id }
-    }).then((response) => {
-        return res.status(200).json(response)
-    }).catch((error) => {
-        return res.status(400).json({ error: error.message })
+        source_transaction: paymentIntent.charges.data[0].id,
+        transfer_group: order._id,
+        metadata: { order_id: order._id }
     })
+
+    return Order.findByIdAndUpdate(order._id, { status: 'confirmed', confirmed_at: Date.now(), auto_confirm_at: null, tr_id: transfer.id }, { new: true })
 }
 
 module.exports = {

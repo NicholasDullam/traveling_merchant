@@ -1,9 +1,9 @@
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import React, { useState, useCallback, useEffect } from 'react';
 import api from './api'
 import "./App.css";
 
-import { Home, Login, Signup, ProductListing, Checkout } from './pages'
+import { Home, Login, Signup, ProductListing, Checkout, Admin } from './pages'
 import AuthContext from "./context/auth-context";
 import Messages from "./pages/Messages";
 import Profile from './pages/Profile';
@@ -107,6 +107,7 @@ function App() {
           <Route path="/signup" component={Signup}/>
           <Route path="/listing" component={ProductListing}/>
           <Route path="/checkout/:order_id" component={Checkout}/>
+          <Route path="/admin" component={Admin}/>
           <Route path="/logout" />
           <Route path="/game" />
           <Route path="/user" />

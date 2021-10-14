@@ -47,10 +47,9 @@ const deliverOrder = async (req, res) => {
 const confirmDelivery = async (req, res) => {
     let { _id } = req.params
     if (!_id) return res.status(400).json({ error: 'Missing order_id' })
-    let order = await Order.findById(_id)
+    let order = await Order.findById(_id).populate('seller')
     if (req.user.id !== order.buyer.toString()) return res.status(402).json({ error: 'Invalid permissions' })
-    let updatedOrder = await Order.findOneAndUpdate({ _id }, { status: 'confirmed', confirmed_at: Date.now(), auto_confirm_at: null }, { new: true })
-    transferToSellerFromOrder(updatedOrder.order_id).then((response) => {
+    transferToSellerFromOrder(order).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
