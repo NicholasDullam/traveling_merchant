@@ -11,6 +11,7 @@ function App() {
   const [user, setUser] = useState(null)
   const [userId, setUserId] = useState(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLogging, setIsLogging] = useState(true)
 
   const login = useCallback((token, user) => {
       console.log(token, user)
@@ -28,11 +29,13 @@ function App() {
   }, []);
 
   useEffect(() => {
+    setIsLogging(true)
     api.verifyToken().then((response) => {
         let { token, user } = response.data
         login(token, user)
+        setIsLogging(false)
     }).catch((error) => {
-        console.log('Failed to verify Token')
+        setIsLogging(false)
     })
   }, []);
 
@@ -48,30 +51,19 @@ function App() {
     }}>
 
       {/* If (token) to restrict access to routes from unlogged users */}
-    <Router>
-      <Switch>
-        <Route path="/login" >
-          <Login/>
-        </Route>
-        <Route path="/signup">
-          <Signup/>
-        </Route>
-        <Route path="/listing">
-          {/* ^ this is a dummy route path */}
-          <ProductListing/>
-        </Route>
-        <Route path="/logout" />
-        <Route path="/game" />
-        <Route path="/user" />
-        <Route path="/checkout/:order_id">
-          <Checkout/>
-        </Route>
-        {/* path="/" must be the last route, before closing Switch tag */}
-        <Route path="/">
-          <Home />
-        </Route>
-      </Switch>
-    </Router>
+      { !isLogging ? <Router>
+        <Switch>
+          <Route path="/login" component={Login}/>
+          <Route path="/signup" component={Signup}/>
+          <Route path="/listing" component={ProductListing}/>
+          <Route path="/checkout/:order_id" component={Checkout}/>
+          <Route path="/logout" />
+          <Route path="/game" />
+          <Route path="/user" />
+          {/* path="/" must be the last route, before closing Switch tag */}
+          <Route path="/" component={Home}/>
+        </Switch>
+      </Router> : null }
     </AuthContext.Provider>
   );
 }

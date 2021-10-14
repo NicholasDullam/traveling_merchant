@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js'
 import { Link, useHistory } from "react-router-dom";
+import AuthContext from "../../context/auth-context"
 import api from '../../api';
 import { Ratings } from '..';
 
 const CheckoutInterface = (props) => {
+    const auth = useContext(AuthContext)
+
     const stripe = useStripe()
     const elements = useElements()
     const history = useHistory()
@@ -13,6 +16,19 @@ const CheckoutInterface = (props) => {
     const [game, setGame] = useState(null)
     const [seller, setSeller] = useState(null)
     const [clientSecret, setClientSecret] = useState(null)
+
+    const [first, setFirst] = useState('')
+    const [last, setLast] = useState('')
+    const [email, setEmail] = useState('')
+
+    useEffect(() => {
+        if (!auth.user) history.push(`/login?redirect_uri=/checkout/${props.order_id}`)
+        else {
+            setFirst(auth.user.first)
+            setLast(auth.user.last)
+            setEmail(auth.user.email)
+        }
+    }, [])
 
     useEffect(() => {
         if (!props.order) return null
@@ -59,7 +75,8 @@ const CheckoutInterface = (props) => {
             payment_method: {
                 card: elements.getElement(CardElement),
                 billing_details: {
-                    name: 'Jenny Rosen'
+                    name: `${first} ${last}`,
+                    email
                 }
             }
         })
@@ -107,7 +124,23 @@ const CheckoutInterface = (props) => {
                 <h6> Checkout </h6>
                 <div style={{ borderTop: '1px solid rgba(0,0,0,.1)' }}/>
                 <div style={{ position: 'relative', padding: '30px'}}>
-                    <div style={{ borderRadius: '5px', padding: '10px', border: '1px solid rgba(0,0,0,.1)' }}>
+                    <div style={{ display: 'flex', marginBottom: '10px' }}>
+                        <div style={{ width: '100%', marginRight: '10px' }}>
+                            <label for="first" className="form-label">First Name</label>
+                            <input value={first} onChange={(e) => setFirst(e.target.value)} type="text" className="form-control" id="first"/> 
+                        </div>
+                        <div style={{ width: '100%' }}>
+                            <label for="last" className="form-label">Last Name</label>
+                            <input value={last} onChange={(e) => setLast(e.target.value)} type="text" className="form-control" id="last"/> 
+                        </div>
+                    </div>
+                    <div style={{ width: '100%', marginBottom: '10px'  }}>
+                        <label for="email" className="form-label">Email</label>
+                        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" className="form-control" id="email"/> 
+                    </div>
+
+                    <label className="form-label">Card</label>
+                    <div style={{ borderRadius: '5px', padding: '10px', border: '1px solid rgba(0,0,0,.15)' }}>
                         <CardElement/>
                     </div>
                 </div>

@@ -17,13 +17,13 @@ const Checkout = (props) => {
         api.getOrderById(order_id).then((response) => {
             setOrder(response.data)
         }).catch((error) => {
-            history.push('/')
+            console.log(error)
         })
     }, [order_id])
 
     return (
         <Elements stripe={stripePromise}>
-            <CheckoutInterface order={order}/>
+            <CheckoutInterface order={order} order_id={order_id}/>
         </Elements>
     )
 }
