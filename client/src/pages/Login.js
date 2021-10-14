@@ -7,7 +7,7 @@ import gamer2 from '../images/gamer_2.png'
 
 import AuthContext from "../context/auth-context"
 
-const Login = () => {
+const Login = (props) => {
     const history = useHistory()
     const auth = useContext(AuthContext);
 
@@ -35,7 +35,8 @@ const Login = () => {
     }
 
     function returnToHome() {
-        history.push('/')
+        let uri = new URLSearchParams(props.location.search).get("redirect_uri")
+        history.push(uri || '/')
     }
 
     return (

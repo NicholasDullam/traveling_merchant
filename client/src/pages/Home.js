@@ -5,8 +5,13 @@ import Layout from '../components/Layout/Layout'
 const Home = (props) => {
     return (
         <Layout navbar>
-            <GameGallery/>
-            <h1> Home page! </h1>
+            <div style={{ marginTop: '40px' }}>
+                <h1> Games </h1>
+                <GameGallery/>
+            </div>
+            <div style={{ marginTop: '40px' }}>
+                <h1> View History </h1>
+            </div>
         </Layout>
     )
 }

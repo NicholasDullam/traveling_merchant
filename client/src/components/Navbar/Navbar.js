@@ -38,16 +38,17 @@ console.log(auth.isLoggedIn)
           <SearchBar/>
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0  ">
           {(auth.isLoggedIn && 
-           <React.Fragment>
-
+          <React.Fragment>
+            { auth.user.admin ? <li className="nav-item">
+              <Link className="nav-link" to="/messages">Admin</Link>
+            </li> : null }
             <li className="nav-item">
-            <Link className="nav-link" to="/messages">Messages</Link>
-          </li>
-             <li className="nav-item">
-             <Link className="nav-link" to="/profile">Profile</Link>
-           </li>
-           </React.Fragment>
-
+              <Link className="nav-link" to="/messages">Messages</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/profile">Profile</Link>
+            </li>
+          </React.Fragment>
           )}
            {(!auth.isLoggedIn &&
            <React.Fragment>
