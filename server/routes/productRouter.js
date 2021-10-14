@@ -7,7 +7,7 @@ const { auth } = require('../middleware/auth')
 const router = express.Router()
 
 // GET requests
-router.get('/products', auth, ProductController.getProducts)
+router.get('/products', ProductController.getProducts)
 
 // POST requests
 router.post('/products', auth, ProductController.createProduct) // create product
