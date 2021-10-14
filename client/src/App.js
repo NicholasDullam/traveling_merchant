@@ -12,6 +12,14 @@ import ProductListing from "./pages/ProductListing";
 import AuthContext from "./context/auth-context";
 import Messages from "./pages/Messages";
 import Profile from './pages/Profile';
+import Settings from "./components/Settings/Settings";
+import AccountInfo from "./pages/AccountInfo";
+import Favorites from "./pages/Favorites";
+import Reviews from './pages/Reviews';
+import ViewingHistory from './pages/ViewingHistory';
+import Orders from "./pages/Orders";
+import Billing from './pages/Billing';
+import Preferences from "./pages/Preferences";
 
 let logoutTimer;
 
@@ -87,6 +95,28 @@ logged = true;
       {/* If (token) to restrict access to routes from unlogged users */}
     <Router>
       <Switch>
+
+       <Route path="/favorites" >
+        <Favorites/>
+        </Route> 
+        <Route path="/reviews" >
+        <Reviews/>
+        </Route>
+        <Route path="/viewing_history" >
+        <ViewingHistory/>
+        </Route>
+        <Route path="/orders" >
+        <Orders/>
+        </Route>
+        <Route path="/billing" >
+        <Billing/>
+        </Route>
+        <Route path="/preferences" >
+        <Preferences/>
+        </Route>
+      <Route path="/account_info" >
+        <AccountInfo/>
+        </Route>
       <Route path="/messages" >
         <Messages/>
         </Route>
