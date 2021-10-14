@@ -1,6 +1,6 @@
 import {React, useState, useContext} from 'react'
 import Layout from '../components/Layout/Layout';
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import api from '../api'
 
 import gamer2 from '../images/gamer_2.png'
@@ -8,10 +8,8 @@ import gamer2 from '../images/gamer_2.png'
 import AuthContext from "../context/auth-context"
 
 const Login = () => {
+    const history = useHistory()
     const auth = useContext(AuthContext);
-    // let user = JSON.parse(sessionStorage.getItem('data'));
-    // const token = user.data.id;
-    console.log(localStorage);
 
     var [email, setEmail] = useState("")
     var [password, setPassword] = useState("")
@@ -30,8 +28,14 @@ const Login = () => {
         console.log("handle submit!")
         e.preventDefault()
         api.login({ email, password }).then((response) => {
-            if(response.status == 200) auth.login()
+            let { token, user } = response.data
+            auth.login(token, user)
+            returnToHome()
         }).catch((error) => console.log("error: " + error))
+    }
+
+    function returnToHome() {
+        history.push('/')
     }
 
     return (
@@ -43,7 +47,6 @@ const Login = () => {
         </h1> 
         <h1>Login</h1>
         <form>
-      
             <label for="emailInput" className="form-label">E-mail</label>
             <input type="email" className="form-control" id="emailInput" placeholder="name@domain.com"
             onChange={handleEmail}></input>
