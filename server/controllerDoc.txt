@@ -1,0 +1,45 @@
+req.fields
+/api
+auth:
+    post(/auth/login)login: email, password
+    post(/auth/logout)logout:
+    post(/auth/banUser)banUser: id
+    post(/auth/removeUser)removeUser: id
+cookie:
+    cookieController: email, p(product)
+    getCookies:
+favorite:
+    post(/favorite)addfavorite: p(product), email
+    get(/favorite)getFavorites:
+    get(/userfavorite)getUserFavorites:
+follower:
+    post(/follower)addFollower: follower(email), following(email)
+    get(/follower)getFollowers:
+    get(/userfollower)getUserFollowers:
+game:
+    post(/game)createGame: name, developer, product_types, platforms, img
+    get(/game)getGames:
+order:
+    post(/order)createOrder: product_id, quantity, requirements
+    post(/order/deliver)deliverOrder: order_id
+    post(/order/confirm)confirmDelivery: order_id
+    post(/order/deny)denyDelivery: order_id
+    post(/order/cancel)cancelOrder: order_id
+    get(/order)getOrders:
+    get(/userOrders)getUserOrders:
+product:
+    post(/product)createProduct: name, type, delivery_type, description, unit_price, min_quantity, stock
+    get(/product)getProducts:
+review:
+    post(/review)addReview: seller(email), rating, content
+    get(/review)getReviews:
+user:
+    post(/user)createUser: email, first, last, password
+    post(/changeEmail)setEmail: email
+    post(/changeFirst)setFirst: first
+    post(/changeLast)setLast: last
+    post(/changePassword)setPassword: password
+    get(/user)getUsers:
+view:
+    post(/addView)userViewHistory: user(email)
+    get(/userViewHistory)getViews:

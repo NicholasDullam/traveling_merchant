@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap");
+/* General styling and styling variables will be stored here */
+:root {
+  /* Primary colors */
+  --color-green: #8baf83;
+  --color-teal-green: #68B2AO;
+
+  /* Secondary colors */
+
+  /* Neutral colors */
+  --color-black: black;
+  --color-dark-grey: #4e4e4e;
+  --color-light-grey: #c4c4c4;
+
+  /* Global font on our website */
+}
+
+
+
+/* Font weights according to Figma documentation */
+
+.regular {
+  font-weight: 400;
+}
+
+.semi-bold {
+  font-weight: 600;
+}
+
+.bold {
+  font-weight: 700;
+}

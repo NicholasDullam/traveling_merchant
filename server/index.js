@@ -3,8 +3,8 @@ require('dotenv').config();
 
 // general imports
 const express = require('express');
+const cookieParser = require('cookie-parser')
 const sslRedirect = require('heroku-ssl-redirect');
-const crypto = require('crypto');
 
 const db = require('./db')
 
@@ -29,11 +29,28 @@ db.on('error', console.error.bind(console, 'MongoDB Connection Error:'))
 // route imports
 const userRouter = require('./routes/userRouter')
 const authRouter = require('./routes/authRouter')
+const gameRouter = require('./routes/gameRouter')
+const productRouter = require('./routes/productRouter')
+const orderRouter = require('./routes/orderRouter')
+const stripeRouter = require('./routes/stripeRouter')
+const favoriteRouter = require('./routes/favoriteRouter')
+const followerRouter = require('./routes/followerRouter')
+const reviewRouter = require('./routes/reviewRouter')
+const viewRouter = require('./routes/viewRouter')
 
 // generate routes
 app.use('/api', userRouter)
 app.use('/api', authRouter)
+app.use('/api', gameRouter)
+app.use('/api', productRouter)
+app.use('/api', orderRouter)
+app.use('/api', stripeRouter)
+app.use('/api', favoriteRouter)
+app.use('/api', followerRouter)
+app.use('/api', reviewRouter)
+app.use('/api', viewRouter)
 
+// attach non-api requests to client build; redirect non-ssl traffic
 if (process.env.NODE_ENV === 'production') {
   app.use(sslRedirect.default());
   app.use(express.static('../client/build'));
