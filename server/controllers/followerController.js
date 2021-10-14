@@ -1,5 +1,4 @@
 const Follower = require("../models/follower");
-const User = require("../models/user");
 
 const createFollower = async (req, res) => {
     let { following } = req.body;
@@ -43,11 +42,6 @@ const deleteFollowerById = (req, res) => {
         return res.status(400).json({ error: error.message })
     })
 }
-
-const getUserFollowers = async (req, res) => {
-    const f = await Follower.find({follower:req.user.id});
-    return res.status(200).json(f);
-  }
 
 module.exports = {
     createFollower,
