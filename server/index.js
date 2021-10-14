@@ -1,10 +1,11 @@
 // env variables
-require('dotenv').config();
-
+var dotenv = require('dotenv')
+dotenv.config()
 // general imports
 const express = require('express');
 const cookieParser = require('cookie-parser')
 const sslRedirect = require('heroku-ssl-redirect');
+var cors = require('cors');
 
 const db = require('./db')
 
@@ -12,6 +13,7 @@ const db = require('./db')
 const app = express()
 const port = process.env.PORT || 8000
 
+app.use(cors());
 app.use(cookieParser());
 
 app.use(express.json({
@@ -61,3 +63,5 @@ if (process.env.NODE_ENV === 'production') {
 
 // start the server listening for requests
 app.listen(port, () => console.log(`Server running on port ${port}`));
+
+console.log(process.env.MONGODB_URI)

@@ -9,6 +9,7 @@ import AuthContext from "../../context/auth-context";
 
 import "./Navbar.css";
 import "../Layout/Layout.css"; // reason for this is to get all global variables (colors, font weights, etc...)
+import SearchBar from "../SearchBar/SearchBar";
 const Navbar = (props) => {
   const auth = useContext(AuthContext);
 
@@ -32,23 +33,7 @@ const Navbar = (props) => {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          {/* mx-auto isn't the right class for the spacing I want, will fix it later. -Victoire */}
-          <div className="search-bar mx-auto col-md-6 col-lg-4"> 
-          <form className="d-flex">
-            <div className="input-group">
-            <input
-              className="form-control me-2"
-              type="search"
-              placeholder="Search games, game assets..."
-              aria-label="Search"
-            />
-            </div>
-        
-            <button className="btn btn-outline-success" type="submit">
-              Search
-            </button>
-          </form>
-          </div>
+          <SearchBar/>
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0  ">
             <li className="nav-item">
             {auth.isLoggedIn && (
