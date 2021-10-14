@@ -36,7 +36,37 @@ const getProducts = (req, res) => {
     })
 }
 
+const getProductById = (req, res) => {
+    let { _id } = req.params
+    Product.findById(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(200).json({ error: error.message })
+    })
+}
+  
+const updateProductById = (req, res) => {
+    let { _id } = req.params
+    Product.findByIdAndUpdate(_id, req.body, { new: true }).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
+const deleteProductById = (req, res) => {
+    let { _id } = req.params
+    Product.findByIdAndDelete(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
 module.exports = {
     createProduct,
-    getProducts
+    getProducts,
+    getProductById,
+    updateProductById,
+    deleteProductById
 }
