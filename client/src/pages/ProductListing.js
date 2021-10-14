@@ -5,7 +5,7 @@ import Listing from '../components/Listing/Listing'
 const ProductListing = (props) => {
 
 return (
-<Layout>
+<Layout navbar >
     <Listing></Listing>
 </Layout>
 
