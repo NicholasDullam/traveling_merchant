@@ -5,6 +5,22 @@ import "./App.css";
 
 import { Home, Login, Signup, ProductListing, Checkout } from './pages'
 import AuthContext from "./context/auth-context";
+import Messages from "./pages/Messages";
+import Profile from './pages/Profile';
+import Settings from "./components/Settings/Settings";
+import AccountInfo from "./pages/AccountInfo";
+import Favorites from "./pages/Favorites";
+import Reviews from './pages/Reviews';
+import ViewingHistory from './pages/ViewingHistory';
+import Orders from "./pages/Orders";
+import Billing from './pages/Billing';
+import Preferences from "./pages/Preferences";
+import QueryResultsPage from "./pages/QueryResultsPage";
+
+let logoutTimer;
+
+var logged = false;
+
 
 function App() {
   const [token, setToken] = useState(null)
@@ -49,10 +65,44 @@ function App() {
       login,
       logout
     }}>
+      {/* If (token) to restrict access to routes from unlogged users */}
+    <Router>
+      <Switch>
+
+       <Route path="/favorites" >
+        <Favorites/>
+        </Route> 
+
+        <Route path="/query_results" >
+        <QueryResultsPage/>
+        </Route> 
+        <Route path="/reviews" >
+        <Reviews/>
+        </Route>
+        <Route path="/viewing_history" >
+        <ViewingHistory/>
+        </Route>
+        <Route path="/orders" >
+        <Orders/>
+        </Route>
+        <Route path="/billing" >
+        <Billing/>
+        </Route>
+        <Route path="/preferences" >
+        <Preferences/>
+        </Route>
+      <Route path="/account_info" >
+        <AccountInfo/>
+        </Route>
+      <Route path="/messages" >
+        <Messages/>
+        </Route>
+        <Route path="/profile" >
+        <Profile/>
+        </Route>
 
       {/* If (token) to restrict access to routes from unlogged users */}
-      { !isLogging ? <Router>
-        <Switch>
+      { !isLogging ? <Switch>
           <Route path="/login" component={Login}/>
           <Route path="/signup" component={Signup}/>
           <Route path="/listing" component={ProductListing}/>
@@ -60,10 +110,12 @@ function App() {
           <Route path="/logout" />
           <Route path="/game" />
           <Route path="/user" />
-          {/* path="/" must be the last route, before closing Switch tag */}
           <Route path="/" component={Home}/>
-        </Switch>
-      </Router> : null }
+          </Switch>
+       : null }
+       </Switch>
+      </Router> :
+    
     </AuthContext.Provider>
   );
 }
