@@ -1,6 +1,6 @@
 import {React, useState, useContext} from 'react'
 import Layout from '../components/Layout/Layout';
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 
 import gamer2 from '../images/gamer_2.png'
@@ -10,10 +10,11 @@ import AuthContext from "../context/auth-context"
 
 
 const Login = () => {
+  const history = useHistory();
+
     const auth = useContext(AuthContext);
     // let user = JSON.parse(sessionStorage.getItem('data'));
     // const token = user.data.id;
-    console.log(localStorage);
 
 
     var [email, setEmail] = useState("")
@@ -42,11 +43,21 @@ function handlePassword(event) {
         })
         .catch(error => console.log("error: " + error))
         .then(response=>{
+            console.log(response)
+            var token = response.data.token
+            var user = response.data.user
         if(response.status == 200) {
-            auth.login()
+            auth.login(token, user)
         }
         })
+redirectToHome()
+        
    }
+
+   
+function redirectToHome(){
+    history.push('/')
+  }
 
     return (
         <Layout>
