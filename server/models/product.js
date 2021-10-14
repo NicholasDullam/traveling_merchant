@@ -4,9 +4,11 @@ var mongoose = require('mongoose');
 
 const Product = new mongoose.Schema({
     user_id: { type: mongoose.Types.ObjectId, ref:'User' },
+    game_id: { type: mongoose.Types.ObjectId, ref:'Game'},
     name: String,
     type: String,
     delivery_type: String,
+    delivery_speed: Number,
     description: String,
     media: [ String ],
     unit_price: Number,
@@ -29,15 +31,5 @@ const Product = new mongoose.Schema({
         updatedAt: 'updated_at'
     }
 });
-
-// Method to add media
-Product.methods.addMedia = function addMedia(v) {
-    this.media.append(v)
-};
-
-// Method to remove media
-Product.methods.removeMedia = function removeMedia(v) {
-    this.media = this.media.filter((media) => media != v)
-}
 
 module.exports = mongoose.model('Product', Product);

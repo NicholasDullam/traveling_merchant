@@ -13,6 +13,14 @@ const auth = async (req, res, next) => {
   }
 }
 
+const getUserFromToken = async (req, res, next) => {
+  const token = req.cookies.access_token;
+  if (token) req.user = jwt.verify(token, token_secret)
+  else req.user = {}
+  next()
+}
+
 module.exports = {
-    auth
+    auth,
+    getUserFromToken
 }

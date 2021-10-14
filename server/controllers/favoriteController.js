@@ -3,17 +3,13 @@ const User = require("../models/user");
 
 // Assume request has product and user's email
 const createFavorite = async (req, res) => {
-    let { p } = req.body;
-    const f = new Favorite();
-    f.product_id = p;
-    f.user_id = req.user.id;
-    f.save().then(function(f) {
-        if (!f) {
-          res.status(500).json({ error: "ERROR CREATING FAVORITE"});
-        } else {
-          res.status(200).json({ error: "SUCCESS"});
-        }
-      })
+    let { product_id } = req.body;
+    const favorite = new Favorite({ product_id, user_id: req.user.id });
+    favorite.save().then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
 }
 
 const getFavorites = (req, res) => {

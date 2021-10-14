@@ -19,9 +19,10 @@ const createAccount = async (req, res) => {
 }
 
 const getAccountOnboarding = (req, res) => {
-    if (!req.user.acct_id) return res.status(400).json({ error: `No stripe account registered for user ${req.user.id}` })
+    let { acct_id } = req.params
+    if (!req.user.admin && req.user.acct_id !== acct_id) return res.status(402).json({ message: 'Invalid Permissions' })
     stripe.accountLinks.create({
-        account: req.user.acct_id,
+        account: acct_id,
         refresh_url: 'http://localhost:8000/api/game',
         return_url: 'http://localhost:8000/api/game',
         type: 'account_onboarding'
@@ -33,9 +34,9 @@ const getAccountOnboarding = (req, res) => {
 }
 
 const getClientSecret = async (req, res) => {
-    let { pr_id } = req.query
-    if (!pr_id) return res.status(400).json({ error: 'Missing payment request id'})
-    stripe.paymentIntents.retrieve(pr_id).then((response) => {
+    let { pi_id } = req.params
+    if (!pi_id) return res.status(400).json({ error: 'Missing payment request id'})
+    stripe.paymentIntents.retrieve(pi_id).then((response) => {
         return res.status(200).json({ client_secret: response.client_secret })
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
@@ -53,11 +54,11 @@ const createPaymentIntentFromOrder = async (order_id) => {
         amount,
         currency: 'usd',
         payment_method_types: ['card'],
-        transfer_group: `{${order_id}}`,
+        transfer_group: `${order_id}`,
         metadata: { order_id }
     })
     
-    return Order.findOneAndUpdate({ _id: order_id }, { pr_id: payment_intent.id }, { new: true })
+    return Order.findOneAndUpdate({ _id: order_id }, { pi_id: payment_intent.id }, { new: true })
 }
 
 const transferToSellerFromOrder = async (order_id) => {
@@ -70,7 +71,7 @@ const transferToSellerFromOrder = async (order_id) => {
         amount: amount - commission,
         currency: 'usd',
         destination: order.seller.acct_id,
-        transfer_group: `{${order_id}}`,
+        transfer_group: `${order_id}`,
         metadata: { order_id }
     }).then((response) => {
         return res.status(200).json(response)

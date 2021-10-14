@@ -1,19 +1,14 @@
 const Follower = require("../models/follower");
 const User = require("../models/user");
 
-// Assume request has follower's and following's email
 const createFollower = async (req, res) => {
-    let {following} = req.body;
-    const f = new Follower();
-    f.follower = req.user.id;
-    f.following = following;
-    f.save().then(function(f) {
-        if (!f) {
-          res.status(500).json({ error: "ERROR CREATING FOLLOWER"});
-        } else {
-          res.status(200).json({ error: "SUCCESS"});
-        }
-      })
+    let { following } = req.body;
+    const follower = new Follower({ follower: req.user.id, following })
+    follower.save().then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
 }
 
 const getFollowers = (req, res) => {
