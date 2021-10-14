@@ -6,7 +6,7 @@ const createView = async (req, res) => {
     let { product_id } = req.body; token = req.cookies.view_history
     let view = new View({ product_id })
     if (req.user.id) view.user_id = req.user.id
-    else if (token) view.token = token
+    if (token) view.token = token
     else {
         token = jwt.sign({}, process.env.TOKEN_SECRET)
         res.cookie('view_history', token)
