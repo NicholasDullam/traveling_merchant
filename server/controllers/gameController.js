@@ -43,9 +43,19 @@ const updateGameById = (req, res) => {
     })
 }
 
+const deleteGameById = (req, res) => {
+    let { _id } = req.params
+    Game.findByIdAndDelete(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
 module.exports = {
     createGame,
     getGames,
     getGameById,
-    updateGameById
+    updateGameById,
+    deleteGameById
 }

@@ -1,14 +1,9 @@
-import { BrowserRouter as Router, Switch, Route, Link,  } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import React, { useState, useCallback, useEffect } from 'react';
-
-
-import logo from "./logo.svg";
+import api from './api'
 import "./App.css";
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import ProductListing from "./pages/ProductListing";
+import { Home, Login, Signup, ProductListing, Checkout } from './pages'
 import AuthContext from "./context/auth-context";
 import Messages from "./pages/Messages";
 import Profile from './pages/Profile';
@@ -28,70 +23,47 @@ var logged = false;
 
 
 function App() {
-
-  const [token, setToken] = useState(false);
-  const [tokenExpirationDate, setTokenExpirationDate] = useState();
-  const [userId, setUserId] = useState(false);
+  const [token, setToken] = useState(null)
+  const [user, setUser] = useState(null)
+  const [userId, setUserId] = useState(null)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLogging, setIsLogging] = useState(true)
 
   const login = useCallback((token, user) => {
-
-    console.log("LOGGING IN Y'ALLL")
-    console.log("token: " + token + ", user: " + user)
-     setToken(token);
-    
-    // const tokenExpirationDate =
-    //   expirationDate || new Date(new Date().getTime() + 1000 * 60 * 60);
-    // setTokenExpirationDate(tokenExpirationDate);
-    localStorage.setItem(
-      'userData',
-      JSON.stringify({
-        userId: user._id,
-        token: token,
-        // expiration: tokenExpirationDate.toISOString()
-      })
-    );
-    setUserId(user._id);
-logged = true;
-
+      console.log(token, user)
+      setToken(token)
+      setUser(user)
+      setUserId(user._id)
+      setIsLoggedIn(true)
   }, []);
-
 
   const logout = useCallback(() => {
-    setToken(null);
-    setTokenExpirationDate(null);
-    setUserId(null);
-    localStorage.removeItem('userData');
-    logged = false;
+      setToken(null)
+      setUser(null)
+      setUserId(null)
+      setIsLoggedIn(false)
   }, []);
 
   useEffect(() => {
-    if (token && tokenExpirationDate) {
-      const remainingTime = tokenExpirationDate.getTime() - new Date().getTime();
-      logoutTimer = setTimeout(logout, remainingTime);
-    } else {
-      clearTimeout(logoutTimer);
-    }
-  }, [token, logout, tokenExpirationDate]);
-
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('userData'));
-    if (
-      storedData &&
-      storedData.token &&
-      new Date(storedData.expiration) > new Date()
-    ) {
-      login(storedData.userId, storedData.token, new Date(storedData.expiration));
-    }
-  }, [login]);
+    setIsLogging(true)
+    api.verifyToken().then((response) => {
+        let { token, user } = response.data
+        login(token, user)
+        setIsLogging(false)
+    }).catch((error) => {
+        setIsLogging(false)
+    })
+  }, []);
 
   return (
     <AuthContext.Provider
     value={{
-      isLoggedIn: !!token,
-      token: token,
-      userId: userId,
-      login: login,
-      logout: logout
+      token,
+      user,
+      userId,
+      isLoggedIn,
+      login,
+      logout
     }}>
       {/* If (token) to restrict access to routes from unlogged users */}
     <Router>
@@ -129,26 +101,21 @@ logged = true;
         <Profile/>
         </Route>
 
-        <Route path="/login" >
-        <Login></Login>
-          </Route>
-        <Route path="/signup">
-    <Signup></Signup>
-          </Route>
-
-        <Route path="/listing">
-          {/* ^ this is a dummy route path */}
-          <ProductListing/>
-          </Route>
-        <Route path="/logout" />
-        <Route path="/game" />
-        <Route path="/user" />
-        {/* path="/" must be the last route, before closing Switch tag */}
-        <Route path="/">
-          <Home />
-        </Route>
-      </Switch>
-    </Router>
+      {/* If (token) to restrict access to routes from unlogged users */}
+      { !isLogging ? <Switch>
+          <Route path="/login" component={Login}/>
+          <Route path="/signup" component={Signup}/>
+          <Route path="/listing" component={ProductListing}/>
+          <Route path="/checkout/:order_id" component={Checkout}/>
+          <Route path="/logout" />
+          <Route path="/game" />
+          <Route path="/user" />
+          <Route path="/" component={Home}/>
+          </Switch>
+       : null }
+       </Switch>
+      </Router> :
+    
     </AuthContext.Provider>
   );
 }

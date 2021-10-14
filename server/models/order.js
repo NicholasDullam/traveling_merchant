@@ -6,7 +6,7 @@ const Order = new mongoose.Schema({
     buyer: { type: mongoose.Types.ObjectId, ref: 'User' },
     seller: { type: mongoose.Types.ObjectId, ref: 'User' },
     product_id: { type: mongoose.Types.ObjectId, ref: 'Product' },
-    pr_id: String,
+    pi_id: String,
     status: String,
     custom: Boolean,
     refunded: Boolean,

@@ -1,5 +1,4 @@
 const Follower = require("../models/follower");
-const User = require("../models/user");
 
 const createFollower = async (req, res) => {
     let { following } = req.body;
@@ -48,5 +47,6 @@ module.exports = {
     createFollower,
     getFollowers,
     getFollowerById,
-    deleteFollowerById
+    deleteFollowerById,
+    getUserFollowers
 }
