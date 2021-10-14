@@ -16,4 +16,7 @@ router.post('/games', auth, GameController.createGame) // create game
 // PUT requests
 router.put('/games/:_id', auth, GameController.updateGameById) // update game by id
 
+// DELETE requests
+router.delete('/games/:_id', auth, GameController.deleteGameById) // update game by id
+
 module.exports = router
