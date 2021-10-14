@@ -47,6 +47,5 @@ module.exports = {
     createFollower,
     getFollowers,
     getFollowerById,
-    deleteFollowerById,
-    getUserFollowers
+    deleteFollowerById
 }
