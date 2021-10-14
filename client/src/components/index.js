@@ -4,12 +4,14 @@ import GameGallery from './GameGallery/GameGallery'
 import Layout from './Layout/Layout'
 import Listing from './Listing/Listing'
 import Navbar from './Navbar/Navbar'
+import Ratings from './Ratings/Ratings'
 
-export default {
+export {
     CheckoutInterface,
     GameCard,
     GameGallery,
     Layout,
     Listing,
-    Navbar
+    Navbar,
+    Ratings
 }

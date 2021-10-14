@@ -4,7 +4,7 @@ import Home from './Home'
 import ProductListing from './ProductListing'
 import Signup from './Signup'
 
-export default { 
+export { 
     Checkout,
     Login,
     Home,

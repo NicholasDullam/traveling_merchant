@@ -1,15 +1,9 @@
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import React, { useState, useCallback, useEffect } from 'react';
 import api from './api'
-
-
-import logo from "./logo.svg";
 import "./App.css";
 
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import ProductListing from "./pages/ProductListing";
+import { Home, Login, Signup, ProductListing, Checkout } from './pages'
 import AuthContext from "./context/auth-context";
 
 function App() {
@@ -57,19 +51,21 @@ function App() {
     <Router>
       <Switch>
         <Route path="/login" >
-        <Login></Login>
-          </Route>
+          <Login/>
+        </Route>
         <Route path="/signup">
-    <Signup></Signup>
-          </Route>
-
+          <Signup/>
+        </Route>
         <Route path="/listing">
           {/* ^ this is a dummy route path */}
           <ProductListing/>
-          </Route>
+        </Route>
         <Route path="/logout" />
         <Route path="/game" />
         <Route path="/user" />
+        <Route path="/checkout/:order_id">
+          <Checkout/>
+        </Route>
         {/* path="/" must be the last route, before closing Switch tag */}
         <Route path="/">
           <Home />

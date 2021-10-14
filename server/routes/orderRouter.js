@@ -8,7 +8,6 @@ const router = express.Router()
 
 // GET requests
 router.get('/orders', auth, OrderController.getOrders) // get orders
-router.get('/userorders', auth, OrderController.getUserOrders) //get user orders
 router.get('/orders/:_id', auth, OrderController.getOrderById) // get order by id
 
 // POST requests

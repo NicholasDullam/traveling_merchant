@@ -34,9 +34,9 @@ const getAccountOnboarding = (req, res) => {
 }
 
 const getClientSecret = async (req, res) => {
-    let { pr_id } = req.params
-    if (!pr_id) return res.status(400).json({ error: 'Missing payment request id'})
-    stripe.paymentIntents.retrieve(pr_id).then((response) => {
+    let { pi_id } = req.params
+    if (!pi_id) return res.status(400).json({ error: 'Missing payment request id'})
+    stripe.paymentIntents.retrieve(pi_id).then((response) => {
         return res.status(200).json({ client_secret: response.client_secret })
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
@@ -54,11 +54,11 @@ const createPaymentIntentFromOrder = async (order_id) => {
         amount,
         currency: 'usd',
         payment_method_types: ['card'],
-        transfer_group: `{${order_id}}`,
+        transfer_group: `${order_id}`,
         metadata: { order_id }
     })
     
-    return Order.findOneAndUpdate({ _id: order_id }, { pr_id: payment_intent.id }, { new: true })
+    return Order.findOneAndUpdate({ _id: order_id }, { pi_id: payment_intent.id }, { new: true })
 }
 
 const transferToSellerFromOrder = async (order_id) => {
@@ -71,7 +71,7 @@ const transferToSellerFromOrder = async (order_id) => {
         amount: amount - commission,
         currency: 'usd',
         destination: order.seller.acct_id,
-        transfer_group: `{${order_id}}`,
+        transfer_group: `${order_id}`,
         metadata: { order_id }
     }).then((response) => {
         return res.status(200).json(response)
