@@ -1,63 +1,42 @@
 import {React, useState, useContext} from 'react'
 import Layout from '../components/Layout/Layout';
 import { Link, useHistory } from "react-router-dom";
-import axios from "axios";
+import api from '../api'
 
 import gamer2 from '../images/gamer_2.png'
 
 import AuthContext from "../context/auth-context"
 
-
-
 const Login = () => {
-  const history = useHistory();
-
+    const history = useHistory()
     const auth = useContext(AuthContext);
-    // let user = JSON.parse(sessionStorage.getItem('data'));
-    // const token = user.data.id;
-
 
     var [email, setEmail] = useState("")
     var [password, setPassword] = useState("")
 
-
-function handleEmail(event) {
-console.log(email);
-    setEmail(event.target.value)
-}
-function handlePassword(event) {
-    console.log(password);
-        setPassword(event.target.value)
+    function handleEmail(event) {
+        console.log(email);
+        setEmail(event.target.value)
     }
 
+    function handlePassword(event) {
+        console.log(password);
+        setPassword(event.target.value)
+    }
 
     function handleSubmit(e) {
         console.log("handle submit!")
         e.preventDefault()
-        // axios.get('http://localhost:8000/api/users')
-        // .catch(error => console.log("error: " + error))
-        // .then(response => 
-        //     console.log(response))
-        axios.post('http://localhost:8000/api/auth/login', {
-            email, password
-        })
-        .catch(error => console.log("error: " + error))
-        .then(response=>{
-            console.log(response)
-            var token = response.data.token
-            var user = response.data.user
-        if(response.status == 200) {
+        api.login({ email, password }).then((response) => {
+            let { token, user } = response.data
             auth.login(token, user)
-        }
-        })
-redirectToHome()
-        
-   }
+            returnToHome()
+        }).catch((error) => console.log("error: " + error))
+    }
 
-   
-function redirectToHome(){
-    history.push('/')
-  }
+    function returnToHome() {
+        history.push('/')
+    }
 
     return (
         <Layout>
@@ -68,7 +47,6 @@ function redirectToHome(){
         </h1> 
         <h1>Login</h1>
         <form>
-      
             <label for="emailInput" className="form-label">E-mail</label>
             <input type="email" className="form-control" id="emailInput" placeholder="name@domain.com"
             onChange={handleEmail}></input>
