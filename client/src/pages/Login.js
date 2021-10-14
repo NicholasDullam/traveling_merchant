@@ -1,13 +1,11 @@
 import {React, useState, useContext} from 'react'
 import Layout from '../components/Layout/Layout';
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from '../api'
 
 import gamer2 from '../images/gamer_2.png'
 
 import AuthContext from "../context/auth-context"
-
-
 
 const Login = () => {
     const auth = useContext(AuthContext);
@@ -15,38 +13,26 @@ const Login = () => {
     // const token = user.data.id;
     console.log(localStorage);
 
-
     var [email, setEmail] = useState("")
     var [password, setPassword] = useState("")
 
-
-function handleEmail(event) {
-console.log(email);
-    setEmail(event.target.value)
-}
-function handlePassword(event) {
-    console.log(password);
-        setPassword(event.target.value)
+    function handleEmail(event) {
+        console.log(email);
+        setEmail(event.target.value)
     }
 
+    function handlePassword(event) {
+        console.log(password);
+        setPassword(event.target.value)
+    }
 
     function handleSubmit(e) {
         console.log("handle submit!")
         e.preventDefault()
-        // axios.get('http://localhost:8000/api/users')
-        // .catch(error => console.log("error: " + error))
-        // .then(response => 
-        //     console.log(response))
-        axios.post('http://localhost:8000/api/auth/login', {
-            email, password
-        })
-        .catch(error => console.log("error: " + error))
-        .then(response=>{
-        if(response.status == 200) {
-            auth.login()
-        }
-        })
-   }
+        api.login({ email, password }).then((response) => {
+            if(response.status == 200) auth.login()
+        }).catch((error) => console.log("error: " + error))
+    }
 
     return (
         <Layout>
