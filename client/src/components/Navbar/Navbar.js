@@ -60,7 +60,7 @@ const Navbar = (props) => {
           <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <img src={auth.user.profile_img} style={{ height: '30px', width: '30px', borderRadius: '50%' }}/>
           </a>
-          <ul style={{ transform: 'translateX(-115px) translateY(10px)' }} class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <ul style={{ transform: 'translateX(-115px) translateY(10px)' }} class="dropdown-menu " aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="#">
             <Link  to="/profile/info">Account info</Link>
               </a></li>
