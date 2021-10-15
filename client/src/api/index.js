@@ -13,7 +13,7 @@ const getProductById = (product_id) => connection.get(`/products/${product_id}`)
 const getGameById = (game_id) => connection.get(`/games/${game_id}`)
 const getUserById = (user_id) => connection.get(`/users/${user_id}`)
 const getClientSecret = (pi_id) => connection.get(`/stripe/payment-intents/${pi_id}/secret`)
-
+const getFavorites = (req) => connection.get(`/favorites`, req)
 let api = {
     login,
     logout,
@@ -22,7 +22,8 @@ let api = {
     getProductById,
     getGameById,
     getUserById,
-    getClientSecret
+    getClientSecret,
+    getFavorites
 }
 
 export default api

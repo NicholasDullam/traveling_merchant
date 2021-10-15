@@ -2,8 +2,12 @@ import React, {useContext} from "react";
 
 import { Link } from "react-router-dom";
 
-import $ from "jquery";
-import Popper from "popper.js";
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
+import 'bootstrap/dist/js/bootstrap.js';
+import $ from 'jquery';
+import Popper from 'popper.js';
 
 import AuthContext from "../../context/auth-context";
 
@@ -43,11 +47,39 @@ const Navbar = (props) => {
             <li className="nav-item">
               <Link className="nav-link" to="/messages">Messages</Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/profile">Profile</Link>
-            </li>
-          </React.Fragment>
-          )}
+            <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="#">
+            <Link  to="/account_info">Account info</Link>
+              </a></li>
+              <li><a class="dropdown-item" href="#">
+            <Link  to="/favorites">Favorites</Link>
+              </a></li>
+              <li><a class="dropdown-item" href="#">
+            <Link  to="/review">Review</Link>
+              </a></li>
+              <li><a class="dropdown-item" href="#">
+            <Link  to="/viewing_history">Viewing History</Link>
+              </a></li>
+              <li><a class="dropdown-item" href="#">
+            <Link  to="/orders">Orders</Link>
+              </a></li>
+              <li><a class="dropdown-item" href="#">
+            <Link  to="/preferences">Preferences</Link>
+              </a></li>
+              <li><a class="dropdown-item" href="#">
+            <Link  to="/signout">Sign out</Link>
+              </a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><hr class="dropdown-divider"/></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+        </li>
+        </React.Fragment>)}
+            
            {(!auth.isLoggedIn &&
            <React.Fragment>
             <li className="nav-item">
