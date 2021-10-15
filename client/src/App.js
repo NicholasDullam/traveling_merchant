@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import api from './api'
 import "./App.css";
 
-import { Home, Login, Signup, ProductListing, Checkout, Admin } from './pages'
+import { Home, Login, Signup, Product, Checkout, Admin, Game, User, Games } from './pages'
 import AuthContext from "./context/auth-context";
 import Messages from "./pages/Messages";
 import Profile from './pages/Profile';
@@ -100,12 +100,12 @@ function App() {
       { !isLogging ? <Switch>
           <Route path="/login" component={Login}/>
           <Route path="/signup" component={Signup}/>
-          <Route path="/listing" component={ProductListing}/>
           <Route path="/checkout/:order_id" component={Checkout}/>
+          <Route path="/games/:game_id" component={Game}/>
+          <Route path="/users/:user_id" component={User}/>
+          <Route path="/products/:product_id" component={Product} />
+          <Route path="/games" component={Games}/>
           <Route path="/admin" component={Admin}/>
-          <Route path="/logout" />
-          <Route path="/game" />
-          <Route path="/user" />
           <Route path="/" component={Home}/>
           </Switch>
        : null }
