@@ -28,4 +28,7 @@ background-color: white;
 border-radius: 100px;
 }
 
+.navbar-toggler-icon{
+  background-image: url('../../images/hamburger.jpg');
+}
 

@@ -18,6 +18,7 @@ const banUserById = (user_id) => connection.put(`/users/${user_id}/ban`)
 const unbanUserById = (user_id) => connection.put(`/users/${user_id}/unban`)
 const deleteUserById = (user_id) => connection.delete(`/users/${user_id}`)
 const createUser = (payload) => connection.post('/users', payload)
+const getFavorites = (req) => connection.get(`/favorites`, req)
 
 let api = {
     login,
@@ -32,7 +33,8 @@ let api = {
     banUserById,
     unbanUserById,
     deleteUserById,
-    createUser 
+    createUser,
+    getFavorites
 }
 
 export default api
