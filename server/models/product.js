@@ -7,6 +7,8 @@ const Product = new mongoose.Schema({
     game_id: { type: mongoose.Types.ObjectId, ref:'Game'},
     name: String,
     type: String,
+    platform: String,
+    server: String,
     delivery_type: String,
     delivery_speed: Number,
     description: String,
