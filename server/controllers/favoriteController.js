@@ -45,15 +45,9 @@ const deleteFavoriteById = (req, res) => {
   })
 }
 
-const getUserFavorites = async (req, res) => {
-  const f = await Favorite.find({user_id:req.user.id});
-  return res.status(200).json(f);
-}
-
 module.exports = {
     createFavorite,
     getFavorites,
     getFavoriteById,
-    deleteFavoriteById,
-    getUserFavorites
+    deleteFavoriteById
 }

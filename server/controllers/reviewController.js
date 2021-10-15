@@ -5,32 +5,15 @@ const Order = require("../models/order")
 // Assume request has user's email, the sellers email, the rating, and the content
 const addReview = async (req, res) => {
     let { seller, rating, content } = req.body;
-    const r = new Review();
-    r.reviewer = req.user.id
-    r.seller = seller
-    r.rating = rating;
-    r.content = content;
-    if (verifyPurchase(r)) {
-        r.save().then(function(r) {
-            if (!r) {
-            res.status(500).json({ error: "ERROR CREATING REVIEW"});
-            } else {
-            res.status(200).json({ error: "SUCCESS"});
-            }
-        })
-    } else {
-        res.status(500).json({ error: "ERROR CREATING REVIEW, NOT VERIFIED"});
-    }
+    const review = new Review({ reviewer: req.user.id, seller, rating, content });
+    let order = await Order.findOne({ buyer: req.user.id, seller })
+    if (order) review.verified = true
+    review.save().then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
 }
-
-// method to verify purchase
-const verifyPurchase = async function (r) {
-    const o = await Order.findOne({buyer:r.reviewer,seller:r.seller})
-    if (!o) {
-        return false
-    }
-    return true
-};
 
 const getReviews = (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'limit']
@@ -47,7 +30,37 @@ const getReviews = (req, res) => {
     })
 }
 
+const getReviewById = (req, res) => {
+    let { _id } = req.params
+    Review.findById(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
+const updateReviewById = (req, res) => {
+    let { _id } = req.params
+    Review.findByIdAndUpdate(_id, req.body, { new: true }).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
+const deleteReviewById = (req, res) => {
+    let { _id } = req.params
+    Review.findByIdAndDelete(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
 module.exports = {
     addReview,
-    getReviews
+    getReviews,
+    getReviewById,
+    updateReviewById,
+    deleteReviewById
 }

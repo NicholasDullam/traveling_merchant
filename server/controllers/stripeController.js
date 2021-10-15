@@ -4,6 +4,10 @@ const Order = require('../models/order')
 
 // route controllers
 
+const createCustomer = (name, email) => {
+    return stripe.customers.create({ name, email })
+}
+
 const createAccount = async (req, res) => {
     if (req.user.acct_id) return res.status(400).json({ error: 'Stripe account already created'})
     let account = await stripe.accounts.create({
@@ -45,7 +49,7 @@ const getClientSecret = async (req, res) => {
 
 // helper functions
 
-const createPaymentIntentFromOrder = async (order_id) => {
+const createPaymentIntentFromOrder = async (order_id, customer_id) => {
     const order = await Order.findById(order_id)
     const amount = order.quantity * order.unit_price
 
@@ -54,6 +58,7 @@ const createPaymentIntentFromOrder = async (order_id) => {
         currency: 'usd',
         payment_method_types: ['card'],
         transfer_group: order_id,
+        customer: customer_id,
         metadata: { order_id }
     })
     
@@ -78,10 +83,25 @@ const transferToSellerFromOrder = async (order) => {
     return Order.findByIdAndUpdate(order._id, { status: 'confirmed', confirmed_at: Date.now(), auto_confirm_at: null, tr_id: transfer.id }, { new: true })
 }
 
+const getPaymentMethods = async (req, res) => {
+    let { customer_id } = req.params
+    stripe.paymentMethods.list({
+        customer: customer_id,
+        type: 'card'
+    }).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        console.log(error)
+        return res.status(400).json({ error: error.message })
+    })
+}
+
 module.exports = {
     createAccount,
+    createCustomer,
     getAccountOnboarding,
     getClientSecret,
     createPaymentIntentFromOrder,
-    transferToSellerFromOrder
+    transferToSellerFromOrder,
+    getPaymentMethods
 }

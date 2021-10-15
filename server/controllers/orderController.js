@@ -25,7 +25,7 @@ const createOrder = async (req, res) => {
 
     order = await order.save()
 
-    createPaymentIntentFromOrder(order._id).then((response) => {
+    createPaymentIntentFromOrder(order._id, req.user.cust_id).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
@@ -52,6 +52,7 @@ const confirmDelivery = async (req, res) => {
     transferToSellerFromOrder(order).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
+        console.log(error)
         return res.status(400).json({ error: error.message })
     })
 }
@@ -72,7 +73,7 @@ const cancelOrder = async (req, res) => {
     let { _id } = req.params
     if (!_id) return res.status(400).json({ error: 'Missing order_id' })
     let order = await Order.findById(_id)
-    if (req.user.id !== order.seller) return res.status(402).json({ error: 'Invalid permissions' })
+    if (req.user.id !== order.seller.toString()) return res.status(402).json({ error: 'Invalid permissions' })
     if (order.status === 'transfer_completed') return res.status(400).json({ error: 'Order already completed' })
     Order.findByIdAndUpdate(_id, { status: 'canceled', refunded: true }, { new: true }).then((response) => {
         return res.status(200).json(response)
