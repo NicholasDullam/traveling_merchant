@@ -4,6 +4,8 @@ import api from '../../api'
 import AuthContext from '../../context/auth-context'
 import Ratings from '../Ratings/Ratings'
 
+import './ProductCard.scss'
+
 const ProductCard = (props) => {
     const auth = useContext(AuthContext)
     const history = useHistory()

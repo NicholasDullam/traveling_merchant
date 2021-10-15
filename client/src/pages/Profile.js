@@ -43,7 +43,7 @@ const Profile = (props) => {
                             <Route path={props.match.url + '/orders'} component={Orders}/>
                             <Route path={props.match.url + '/products'} component={Products}/>
                             <Route path={props.match.url + '/billing'} component={Billing}/>
-                            <Route path={props.match.url + '/billing'} component={Preferences}/>
+                            <Route path={props.match.url + '/preferences'} component={Preferences}/>
                         </Switch>
                     </div>
                 </div>
