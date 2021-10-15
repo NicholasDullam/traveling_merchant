@@ -19,6 +19,9 @@ const unbanUserById = (user_id) => connection.put(`/users/${user_id}/unban`)
 const deleteUserById = (user_id) => connection.delete(`/users/${user_id}`)
 const createUser = (payload) => connection.post('/users', payload)
 const getFavorites = (req) => connection.get(`/favorites`, req)
+const getGames = (req) => connection.get('/games', req)
+const getViews = (req) => connection.get('/views', req)
+const getProducts = (req) => connection.get('/products', req)
 
 let api = {
     login,
@@ -34,7 +37,10 @@ let api = {
     unbanUserById,
     deleteUserById,
     createUser,
-    getFavorites
+    getFavorites,
+    getGames,
+    getViews,
+    getProducts
 }
 
 export default api

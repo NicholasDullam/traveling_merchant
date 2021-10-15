@@ -20,8 +20,8 @@ const Navbar = (props) => {
   // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
   return (
     <nav className="navbar navbar-expand-md">
-      <div className="container-fluid">
-        <h1 className="brand">
+      <div className="container-fluid" style={{ alignItems: 'center' }}>
+        <h1 className="brand" style={{ marginBottom: '8px', marginTop: '-8px', marginLeft: '10px'}}>
           <Link to="/" className="navbar-brand">TM</Link>
         </h1>
         <button
