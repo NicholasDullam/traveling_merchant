@@ -13,7 +13,13 @@ const getProductById = (product_id) => connection.get(`/products/${product_id}`)
 const getGameById = (game_id) => connection.get(`/games/${game_id}`)
 const getUserById = (user_id) => connection.get(`/users/${user_id}`)
 const getClientSecret = (pi_id) => connection.get(`/stripe/payment-intents/${pi_id}/secret`)
+const getUsers = (req) => connection.get('/users', req)
+const banUserById = (user_id) => connection.put(`/users/${user_id}/ban`)
+const unbanUserById = (user_id) => connection.put(`/users/${user_id}/unban`)
+const deleteUserById = (user_id) => connection.delete(`/users/${user_id}`)
+const createUser = (payload) => connection.post('/users', payload)
 const getFavorites = (req) => connection.get(`/favorites`, req)
+
 let api = {
     login,
     logout,
@@ -23,6 +29,11 @@ let api = {
     getGameById,
     getUserById,
     getClientSecret,
+    getUsers,
+    banUserById,
+    unbanUserById,
+    deleteUserById,
+    createUser,
     getFavorites
 }
 

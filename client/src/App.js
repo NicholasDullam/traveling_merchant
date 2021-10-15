@@ -17,11 +17,6 @@ import Billing from './pages/Billing';
 import Preferences from "./pages/Preferences";
 import QueryResultsPage from "./pages/QueryResultsPage";
 
-let logoutTimer;
-
-var logged = false;
-
-
 function App() {
   const [token, setToken] = useState(null)
   const [user, setUser] = useState(null)
