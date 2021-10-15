@@ -1,5 +1,6 @@
 const User = require('../models/user')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 // assume req has seller_id, customer_id, first and last name, email, password, admin status, profile_img, and settings
 const createUser = async (req, res) => {
@@ -11,8 +12,10 @@ const createUser = async (req, res) => {
     let salt = await bcrypt.genSalt(10)
     user.password = await bcrypt.hash(password, salt)
     user.save().then((response) => {
-      return res.status(200).json(response)
+      token = jwt.sign({ id: response._id, acct_id: response.acct_id, admin: response.admin, banned: response.banned }, process.env.TOKEN_SECRET)
+      return res.cookie('access_token', token, { httpOnly: true, secure:process.env.NODE_ENV === "production" }).status(200).json({ token, user: response })
     }).catch((error) => {
+        console.log(error)
       return res.status(400).json({ error: error.message })
     })
 }

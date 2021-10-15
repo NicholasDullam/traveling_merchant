@@ -1,19 +1,11 @@
-.game-card {
-    border-radius: 20px;
-    border: hsl(0, 0%, 77%) 1px solid;
-    padding: 20px 30px;
-
-}
 .discover-more {
     color: #568C4A
-    
 }
 
 .game-name {
     color: #44524E;
     font-size: 16px;
     font-weight: 800;
-
 }
 
 .row {
