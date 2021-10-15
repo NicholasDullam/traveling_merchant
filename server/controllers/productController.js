@@ -3,6 +3,7 @@ const User = require('../models/user')
 
 const createProduct = async (req, res) => {
     let { name, type, delivery_type, delivery_speed, description, unit_price, min_quantity, stock, game_id } = req.body
+    if (!name || !type || !delivery_type || !delivery_speed || !description || !unit_price || !min_quantity || !stock || !game_id) return res.status(400).json({ error: "Invalid input"})
     let product = new Product({
         user_id: req.user.id,
         game_id,

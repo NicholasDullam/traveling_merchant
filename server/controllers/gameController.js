@@ -2,6 +2,7 @@ const Game = require('../models/game')
 
 const createGame = (req, res) => {
     let { name, developer, product_types, platforms, img } = req.body
+    if (!name || !developer || !product_types || !platforms || !img) return res.status(400).json({ error: "Invalid input"})
     let game = new Game({ name, developer, product_types, platforms, img })
     game.save().then((response) => {
         return res.status(200).json(response)
