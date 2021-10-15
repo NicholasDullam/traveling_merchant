@@ -5,6 +5,7 @@ const Order = require("../models/order")
 // Assume request has user's email, the sellers email, the rating, and the content
 const addReview = async (req, res) => {
     let { seller, rating, content } = req.body;
+    if (!seller || !rating || !content) return res.status(400).json({ error: "Invalid input"})
     const review = new Review({ reviewer: req.user.id, seller, rating, content });
     let order = await Order.findOne({ buyer: req.user.id, seller })
     if (order) review.verified = true

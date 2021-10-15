@@ -4,6 +4,7 @@ const User = require("../models/user");
 // Assume request has product and user's email
 const createFavorite = async (req, res) => {
     let { product_id } = req.body;
+    if (!product_id) return res.status(400).json({ error: "Invalid input"})
     const favorite = new Favorite({ product_id, user_id: req.user.id });
     favorite.save().then((response) => {
         return res.status(200).json(response)
