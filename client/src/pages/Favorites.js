@@ -1,79 +1,44 @@
-import React from "react";
-import Settings from "../components/Settings/Settings";
-import axios from 'axios'
-
+import React, { useContext, useEffect, useState } from "react";
 import api from '../api'
 import ProductCard from './../components/ProductCard/ProductCard';
+import AuthContext from "../context/auth-context";
+
 const Favorites = (props) => {
+    const auth = useContext(AuthContext)
+    const [favorites, setFavorites] = useState([])
+    const [productsLoaded, setProductsLoaded] = useState(false)
 
-var FavoriteCards =[];
-var favorites = [];
+    useEffect(() => {
+        api.getFavorites({ params: { user_id: auth.user._id }}).then((response) => {
+            console.log(response.data)
+            setFavorites(response.data)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }, [])
 
-async function asyncGetFavorites() {
-    
-const fav = await api.getFavorites();
+    useEffect(async () => {
+        if (!favorites.length || productsLoaded) return
+        let updatedFavorites = [...favorites]
+        console.log('testing')
+        for (let i = 0; i < favorites.length; i++) {
+            let product = await api.getProductById(favorites[i].product_id)
+            updatedFavorites[i].product = product.data
+        }
 
+        setFavorites(updatedFavorites)
+        setProductsLoaded(true)
+    }, [favorites])
 
-for (var i = 0; i < fav.data.length; i++) {
-    const product = await api.getProductById(fav.data[i].product_id)
-    // console.log(fav.data[i].product_id)
-    console.log(product.data)
-
-    var card =  <ProductCard name = {product.data.name} price={product.data.price}></ProductCard>
-
-FavoriteCards.push(card) 
-    console.log(product.data.name + " " + product.data.unit_price);
-}
-
-// api.getFavorites()
-// .then((result => 
-// result.data.forEach(favorite => 
-//   favorites.push(favorite)
-// )))
-// .catch(function(e) {
-// console.log(e)
-
-// })
-
-}
-
-// var products = [];
-
-// async function asyncGetFavoriteProducts() {
-
-// favorites.forEach(favorite => 
-//     api.getProductById(favorite.product_id)
-//     .then((result => 
-//         console.log(result.data)
-//     // products.push(result.data)
-//     ))
-//     .catch(function(e) {
-//         console.log(e)
-        
-//         })
-// )
-//     }
-
-
-    asyncGetFavorites();
-    // asyncGetFavoriteProducts();
-
-// console.log("favorites[0].product_id: " + favorites[0].product_id)
-
-console.log(FavoriteCards);
-// console.log(products);
-
-
-// var dummyFavorite = favorites[0].product_id;
-
-
-return (
-    <Settings>
-        {/* <p>{dummyFavorite}</p> */}
-        {FavoriteCards}
-           </Settings>
-)
-
+    return (
+        <div>
+            {
+                favorites.map((favorite, i) => {
+                    return <ProductCard key={i} product={favorite.product}/>
+                })
+            }
+        </div>
+    )
 }
 
 export default Favorites;

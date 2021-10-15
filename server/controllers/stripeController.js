@@ -96,6 +96,17 @@ const getPaymentMethods = async (req, res) => {
     })
 }
 
+const deletePaymentMethod = async (req, res) => {
+    let { pm_id } = req.params
+    let paymentMethod = await stripe.paymentMethods.retrieve(pm_id)
+    if (paymentMethod.customer !== req.user.cust_id) return res.status(402).json({ error: 'Invalid permissions' })
+    stripe.paymentMethods.detach(pm_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
 module.exports = {
     createAccount,
     createCustomer,
@@ -103,5 +114,6 @@ module.exports = {
     getClientSecret,
     createPaymentIntentFromOrder,
     transferToSellerFromOrder,
-    getPaymentMethods
+    getPaymentMethods,
+    deletePaymentMethod
 }

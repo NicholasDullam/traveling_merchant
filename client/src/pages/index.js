@@ -8,6 +8,14 @@ import Game from './Game'
 import User from './User'
 import Product from './Product'
 import Games from './Games'
+import Favorites from './Favorites'
+import Info from './Info'
+import Preferences from './Preferences'
+import Billing from './Billing'
+import Reviews from './Reviews'
+import Views from './Views'
+import Orders from './Orders'
+import Products from './Products'
 
 export { 
     Checkout,
@@ -19,5 +27,13 @@ export {
     AdminUsers,
     Game,
     Games,
-    User
+    User,
+    Favorites,
+    Info,
+    Preferences,
+    Billing,
+    Reviews,
+    Views,
+    Orders,
+    Products
 }
