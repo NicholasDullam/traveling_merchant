@@ -7,6 +7,7 @@ const Ratings = (props) => {
     const [ratingLoaded, setRatingLoaded] = useState(false)
 
     useEffect(() => {
+        if (props.count) return
         api.getReviews({ params: { seller: props.user_id  }}).then((response) => {
             if (response.data.length > 1) {
                 console.log(response.data)
@@ -21,16 +22,21 @@ const Ratings = (props) => {
             setRatingLoaded(true)
         })
     }, [])
-    
 
-    var arr = [];
-    if (reviewRating) {
-        for (var i = 0; i < Math.round(reviewRating/20); i++) {
+    let count = reviewRating ? Math.round(reviewRating/20) : props.count
+
+    const generateStars = (count) => {
+        let arr = []
+        for (var i = 0; i < count; i++) {
             arr[i] = <FaStar/>
         }
+
+        return arr
     }
 
-    console.log(reviewRating)
+    let arr = generateStars(count)
+
+    if (props.count) return <div> {arr} </div>
 
     return (
         reviewRating !== null && ratingLoaded ? <div style={{ display: 'flex', alignItems: 'center' }}>

@@ -7,6 +7,7 @@ const Game = new mongoose.Schema({
     developer: String,
     product_types: [ String ],
     platforms: [ String ],
+    servers: [ String ], 
     img: String,
 }, {
     timestamps: {

@@ -10,6 +10,7 @@ const Product = (props) => {
     const [user, setUser] = useState(null)
     const [product, setProduct] = useState(null)
     const [favorited, setFavorited] = useState(null)
+    const [reviews, setReviews] = useState([])
     const [quantity, setQuantity] = useState('')
     const auth = useContext(AuthContext)
     const { product_id } = useParams()
@@ -64,6 +65,15 @@ const Product = (props) => {
         })
     }, [product])
 
+    useEffect(() => {
+        if (!user) return
+        api.getReviews({ params: { seller: user._id }}).then((response) => {
+            setReviews(response.data)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }, [user])
+
     const handleFavorite = () => {
         api.createFavorite({ product_id }).then((response) => {
             setFavorited(true)
@@ -117,6 +127,18 @@ const Product = (props) => {
                                 </div>
                             </div>
                         </div> 
+                        <div style={{ borderTop: '1px solid rgba(0,0,0,.1)', margin: '20px 0px 20px 0px' }}/>
+                        <h4> Seller Reviews </h4>
+                        {
+                            reviews.map((review) => {
+                                return (
+                                    <div style={{ display: 'flex', marginBottom: '15px', alignItems: 'center'}}>
+                                        <Ratings count={review.rating}/>
+                                        <h6 style={{ marginBottom: '-3px' , marginLeft: '10px'}}> {review.content} </h6>
+                                    </div>
+                                )
+                            })
+                        }
                     </div> : null }
             
                 </div>
