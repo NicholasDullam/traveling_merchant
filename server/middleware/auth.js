@@ -7,6 +7,7 @@ const auth = async (req, res, next) => {
   try {
     const data = jwt.verify(token, token_secret);
     req.user = data
+    if (req.user.banned) return res.status(403).json({ error: 'You are banned' })
     return next()
   } catch {
     return res.sendStatus(403);

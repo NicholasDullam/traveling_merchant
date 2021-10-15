@@ -7,7 +7,7 @@ const { auth } = require('../middleware/auth')
 const router = express.Router()
 
 router.post('/favorites', auth, FavoriteController.createFavorite)
-router.get('/favorites', auth, FavoriteController.getUserFavorites)
+router.get('/favorites', auth, FavoriteController.getFavorites)
 router.get('/favorites/:_id', auth, FavoriteController.getFavoriteById)
 router.delete('/favorites/:_id', auth, FavoriteController.deleteFavoriteById)
 
