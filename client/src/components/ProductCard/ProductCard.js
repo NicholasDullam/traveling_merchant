@@ -7,10 +7,10 @@ const ProductCard = (props) => {
 
     return (
 <div class="card">
-    <p>Fortnite duct tape (400)</p>
-    <p> Username</p> <Ratings count={5}/>
+    <p>{props.name}</p>
+    <p>username</p> <Ratings count={5}/>
         <img src={productImg}></img>
-        <p> $5.00 </p>
+        <p>{props.price} </p>
         <button class="btn"> Purchase</button>
 </div>
 

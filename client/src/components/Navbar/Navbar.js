@@ -17,8 +17,6 @@ import SearchBar from "../SearchBar/SearchBar";
 const Navbar = (props) => {
   const auth = useContext(AuthContext);
 
-console.log(auth.isLoggedIn)
-
   // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
   return (
     <nav className="navbar navbar-expand-md">
@@ -44,7 +42,7 @@ console.log(auth.isLoggedIn)
           {(auth.isLoggedIn && 
           <React.Fragment>
             { auth.user.admin ? <li className="nav-item">
-              <Link className="nav-link" to="/messages">Admin</Link>
+              <Link className="nav-link" to="/admin/users">Admin</Link>
             </li> : null }
             <li className="nav-item">
               <Link className="nav-link" to="/messages">Messages</Link>

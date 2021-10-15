@@ -19,6 +19,6 @@ router.put('/users/:_id/ban', auth, UserController.banUser)
 router.put('/users/:_id/unban', auth, UserController.unbanUser)
 
 // DELETE requests
-router.put('/users/:_id', auth, UserController.deleteUserById)
+router.delete('/users/:_id', auth, UserController.deleteUserById)
 
 module.exports = router
