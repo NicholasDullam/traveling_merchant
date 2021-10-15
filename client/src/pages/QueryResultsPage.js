@@ -8,7 +8,7 @@ import QueryResultsList from "../components/QueryResultsList/QueryResultsList";
 const QueryResultsPage = (props) => {
     const location = useLocation()
 
-console.log(location.state.query)
+// console.log(location.state.query)
 console.log(location.state.productsToDisplay)
 
 return (
