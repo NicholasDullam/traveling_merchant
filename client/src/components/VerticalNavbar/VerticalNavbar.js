@@ -7,12 +7,12 @@ const VerticalNavbar = (props) => {
     return (
         <ul class="nav flex-column">
             <li class="nav-item">
-        <Link to ="/account_info" class="nav-link"> Account info
+        <Link to ="/account_info" > Account info
         </Link>
         </li>
         <li class="nav-item">
 
-        <Link to =" /favorites"> Favorites
+        <Link to ="/favorites"> Favorites
         </Link>
         </li>
         <li class="nav-item">
