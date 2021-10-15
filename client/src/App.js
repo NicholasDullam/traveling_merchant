@@ -7,15 +7,6 @@ import { Home, Login, Signup, Product, Checkout, Admin, Game, User, Games } from
 import AuthContext from "./context/auth-context";
 import Messages from "./pages/Messages";
 import Profile from './pages/Profile';
-import Settings from "./components/Settings/Settings";
-import AccountInfo from "./pages/AccountInfo";
-import Favorites from "./pages/Favorites";
-import Reviews from './pages/Reviews';
-import ViewingHistory from './pages/ViewingHistory';
-import Orders from "./pages/Orders";
-import Billing from './pages/Billing';
-import Preferences from "./pages/Preferences";
-import QueryResultsPage from "./pages/QueryResultsPage";
 
 function App() {
   const [token, setToken] = useState(null)
@@ -64,42 +55,15 @@ function App() {
     <Router>
       <Switch>
 
-       <Route path="/favorites" >
-        <Favorites/>
-        </Route> 
-
-        <Route path="/query_results" >
-        <QueryResultsPage/>
-        </Route> 
-        <Route path="/reviews" >
-        <Reviews/>
-        </Route>
-        <Route path="/viewing_history" >
-        <ViewingHistory/>
-        </Route>
-        <Route path="/orders" >
-        <Orders/>
-        </Route>
-        <Route path="/billing" >
-        <Billing/>
-        </Route>
-        <Route path="/preferences" >
-        <Preferences/>
-        </Route>
-      <Route path="/account_info" >
-        <AccountInfo/>
-        </Route>
       <Route path="/messages" >
         <Messages/>
-        </Route>
-        <Route path="/profile" >
-        <Profile/>
         </Route>
 
       {/* If (token) to restrict access to routes from unlogged users */}
       { !isLogging ? <Switch>
           <Route path="/login" component={Login}/>
           <Route path="/signup" component={Signup}/>
+          <Route path="/profile" component={Profile}/>
           <Route path="/checkout/:order_id" component={Checkout}/>
           <Route path="/games/:game_id" component={Game}/>
           <Route path="/users/:user_id" component={User}/>

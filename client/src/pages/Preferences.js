@@ -1,11 +1,11 @@
 import React from "react";
-import Settings from "../components/Settings/Settings";
 
 const Preferences = (props) => {
-return (
-    <Settings>  Preferences</Settings>
-)
-
+    return (
+        <div>
+            <h6> testing </h6>
+        </div>
+    )
 }
 
 export default Preferences

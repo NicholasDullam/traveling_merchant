@@ -77,8 +77,9 @@ const CheckoutInterface = (props) => {
                 billing_details: {
                     name: `${first} ${last}`,
                     email
-                }
-            }
+                },
+            },
+            setup_future_usage: 'off_session'
         })
 
         if (result.error) {
@@ -99,10 +100,9 @@ const CheckoutInterface = (props) => {
                     <h4 style={{ color: 'white', opacity: '.7', marginBottom: '30px' }}> To <span> {seller.first} {seller.last} </span></h4>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <img src={seller.profile_img} style={{ height: '100px', width: '100px', borderRadius: '50%' }}/>
-                        <div style={{ marginLeft: '40px' }}>
-                            <h3 style={{ marginBottom: '0px', color: 'white' }}> {seller.first} {seller.last} </h3>
-                            <Ratings count={5}/>
-                            <p style={{ color: 'white', opacity: '.7' }}> No Reviews </p>
+                        <div style={{ marginLeft: '40px', color: 'white' }}>
+                            <h3 style={{ marginBottom: '0px' }}> {seller.first} {seller.last} </h3>
+                            <Ratings user_id={seller._id}/>
                         </div>
                     </div>
                 </div> : null }

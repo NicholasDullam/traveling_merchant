@@ -1,17 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react'
-import api from '../../api'
-import AuthContext from '../../context/auth-context'
-import { ProductCard } from '..'
+import React, { useContext, useEffect, useState } from "react";
+import api from '../api'
+import ProductCard from './../components/ProductCard/ProductCard';
+import AuthContext from "../context/auth-context";
 
-const ViewGallery = (props) => {
+const Views = (props) => {
     const auth = useContext(AuthContext)
     const [views, setViews] = useState([])
     const [productsLoaded, setProductsLoaded] = useState(false)
 
     useEffect(() => {
-        let params = { limit: 5, sort: '-created_at' }
-        if (auth.user) params.user_id = auth.user._id
-        api.getViews({ params }).then((response) => {
+        api.getViews({ params: { user_id: auth.user._id }}).then((response) => {
             setViews(response.data)
         }).catch((error) => {
             console.log(error)
@@ -34,12 +32,12 @@ const ViewGallery = (props) => {
     return (
         <div>
             {
-                views.map((view) => {
-                    return <ProductCard product={view.product}/>
+                views.map((view, i) => {
+                    return <ProductCard key={i} product={view.product}/>
                 })
             }
         </div>
     )
 }
 
-export default ViewGallery
+export default Views;

@@ -14,8 +14,17 @@ import AuthContext from "../../context/auth-context";
 import "./Navbar.css";
 import "../Layout/Layout.css"; // reason for this is to get all global variables (colors, font weights, etc...)
 import SearchBar from "../SearchBar/SearchBar";
+import api from "../../api";
 const Navbar = (props) => {
   const auth = useContext(AuthContext);
+
+  const handleLogout = () => {
+    api.logout().then((response) => {
+      auth.logout()
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
 
   // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
   return (
@@ -39,7 +48,7 @@ const Navbar = (props) => {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <SearchBar/>
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0  ">
-          {(auth.isLoggedIn && 
+          {(auth.isLoggedIn && auth.user && 
           <React.Fragment>
             { auth.user.admin ? <li className="nav-item">
               <Link className="nav-link" to="/admin/users">Admin</Link>
@@ -47,35 +56,38 @@ const Navbar = (props) => {
             <li className="nav-item">
               <Link className="nav-link" to="/messages">Messages</Link>
             </li>
-            <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown
+            <li class="nav-item dropdown" style={{ marginLeft: '20px' }}>
+          <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src={auth.user.profile_img} style={{ height: '30px', width: '30px', borderRadius: '50%' }}/>
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <ul style={{ transform: 'translateX(-115px) translateY(10px)' }} class="dropdown-menu" aria-labelledby="navbarDropdown">
             <li><a class="dropdown-item" href="#">
-            <Link  to="/account_info">Account info</Link>
+            <Link  to="/profile/info">Account info</Link>
               </a></li>
               <li><a class="dropdown-item" href="#">
-            <Link  to="/favorites">Favorites</Link>
+            <Link  to="/profile/favorites">Favorites</Link>
               </a></li>
               <li><a class="dropdown-item" href="#">
-            <Link  to="/review">Review</Link>
+            <Link  to="/profile/reviews">Review</Link>
               </a></li>
               <li><a class="dropdown-item" href="#">
-            <Link  to="/viewing_history">Viewing History</Link>
+            <Link  to="/profile/views">Viewing History</Link>
               </a></li>
               <li><a class="dropdown-item" href="#">
-            <Link  to="/orders">Orders</Link>
+            <Link  to="/profile/orders">Orders</Link>
+              </a></li>
+              {auth.user.acct_id ? <li><a class="dropdown-item" href="#">
+            <Link  to="/profile/products">Products</Link>
+              </a></li> : null }
+              <li><a class="dropdown-item" href="#">
+            <Link  to="/profile/billing">Billing</Link>
               </a></li>
               <li><a class="dropdown-item" href="#">
-            <Link  to="/preferences">Preferences</Link>
+            <Link  to="/profile/preferences">Preferences</Link>
               </a></li>
-              <li><a class="dropdown-item" href="#">
-            <Link  to="/signout">Sign out</Link>
+              <li onClick={handleLogout}><a class="dropdown-item" href="#">
+            <Link  to="/">Sign out</Link>
               </a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"/></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>
         </li>
         </React.Fragment>)}

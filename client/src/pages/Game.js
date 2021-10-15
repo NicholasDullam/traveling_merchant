@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../api'
+import { ProductCard } from '../components'
 import Layout from '../components/Layout/Layout'
 
 const Game = (props) => {
     const [game, setGame] = useState(null)
     const [products, setProducts] = useState([])
     const [name, setName] = useState('')
+    const [productType, setProductType] = useState('')
+    const [deliveryType, setDeliveryType] = useState('')
     const { game_id } = useParams()
 
     useEffect(() => {
@@ -34,11 +37,21 @@ const Game = (props) => {
     const handleSearch = () => {
         let params = { game_id }
         if (name.length) params.name = name 
+        if (deliveryType.length) params.delivery_type = deliveryType
+        if (productType.length) params.type = productType
         getProducts(params)
     }
 
     const handleName = (e) => {
         setName(e.target.value)
+    }
+
+    const handleProductType = (e) => {
+        setProductType(e.target.value)
+    }
+
+    const handleDeliveryType = (e) => {
+        setDeliveryType(e.target.value)
     }
 
     const handleKeyPress = (e) => {
@@ -69,34 +82,28 @@ const Game = (props) => {
                     </div>
                     <div style={{ marginRight: '10px'  }}>
                         <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Product Type</label>
-                        <select className="form-control" type='select' value={name} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handleName}>
-                            <option value={'test'}> </option>
+                        <select className="form-control" type='select' value={productType} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handleProductType}>
+                            <option value={''} disabled hidden> Select </option>
+                            { game.product_types.map((type) => {
+                                return <option value={type}> {type} </option>
+                            })}
                         </select>
                     </div>
                     <div style={{ marginRight: '10px'  }}>
                         <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Delivery Type</label>
-                        <select className="form-control" type='select' value={name} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handleName}>
-                            <option value={'test'}> </option>
-                        </select>
-                    </div>
-                    <div style={{ marginRight: '10px'  }}>
-                        <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Delivery Time</label>
-                        <select className="form-control" type='select' value={name} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handleName}>
-                            <option value={'test'}> </option>
+                        <select className="form-control" type='select' value={deliveryType} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handleDeliveryType}>
+                            <option value={''} disabled hidden> Select </option>
+                            <option value={'face-to-face'}> face-to-face </option>
+                            <option value={'automatic'}> automatic </option>
+                            <option value={'remote'}> remote </option>                     
                         </select>
                     </div>
                 </div>
 
                 <div>
-                    {
-                        products.map((product) => {
-                            return (
-                                <div>
-                                    { product.name }
-                                </div>
-                            )
-                        })
-                    }
+                    { products.map((product) => {
+                        return <ProductCard product={product}/>
+                    })}
                 </div>
             </div> : null }
         </Layout>

@@ -21,22 +21,24 @@ const Admin = (props) => {
 
     return (
         <Layout navbar>
-            <h1 style={{ marginTop: '40px' }}> Admin </h1>
-            <div style={{ display: 'flex', marginTop: '30px', }}>
-                <div style={{ position: 'sticky', top: '30px', marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
-                    <Tab name='Users' handleRouter={handleRouter} location={props.location} path='/admin/users'/>
-                    <Tab name='Orders' handleRouter={handleRouter} location={props.location} path='/admin/orders'/>
-                    <Tab name='Products' handleRouter={handleRouter} location={props.location} path='/admin/products'/>
-                    <Tab name='Favorites' handleRouter={handleRouter} location={props.location} path='/admin/favorites'/>
-                </div>
-                <div style={{ width: '100%' }}>
-                    <Switch>
-                        <Route path={props.match.url + '/users'} component={AdminUsers}/>
-                        <Route path={props.match.url + '/users'} component={AdminUsers}/>
-                        <Route path={props.match.url + '/users'} component={AdminUsers}/>
-                        <Route path={props.match.url + '/users'} component={AdminUsers}/>
-                        <Route path={props.match.url + '/users'} component={AdminUsers}/>
-                    </Switch>
+            <div style={{ marginBottom: '40px', marginTop: '40px' }}>
+                <h1 style={{ marginTop: '40px' }}> Admin </h1>
+                <div style={{ display: 'flex', marginTop: '30px', }}>
+                    <div style={{ position: 'sticky', top: '30px', marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
+                        <Tab name='Users' handleRouter={handleRouter} location={props.location} path='/admin/users'/>
+                        <Tab name='Orders' handleRouter={handleRouter} location={props.location} path='/admin/orders'/>
+                        <Tab name='Products' handleRouter={handleRouter} location={props.location} path='/admin/products'/>
+                        <Tab name='Favorites' handleRouter={handleRouter} location={props.location} path='/admin/favorites'/>
+                    </div>
+                    <div style={{ width: '100%' }}>
+                        <Switch>
+                            <Route path={props.match.url + '/users'} component={AdminUsers}/>
+                            <Route path={props.match.url + '/users'} component={AdminUsers}/>
+                            <Route path={props.match.url + '/users'} component={AdminUsers}/>
+                            <Route path={props.match.url + '/users'} component={AdminUsers}/>
+                            <Route path={props.match.url + '/users'} component={AdminUsers}/>
+                        </Switch>
+                    </div>
                 </div>
             </div>
         </Layout>

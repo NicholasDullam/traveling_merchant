@@ -22,6 +22,15 @@ const getFavorites = (req) => connection.get(`/favorites`, req)
 const getGames = (req) => connection.get('/games', req)
 const getViews = (req) => connection.get('/views', req)
 const getProducts = (req) => connection.get('/products', req)
+const getOrders = (req) => connection.get('/orders', req)
+const getReviews = (req) => connection.get('/reviews', req)
+const updateUserById = (user_id, payload) => connection.put(`/users/${user_id}`, payload)
+const createOrder = (payload) => connection.post('/orders', payload)
+const createView = (payload) => connection.post('/views', payload)
+const getPaymentMethods = (customer_id) => connection.get(`/stripe/customers/${customer_id}/payment-methods`)
+const deletePaymentMethod = (pm_id) => connection.delete(`/stripe/payment-methods/${pm_id}`)
+const createFavorite = (payload) => connection.post('/favorites', payload)
+const deleteFavoriteById = (favorite_id) => connection.delete(`/favorites/${favorite_id}`)
 
 let api = {
     login,
@@ -40,7 +49,16 @@ let api = {
     getFavorites,
     getGames,
     getViews,
-    getProducts
+    getProducts,
+    getReviews,
+    updateUserById,
+    getOrders,
+    createOrder,
+    createView,
+    getPaymentMethods,
+    deletePaymentMethod,
+    createFavorite,
+    deleteFavoriteById
 }
 
 export default api
