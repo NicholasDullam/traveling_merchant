@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import React, { useState, useCallback, useEffect } from 'react';
 import api from './api'
-import "./App.css";
+import "./App.scss";
 
 import { Home, Login, Signup, Product, Checkout, Admin, Game, User, Games } from './pages'
 import AuthContext from "./context/auth-context";

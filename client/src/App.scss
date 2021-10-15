@@ -1,8 +1,10 @@
 * {
   font-family: "Source Sans Pro", sans-serif;
-
+  &.dark {
+  background-color: rgb(41, 41, 41);
+  color:white;
+  }
 }
-
 .App {
   text-align: center;
 }
