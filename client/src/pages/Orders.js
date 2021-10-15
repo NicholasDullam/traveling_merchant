@@ -9,7 +9,7 @@ const Orders = (props) => {
     const [sellOrders, setSellOrders] = useState([])
 
     useEffect(() => {
-        api.getOrders({ params: { buyer: auth.user._id }}).then((response) => {
+        api.getOrders({ params: { buyer: auth.user._id, sort: '-created_at' }}).then((response) => {
             setBuyOrders(response.data)
         }).catch((error) => {
             console.log(error)
@@ -17,7 +17,7 @@ const Orders = (props) => {
     }, [])
 
     useEffect(() => {
-        api.getOrders({ params: { seller: auth.user._id }}).then((response) => {
+        api.getOrders({ params: { seller: auth.user._id, sort: '-created_at' }}).then((response) => {
             setSellOrders(response.data)
         }).catch((error) => {
             console.log(error)
@@ -34,8 +34,7 @@ const Orders = (props) => {
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <p style={{ marginBottom: '0px' }}> {order._id} </p>
                                 <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {order.status} </p>
-                                <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {order.product_id} </p>
-                                <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {order.seller} </p>
+                                <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {order.created_at} </p>
                             </div>
                         </div>
                     )
@@ -50,8 +49,7 @@ const Orders = (props) => {
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <p style={{ marginBottom: '0px' }}> {order._id} </p>
                                 <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {order.status} </p>
-                                <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {order.product_id} </p>
-                                <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {order.buyer} </p>
+                                <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {order.created_at} </p>
                             </div>
                         </div>
                     )

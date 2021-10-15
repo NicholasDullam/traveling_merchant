@@ -10,6 +10,8 @@ const Game = (props) => {
     const [name, setName] = useState('')
     const [productType, setProductType] = useState('')
     const [deliveryType, setDeliveryType] = useState('')
+    const [server, setServer] = useState('')
+    const [platform, setPlatform] = useState('')
     const { game_id } = useParams()
 
     useEffect(() => {
@@ -39,6 +41,8 @@ const Game = (props) => {
         if (name.length) params.name = name 
         if (deliveryType.length) params.delivery_type = deliveryType
         if (productType.length) params.type = productType
+        if (server.length) params.server = server
+        if (platform.length) params.platform = platform
         getProducts(params)
     }
 
@@ -52,6 +56,14 @@ const Game = (props) => {
 
     const handleDeliveryType = (e) => {
         setDeliveryType(e.target.value)
+    }
+
+    const handlePlatform = (e) => {
+        setPlatform(e.target.value)
+    }
+
+    const handleServer = (e) => {
+        setServer(e.target.value)
     }
 
     const handleKeyPress = (e) => {
@@ -81,7 +93,7 @@ const Game = (props) => {
                         <input className="form-control" value={name} placeholder={'Cheap Gold'} onKeyPress={handleKeyPress} onChange={handleName}/>
                     </div>
                     <div style={{ marginRight: '10px'  }}>
-                        <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Product Type</label>
+                        <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Type</label>
                         <select className="form-control" type='select' value={productType} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handleProductType}>
                             <option value={''} disabled hidden> Select </option>
                             { game.product_types.map((type) => {
@@ -90,12 +102,30 @@ const Game = (props) => {
                         </select>
                     </div>
                     <div style={{ marginRight: '10px'  }}>
-                        <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Delivery Type</label>
+                        <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Delivery</label>
                         <select className="form-control" type='select' value={deliveryType} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handleDeliveryType}>
                             <option value={''} disabled hidden> Select </option>
                             <option value={'face-to-face'}> face-to-face </option>
                             <option value={'automatic'}> automatic </option>
                             <option value={'remote'}> remote </option>                     
+                        </select>
+                    </div>
+                    <div style={{ marginRight: '10px'  }}>
+                        <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Platform</label>
+                        <select className="form-control" type='select' value={platform} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handlePlatform}>
+                            <option value={''} disabled hidden> Select </option>
+                            { game.platforms.map((type) => {
+                                return <option value={type}> {type} </option>
+                            })}
+                        </select>
+                    </div>
+                    <div style={{ marginRight: '10px'  }}>
+                        <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Server</label>
+                        <select className="form-control" type='select' value={server} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handleServer}>
+                            <option value={''} disabled hidden> Select </option>
+                            { game.servers.map((type) => {
+                                return <option value={type}> {type} </option>
+                            })}
                         </select>
                     </div>
                 </div>

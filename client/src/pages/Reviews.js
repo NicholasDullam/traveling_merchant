@@ -22,7 +22,7 @@ const Reviews = (props) => {
                     return (
                         <div style={{ padding: '10px', borderBottom: i < reviews.length - 1 ? '1px solid rgba(0,0,0,.1)' : ''}}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <p style={{ marginBottom: '0px' }}> {review.seller}/5 </p>
+                                <p style={{ marginBottom: '0px' }}> {review.seller} </p>
                                 <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {review.rating}/5 </p>
                                 <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {review.content} </p>
                             </div>
