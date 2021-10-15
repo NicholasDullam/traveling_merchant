@@ -13,6 +13,24 @@ const getProductById = (product_id) => connection.get(`/products/${product_id}`)
 const getGameById = (game_id) => connection.get(`/games/${game_id}`)
 const getUserById = (user_id) => connection.get(`/users/${user_id}`)
 const getClientSecret = (pi_id) => connection.get(`/stripe/payment-intents/${pi_id}/secret`)
+const getUsers = (req) => connection.get('/users', req)
+const banUserById = (user_id) => connection.put(`/users/${user_id}/ban`)
+const unbanUserById = (user_id) => connection.put(`/users/${user_id}/unban`)
+const deleteUserById = (user_id) => connection.delete(`/users/${user_id}`)
+const createUser = (payload) => connection.post('/users', payload)
+const getFavorites = (req) => connection.get(`/favorites`, req)
+const getGames = (req) => connection.get('/games', req)
+const getViews = (req) => connection.get('/views', req)
+const getProducts = (req) => connection.get('/products', req)
+const getOrders = (req) => connection.get('/orders', req)
+const getReviews = (req) => connection.get('/reviews', req)
+const updateUserById = (user_id, payload) => connection.put(`/users/${user_id}`, payload)
+const createOrder = (payload) => connection.post('/orders', payload)
+const createView = (payload) => connection.post('/views', payload)
+const getPaymentMethods = (customer_id) => connection.get(`/stripe/customers/${customer_id}/payment-methods`)
+const deletePaymentMethod = (pm_id) => connection.delete(`/stripe/payment-methods/${pm_id}`)
+const createFavorite = (payload) => connection.post('/favorites', payload)
+const deleteFavoriteById = (favorite_id) => connection.delete(`/favorites/${favorite_id}`)
 
 let api = {
     login,
@@ -22,7 +40,25 @@ let api = {
     getProductById,
     getGameById,
     getUserById,
-    getClientSecret
+    getClientSecret,
+    getUsers,
+    banUserById,
+    unbanUserById,
+    deleteUserById,
+    createUser,
+    getFavorites,
+    getGames,
+    getViews,
+    getProducts,
+    getReviews,
+    updateUserById,
+    getOrders,
+    createOrder,
+    createView,
+    getPaymentMethods,
+    deletePaymentMethod,
+    createFavorite,
+    deleteFavoriteById
 }
 
 export default api

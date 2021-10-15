@@ -5,6 +5,8 @@ import Layout from './Layout/Layout'
 import Listing from './Listing/Listing'
 import Navbar from './Navbar/Navbar'
 import Ratings from './Ratings/Ratings'
+import ViewGallery from './ViewGallery/ViewGallery'
+import ProductCard from './ProductCard/ProductCard'
 
 export {
     CheckoutInterface,
@@ -13,5 +15,7 @@ export {
     Layout,
     Listing,
     Navbar,
-    Ratings
+    Ratings,
+    ViewGallery,
+    ProductCard
 }

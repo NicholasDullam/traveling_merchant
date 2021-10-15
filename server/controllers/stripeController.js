@@ -4,6 +4,10 @@ const Order = require('../models/order')
 
 // route controllers
 
+const createCustomer = (name, email) => {
+    return stripe.customers.create({ name, email })
+}
+
 const createAccount = async (req, res) => {
     if (req.user.acct_id) return res.status(400).json({ error: 'Stripe account already created'})
     let account = await stripe.accounts.create({
@@ -45,35 +49,58 @@ const getClientSecret = async (req, res) => {
 
 // helper functions
 
-const createPaymentIntentFromOrder = async (order_id) => {
+const createPaymentIntentFromOrder = async (order_id, customer_id) => {
     const order = await Order.findById(order_id)
-    if (!order) return res.status(400).json({ error: 'Order not found' })
     const amount = order.quantity * order.unit_price
 
     let payment_intent = await stripe.paymentIntents.create({
         amount,
         currency: 'usd',
         payment_method_types: ['card'],
-        transfer_group: `${order_id}`,
+        transfer_group: order_id,
+        customer: customer_id,
         metadata: { order_id }
     })
     
     return Order.findOneAndUpdate({ _id: order_id }, { pi_id: payment_intent.id }, { new: true })
 }
 
-const transferToSellerFromOrder = async (order_id) => {
-    const order = await Order.findById(order_id).populate('seller')
-    if (!order) return res.status(400).json({ error: 'Order not found' })
+const transferToSellerFromOrder = async (order) => {
     const amount = order.quantity * order.unit_price 
     const commission = amount * .1
 
-    stripe.transfers.create({
+    let paymentIntent = await stripe.paymentIntents.retrieve(order.pi_id)
+
+    let transfer = await stripe.transfers.create({
         amount: amount - commission,
         currency: 'usd',
         destination: order.seller.acct_id,
-        transfer_group: `${order_id}`,
-        metadata: { order_id }
+        source_transaction: paymentIntent.charges.data[0].id,
+        transfer_group: order._id,
+        metadata: { order_id: order._id }
+    })
+
+    return Order.findByIdAndUpdate(order._id, { status: 'confirmed', confirmed_at: Date.now(), auto_confirm_at: null, tr_id: transfer.id }, { new: true })
+}
+
+const getPaymentMethods = async (req, res) => {
+    let { customer_id } = req.params
+    stripe.paymentMethods.list({
+        customer: customer_id,
+        type: 'card'
     }).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        console.log(error)
+        return res.status(400).json({ error: error.message })
+    })
+}
+
+const deletePaymentMethod = async (req, res) => {
+    let { pm_id } = req.params
+    let paymentMethod = await stripe.paymentMethods.retrieve(pm_id)
+    if (paymentMethod.customer !== req.user.cust_id) return res.status(402).json({ error: 'Invalid permissions' })
+    stripe.paymentMethods.detach(pm_id).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
@@ -82,8 +109,11 @@ const transferToSellerFromOrder = async (order_id) => {
 
 module.exports = {
     createAccount,
+    createCustomer,
     getAccountOnboarding,
     getClientSecret,
     createPaymentIntentFromOrder,
-    transferToSellerFromOrder
+    transferToSellerFromOrder,
+    getPaymentMethods,
+    deletePaymentMethod
 }

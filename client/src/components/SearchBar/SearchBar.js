@@ -1,47 +1,31 @@
-import React, {useState} from 'react'
-import axios from 'axios'
+import React, { useState } from 'react'
+import { useHistory } from 'react-router';
 
-const SearchBar=(props) => {
-const [query, setQuery] = useState("")
- 
-var productNames = [];
+const SearchBar = (props) => {
+    const [name, setName] = useState('')
+    const history = useHistory()
 
-axios.get("http://localhost:8000/api/products")
-.then(result => 
-    console.log("result" + result)
-    // productNames.push(result.name)
+    const handleName = (e) => {
+        setName(e.target.value)
+    }
 
-)
+    const handleEnter = (e) => {
+        if (e.key === 'Enter') history.push(`/games?q=${name}`)
+    }
 
-// console.log(productNames)
-
-// get all game items in the db, apply filter to them
-
-
-const handleFilter = (e) => {
-    const query = e.target.value;
-    setQuery(query);
-
-}
-return (
-    <div className="search-bar mx-auto col-md-6 col-lg-4"> 
-    <form className="d-flex">
-      <div className="input-group">
-      <input
-        className="form-control me-2"
-        type="search"
-        placeholder="Search games, game assets..."
-        aria-label="Search"
-        value={query}
-      onChange={handleFilter}
-      />
-      </div>
-  
-      <button className="btn btn-outline-success" type="submit">
-        Search
-      </button>
-    </form>
-    </div>
-    )
+    return (
+        <div className="search-bar mx-auto col-md-6 col-lg-4"> 
+            <div className="input-group">
+                <input
+                  className="form-control me-2"
+                  type="search"
+                  placeholder="Search games"
+                  aria-label="Search"
+                  value={name}
+                  onChange={handleName}
+                  onKeyPress={handleEnter}/>
+            </div>
+        </div>
+      )
 }
 export default SearchBar

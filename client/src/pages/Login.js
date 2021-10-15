@@ -30,13 +30,16 @@ const Login = (props) => {
         api.login({ email, password }).then((response) => {
             let { token, user } = response.data
             auth.login(token, user)
-            returnToHome()
+            handleRedirect()
         }).catch((error) => console.log("error: " + error))
     }
 
-    function returnToHome() {
-        let uri = new URLSearchParams(props.location.search).get("redirect_uri")
-        history.push(uri || '/')
+    const handleRedirect = () => {
+        history.push(getRedirect() || '/')
+    }
+
+    const getRedirect = () => {
+        return new URLSearchParams(props.location.search).get("redirect_uri")
     }
 
     return (
@@ -48,19 +51,19 @@ const Login = (props) => {
         </h1> 
         <h1>Login</h1>
         <form>
-            <label for="emailInput" className="form-label">E-mail</label>
+            <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>E-mail</label>
             <input type="email" className="form-control" id="emailInput" placeholder="name@domain.com"
             onChange={handleEmail}></input>
             
-            <label for="passwordInput" className="form-label">Password</label>
+            <label for="passwordInput" className="form-label" style={{ marginTop: '10px' }}>Password</label>
             <input type="password" className="form-control" id="passwordInput" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
              onChange={handlePassword}></input>
 
          
-            <input type="checkbox" className="form-check-input" id=""/>
-                <label>Keep me logged in</label>
-            <button  type="button" className="btn btn-primary" onClick={handleSubmit}>Log in</button>
-            <p>Don't have an account? <Link to="/signup">Sign up</Link></p>
+            {/*<input type="checkbox" className="form-check-input" id=""/>
+                <label>Keep me logged in</label>*/}
+            <button  type="button" className="btn btn-primary" onClick={handleSubmit} style={{ marginTop: '20px' }}>Log in</button>
+            <p style={{ marginTop: '10px' }}>Don`t have an account? <Link to={`/signup${getRedirect() ? `?redirect_uri=${getRedirect()}` : ''}`}>Sign up</Link></p>
         </form>
         </div>
         <div className="col col-picture">

@@ -53,22 +53,10 @@ const deleteViewById = (req, res) => {
         return res.status(400).json({ error: error.message })
     })
 }
-
-const getUserViews = (req, res) => {
-    const token = req.cookies.view_history;
-    if (token) {
-        View.find({token:token.token}).then((response) => {
-            return res.status(200).json(response)
-        }).catch((error) => {
-            return res.status(200).json({ error: error.message })
-        })
-    }
-}
   
 module.exports = {
     createView,
     getViews,
     getViewById,
-    deleteViewById,
-    getUserViews
+    deleteViewById
 }
