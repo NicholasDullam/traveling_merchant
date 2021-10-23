@@ -8,6 +8,7 @@ const sslRedirect = require('heroku-ssl-redirect');
 var cors = require('cors');
 
 const db = require('./db')
+const io = require('./socket')
 
 // create an express app
 const app = express()
@@ -43,6 +44,7 @@ const favoriteRouter = require('./routes/favoriteRouter')
 const followerRouter = require('./routes/followerRouter')
 const reviewRouter = require('./routes/reviewRouter')
 const viewRouter = require('./routes/viewRouter')
+const socketRouter = require('./routes/socketRouter')
 
 // generate routes
 app.use('/api', userRouter)
@@ -55,6 +57,7 @@ app.use('/api', favoriteRouter)
 app.use('/api', followerRouter)
 app.use('/api', reviewRouter)
 app.use('/api', viewRouter)
+app.use('/api', socketRouter)
 
 // attach non-api requests to client build; redirect non-ssl traffic
 if (process.env.NODE_ENV === 'production') {
