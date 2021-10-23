@@ -16,7 +16,7 @@ const SearchBar = (props) => {
     return (
         <div className="search-bar mx-auto col-md-6 col-lg-4"> 
             <div className="input-group">
-                <input
+                <input style={{ border: 'none' }}
                   className="form-control me-2"
                   type="search"
                   placeholder="Search games"
