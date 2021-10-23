@@ -42,41 +42,41 @@ function App() {
   }, []);
 
   return (
-    <AuthContext.Provider
-    value={{
-      token,
-      user,
-      userId,
-      isLoggedIn,
-      login,
-      logout
-    }}>
-      {/* If (token) to restrict access to routes from unlogged users */}
-    <Router>
-      <Switch>
+      <AuthContext.Provider
+      value={{
+        token,
+        user,
+        userId,
+        isLoggedIn,
+        login,
+        logout
+      }}>
+        {/* If (token) to restrict access to routes from unlogged users */}
+      <Router>
+        <Switch>
 
-      <Route path="/messages" >
-        <Messages/>
-        </Route>
+        <Route path="/messages" >
+          <Messages/>
+          </Route>
 
-      {/* If (token) to restrict access to routes from unlogged users */}
-      { !isLogging ? <Switch>
-          <Route path="/login" component={Login}/>
-          <Route path="/signup" component={Signup}/>
-          <Route path="/profile" component={Profile}/>
-          <Route path="/checkout/:order_id" component={Checkout}/>
-          <Route path="/games/:game_id" component={Game}/>
-          <Route path="/users/:user_id" component={User}/>
-          <Route path="/products/:product_id" component={Product} />
-          <Route path="/games" component={Games}/>
-          <Route path="/admin" component={Admin}/>
-          <Route path="/" component={Home}/>
-          </Switch>
-       : null }
-       </Switch>
-      </Router> :
-    
-    </AuthContext.Provider>
+        {/* If (token) to restrict access to routes from unlogged users */}
+        { !isLogging ? <Switch>
+            <Route path="/login" component={Login}/>
+            <Route path="/signup" component={Signup}/>
+            <Route path="/profile" component={Profile}/>
+            <Route path="/checkout/:order_id" component={Checkout}/>
+            <Route path="/games/:game_id" component={Game}/>
+            <Route path="/users/:user_id" component={User}/>
+            <Route path="/products/:product_id" component={Product} />
+            <Route path="/games" component={Games}/>
+            <Route path="/admin" component={Admin}/>
+            <Route path="/" component={Home}/>
+            </Switch>
+        : null }
+        </Switch>
+        </Router> :
+      
+      </AuthContext.Provider>
   );
 }
 
