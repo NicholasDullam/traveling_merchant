@@ -27,6 +27,9 @@ io.on('connection', (socket) => {
     if (online.indexOf(socket.user.id) != -1) {
         online.push(socket.user.id);
     }
+    io.to(socket.user.id).emit('success', {
+        userid:socket.user.id
+    });
 
     Notification.find({receiver:socket.user.id,seen:false}).then((response) => {
         response.forEach(notif => {
@@ -64,6 +67,20 @@ io.on('connection', (socket) => {
             content:msg.content,
             id:n._id
         });
+    });
+
+    socket.on('online', (user) => {
+        if (online.indexOf(user) != -1) {
+            socket.to(socket.user.id).emit('online', {
+                user:user,
+                online:true
+            })
+        } else {
+            socket.to(socket.user.id).emit('online', {
+                user:user,
+                online:false
+            })
+        }
     });
 
     socket.on('read', (msg) => {
