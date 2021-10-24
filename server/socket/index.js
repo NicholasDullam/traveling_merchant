@@ -5,11 +5,7 @@ const User = require("../models/user")
 var online = [];
 
 const httpServer = require("http").createServer();
-const io = require("socket.io")(httpServer, {
-  cors: {
-    origin: "http://localhost:8000",
-  },
-});
+const io = require("socket.io")(httpServer);
 
 io.use((socket, next) => {
     const token = socket.handshake.auth.token;

@@ -3,7 +3,7 @@ const token_secret = process.env.TOKEN_SECRET;
 const Ip = require('../models/ip');
 const User = require('../models/user')
 
-const isBanned = (req, res, next) => {
+const isBanned = async (req, res, next) => {
 
   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   if (req.user) {
@@ -12,11 +12,12 @@ const isBanned = (req, res, next) => {
       if (user.ips.indexOf(ip) == -1) {
         user.ips.push(ip);
         user.save().then().catch((err) => {
-          console.log(err);
-        })
+          console.log('beep boop:\n' + err);
+        });
       }
       user.ips.forEach(ip => {
         Ip.findOne({ip:ip}).then((doc) => {
+          console.log(doc)
           if (doc) {
             return res.status(400).json({error:'Ip is banned'});
           }
@@ -34,10 +35,11 @@ const isBanned = (req, res, next) => {
         }
         return next()
     }).catch((err) => {
+        console.log("beep boop:\n")
         console.log(err)
     });
   }
-  return next()
+  next()
 }
 
 const auth = async (req, res, next) => {
