@@ -2,7 +2,7 @@ const express = require('express')
 
 const StripeController = require('../controllers/stripeController')
 
-const { auth } = require('../middleware/auth')
+const { auth, isBanned } = require('../middleware/auth')
 
 const router = express.Router()
 

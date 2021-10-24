@@ -15,6 +15,7 @@ const User = new mongoose.Schema({
     admin: Boolean,
     banned: Boolean,
     chatrooms: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
+    ips: [String],
     settings: {
         /* ... */
     }

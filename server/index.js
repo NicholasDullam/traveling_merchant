@@ -45,6 +45,7 @@ const followerRouter = require('./routes/followerRouter')
 const reviewRouter = require('./routes/reviewRouter')
 const viewRouter = require('./routes/viewRouter')
 const socketRouter = require('./routes/socketRouter')
+const ipRouter = require('./routes/ipRouter')
 
 // generate routes
 app.use('/api', userRouter)
@@ -58,6 +59,7 @@ app.use('/api', followerRouter)
 app.use('/api', reviewRouter)
 app.use('/api', viewRouter)
 app.use('/api', socketRouter)
+app.use('/api', ipRouter)
 
 // attach non-api requests to client build; redirect non-ssl traffic
 if (process.env.NODE_ENV === 'production') {
