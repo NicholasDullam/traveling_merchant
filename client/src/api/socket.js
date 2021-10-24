@@ -64,6 +64,9 @@ socket.on('notification', (msg) => {
      *       - create notification pop-up and add to notification list
      *    4: not on chat page and looking at notification drop down
      *       - add notification to list
+     *    5: from self (update the chat, this is for other tabs)
+     * 
+     *    params: to, from, type, content, id
     */
 });
 
