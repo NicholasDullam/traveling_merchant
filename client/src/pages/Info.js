@@ -32,6 +32,7 @@ const Info = (props) => {
     return (
         <div>
             <div style={{ maxWidth: '600px'}}>
+                <h5 style={{ marginBottom: '20px' }}> Account Info </h5>
                 <div style={{ display: 'flex'}}>
                     <div style={{ marginRight: '10px', width: '100%' }}>
                         <label for="usernameInput" className="form-label">First Name</label>

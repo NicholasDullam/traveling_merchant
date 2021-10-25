@@ -32,6 +32,7 @@ const Favorites = (props) => {
 
     return (
         <div>
+            <h5 style={{ marginBottom: '20px' }}> Favorites </h5>
             {
                 favorites.map((favorite, i) => {
                     return <ProductCard key={i} product={favorite.product}/>

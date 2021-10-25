@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import api from '../api'
 import ProductCard from './../components/ProductCard/ProductCard';
 import AuthContext from "../context/auth-context";
+import { Ratings } from "../components";
 
 const Reviews = (props) => {
     const auth = useContext(AuthContext)
@@ -17,14 +18,17 @@ const Reviews = (props) => {
 
     return (
         <div>
+            <h5 style={{ marginBottom: '20px' }}> Reviews </h5>
             {
                 reviews.map((review, i) => {
                     return (
-                        <div style={{ padding: '10px', borderBottom: i < reviews.length - 1 ? '1px solid rgba(0,0,0,.1)' : ''}}>
+                        <div key={i} style={{ padding: '10px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px', cursor: 'pointer' }}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <p style={{ marginBottom: '0px' }}> {review.seller} </p>
-                                <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {review.rating}/5 </p>
+                                <p style={{ marginBottom: '0px', width: '70px', textOverflow: 'ellipsis', overflow: 'hidden' }}> {review._id} </p>
                                 <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {review.content} </p>
+                                <div style={{ marginLeft: 'auto'}}>
+                                    <Ratings count={review.rating}/>
+                                </div>
                             </div>
                         </div>
                     )

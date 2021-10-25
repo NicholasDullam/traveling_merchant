@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useHistory } from "react-router";
 import api from "../api";
 import AuthContext from "../context/auth-context";
 
 
 const Products = (props) => {
     const auth = useContext(AuthContext)
+    const history = useHistory()
     const [products, setProducts] = useState([])
     const [retrievedFavorites, setRetrievedFavorites] = useState(false)
 
@@ -30,15 +32,16 @@ const Products = (props) => {
 
     return (
         <div>
+            <h5 style={{ marginBottom: '20px' }}> Products </h5>
             {
                 products.map((product, i) => {
                     return (
-                        <div style={{ padding: '10px', borderBottom: i < products.length - 1 ? '1px solid rgba(0,0,0,.1)' : ''}}>
+                        <div key={i} style={{ padding: '10px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px', cursor: 'pointer' }} onClick={() => history.push(`/products/${product._id}`)}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <p style={{ marginBottom: '0px' }}> {product._id} </p>
+                                <p style={{ marginBottom: '0px', width: '70px', textOverflow: 'ellipsis', overflow: 'hidden' }}> {product._id} </p>
                                 <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {product.name} </p>
                                 <p style={{ marginBottom: '0px', marginLeft: '20px' }}> ${product.unit_price / 100} </p>
-                                <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {product.favorites} favorites </p>
+                                <p style={{ marginBottom: '0px', marginLeft: 'auto' }}> {product.favorites} favorites </p>
                             </div>
                         </div>
                     )
