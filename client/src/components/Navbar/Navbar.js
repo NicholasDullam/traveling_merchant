@@ -61,31 +61,31 @@ const Navbar = (props) => {
             <img src={auth.user.profile_img} style={{ height: '30px', width: '30px', borderRadius: '50%' }}/>
           </a>
           <ul style={{ transform: 'translateX(-115px) translateY(10px)' }} class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">
-            <Link  to="/profile/info">Account info</Link>
+            <li><a class="dropdown-item">
+            <Link to="/profile/info">Account info</Link>
               </a></li>
-              <li><a class="dropdown-item" href="#">
+              <li><a class="dropdown-item">
             <Link  to="/profile/favorites">Favorites</Link>
               </a></li>
-              <li><a class="dropdown-item" href="#">
+              <li><a class="dropdown-item">
             <Link  to="/profile/reviews">Review</Link>
               </a></li>
-              <li><a class="dropdown-item" href="#">
+              <li><a class="dropdown-item">
             <Link  to="/profile/views">Viewing History</Link>
               </a></li>
-              <li><a class="dropdown-item" href="#">
+              <li><a class="dropdown-item">
             <Link  to="/profile/orders">Orders</Link>
               </a></li>
-              {auth.user.acct_id ? <li><a class="dropdown-item" href="#">
+              {auth.user.acct_id ? <li><a class="dropdown-item">
             <Link  to="/profile/products">Products</Link>
               </a></li> : null }
-              <li><a class="dropdown-item" href="#">
+              <li><a class="dropdown-item">
             <Link  to="/profile/billing">Billing</Link>
               </a></li>
-              <li><a class="dropdown-item" href="#">
+              <li><a class="dropdown-item">
             <Link  to="/profile/preferences">Preferences</Link>
               </a></li>
-              <li onClick={handleLogout}><a class="dropdown-item" href="#">
+              <li onClick={handleLogout}><a class="dropdown-item">
             <Link  to="/">Sign out</Link>
               </a></li>
           </ul>

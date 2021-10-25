@@ -3,7 +3,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import api from './api'
 import "./App.scss";
 
-import { Home, Login, Signup, Product, Checkout, Admin, Game, User, Games } from './pages'
+import { Home, Login, Signup, Product, Checkout, Admin, Game, User, Games, Order } from './pages'
 import AuthContext from "./context/auth-context";
 import Messages from "./pages/Messages";
 import Profile from './pages/Profile';
@@ -51,31 +51,27 @@ function App() {
         login,
         logout
       }}>
-        {/* If (token) to restrict access to routes from unlogged users */}
-      <Router>
-        <Switch>
+        <Router>
+          <Switch>
+            { !isLogging ? <Switch>
+                {/* Do not contain sub-routes */}
+                <Route path="/login" exact component={Login}/>
+                <Route path="/signup" exact component={Signup}/>
+                <Route path="/messages" exact component={Messages}/>
+                <Route path="/games/:game_id" exact component={Game}/>
+                <Route path="/orders/:order_id" exact component={Order}/>
+                <Route path="/orders/:order_id/checkout" exact component={Checkout}/>
+                <Route path="/users/:user_id" exact component={User}/>
+                <Route path="/products/:product_id" exact component={Product}/>
+                <Route path="/games" exact component={Games}/>
 
-        <Route path="/messages" >
-          <Messages/>
-          </Route>
-
-        {/* If (token) to restrict access to routes from unlogged users */}
-        { !isLogging ? <Switch>
-            <Route path="/login" component={Login}/>
-            <Route path="/signup" component={Signup}/>
-            <Route path="/profile" component={Profile}/>
-            <Route path="/checkout/:order_id" component={Checkout}/>
-            <Route path="/games/:game_id" component={Game}/>
-            <Route path="/users/:user_id" component={User}/>
-            <Route path="/products/:product_id" component={Product} />
-            <Route path="/games" component={Games}/>
-            <Route path="/admin" component={Admin}/>
-            <Route path="/" component={Home}/>
-            </Switch>
-        : null }
-        </Switch>
-        </Router> :
-      
+                {/* Contain sub-routes */}
+                <Route path="/profile" component={Profile}/>
+                <Route path="/admin" component={Admin}/>
+                <Route path="/" component={Home}/>
+              </Switch> : null }
+          </Switch>
+        </Router>
       </AuthContext.Provider>
   );
 }

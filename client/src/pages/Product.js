@@ -21,7 +21,7 @@ const Product = (props) => {
         e.stopPropagation()
         if (!auth.isLoggedIn) history.push(`/login?redirect_uri=${props.location.pathname}`)
         api.createOrder({ quantity: Number(quantity) || product.min_quantity, product_id: product._id }).then((response) => {
-            history.push(`/checkout/${response.data._id}`)
+            history.push(`/orders/${response.data._id}/checkout`)
         }).catch((error) => {
             console.log(error)
         })

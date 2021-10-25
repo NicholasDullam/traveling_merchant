@@ -15,6 +15,7 @@ import Billing from './Billing'
 import Reviews from './Reviews'
 import Views from './Views'
 import Orders from './Orders'
+import Order from './Order'
 import Products from './Products'
 
 export { 
@@ -35,5 +36,6 @@ export {
     Reviews,
     Views,
     Orders,
+    Order,
     Products
 }

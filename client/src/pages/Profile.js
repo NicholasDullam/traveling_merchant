@@ -7,7 +7,7 @@ const Tab = (props) => {
     let active = props.location.pathname === props.path
 
     return (
-        <div style={{ padding: '15px', borderRadius: '40px', backgroundColor: active ? '#68B2A0' : '', color: active ? 'white' : '', display: 'flex', marginBottom: '5px', cursor: 'pointer' }} onClick={() => props.handleRouter(props.path)}>
+        <div style={{ padding: '15px', borderRadius: '40px', backgroundColor: active ? '#68B2A0' : '', color: active ? 'white' : '', display: 'flex', marginBottom: '5px', cursor: 'pointer', transition: 'background-color 300ms ease, color 300ms ease', }} onClick={() => props.handleRouter(props.path)}>
             <h5 style={{ marginBottom: '0px' }}> {props.name} </h5>
         </div>
     )
@@ -23,8 +23,8 @@ const Profile = (props) => {
         <Layout navbar>
             <div style={{ marginBottom: '40px', marginTop: '40px' }}>
                 <h1> Profile </h1>
-                <div style={{ display: 'flex', marginTop: '30px', }}>
-                    <div style={{ position: 'sticky', top: '30px', marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', marginTop: '30px' }}>
+                    <div style={{ position: 'sticky', top: '30px', marginRight: '50px', display: 'inline-flex', flexDirection: 'column' }}>
                         <Tab name='Info' handleRouter={handleRouter} location={props.location} path='/profile/info'/>
                         <Tab name='Favorites' handleRouter={handleRouter} location={props.location} path='/profile/favorites'/>
                         <Tab name='Reviews' handleRouter={handleRouter} location={props.location} path='/profile/reviews'/>

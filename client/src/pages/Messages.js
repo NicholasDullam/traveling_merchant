@@ -1,9 +1,15 @@
 import React from 'react'
+import { Layout } from '../components'
 
 const Messages = (props) => {
     return (
-
-        <h1>Messages</h1>
+        <Layout navbar>
+            <h1 style={{ marginTop: '40px' }}> Messages </h1>
+            <div style={{ height: '100%', display: 'flex' }}>
+                <div>
+                </div>
+            </div>
+        </Layout>
     )
 }
 

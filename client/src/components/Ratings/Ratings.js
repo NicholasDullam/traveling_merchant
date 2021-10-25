@@ -36,10 +36,10 @@ const Ratings = (props) => {
 
     let arr = generateStars(count)
 
-    if (props.count) return <div> {arr} </div>
+    if (props.count) return <div style={{ height: '16px' }}> {arr} </div>
 
     return (
-        reviewRating !== null && ratingLoaded ? <div style={{ display: 'flex', alignItems: 'center' }}>
+        reviewRating !== null && ratingLoaded ? <div style={{ display: 'flex', alignItems: 'center', fontSize: '0px' }}>
             <div>
                 {arr}
             </div>

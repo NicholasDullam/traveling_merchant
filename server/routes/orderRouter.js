@@ -14,6 +14,7 @@ router.get('/orders/:_id', auth, OrderController.getOrderById) // get order by i
 router.post('/orders', auth, OrderController.createOrder) // create order
 
 // PUT requests
+router.put('/orders/:_id/verify', auth, OrderController.verifyPurchase)
 router.put('/orders/:_id/deliver', auth, OrderController.deliverOrder) // mark order as delivered
 router.put('/orders/:_id/confirm', auth, OrderController.confirmDelivery) // confirm order delivery
 router.put('/orders/:_id/deny', auth, OrderController.denyDelivery) // deny order deliver
