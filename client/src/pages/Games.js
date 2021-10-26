@@ -20,8 +20,8 @@ const Games = (props) => {
 
     return (
         <Layout navbar>
-            <div style={{ marginTop: '40px', marginBottom: '40px' }}>
-                <h1 style={{ marginBottom: '15px' }}> {!getQuery() ? 'Browse Games' : 'Results'} </h1>
+            <div>
+                <h1 style={{ marginBottom: '20px' }}> {!getQuery() ? 'Browse Games' : 'Results'} </h1>
                 {
                     getQuery() ? <div>
                         { 

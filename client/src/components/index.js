@@ -7,6 +7,7 @@ import Navbar from './Navbar/Navbar'
 import Ratings from './Ratings/Ratings'
 import ViewGallery from './ViewGallery/ViewGallery'
 import ProductCard from './ProductCard/ProductCard'
+import Messenger from './Messenger/Messenger'
 
 export {
     CheckoutInterface,
@@ -17,5 +18,6 @@ export {
     Navbar,
     Ratings,
     ViewGallery,
-    ProductCard
+    ProductCard,
+    Messenger
 }

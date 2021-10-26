@@ -7,7 +7,7 @@ import { ViewGallery } from '../components'
 const Home = (props) => {
     return (
         <Layout navbar>
-            <div style={{ marginTop: '40px', marginBottom: '40px' }}>
+            <div>
                 <div>
                     <h1 style={{ marginBottom: '0px' }}> Games </h1>
                     <a href={'/games'}><h6 style={{ marginBottom: '15px' }}> Browse All </h6></a>

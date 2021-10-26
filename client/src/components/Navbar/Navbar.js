@@ -10,6 +10,7 @@ import $ from 'jquery';
 import Popper from 'popper.js';
 
 import AuthContext from "../../context/auth-context";
+import MessengerContext from "../../context/messenger-context";
 
 import "./Navbar.css";
 import "../Layout/Layout.css"; // reason for this is to get all global variables (colors, font weights, etc...)
@@ -17,6 +18,7 @@ import SearchBar from "../SearchBar/SearchBar";
 import api from "../../api";
 const Navbar = (props) => {
   const auth = useContext(AuthContext);
+  const messenger = useContext(MessengerContext)
 
   const handleLogout = () => {
     api.logout().then((response) => {
@@ -28,7 +30,7 @@ const Navbar = (props) => {
 
   // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
   return (
-    <nav className="navbar navbar-expand-md">
+    <nav className="navbar navbar-expand-md" style={{ position: 'fixed', top: '0px', width: '100%', zIndex: '2' }}>
       <div className="container-fluid" style={{ alignItems: 'center' }}>
         <h1 className="brand" style={{ marginBottom: '8px', marginTop: '-8px', marginLeft: '10px'}}>
           <Link to="/" className="navbar-brand">TM</Link>
@@ -53,8 +55,11 @@ const Navbar = (props) => {
             { auth.user.admin ? <li className="nav-item">
               <Link className="nav-link" to="/admin/users">Admin</Link>
             </li> : null }
-            <li className="nav-item">
-              <Link className="nav-link" to="/messages">Messages</Link>
+            <li className="nav-item" onClick={() => {
+              if (messenger.isOpen) messenger.close()
+              if (!messenger.isOpen) messenger.open()
+            }}>
+              <p style={{ marginBottom: '0px' }} className="nav-link" to="/messages">Messages</p>
             </li>
             <li class="nav-item dropdown" style={{ marginLeft: '20px' }}>
           <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

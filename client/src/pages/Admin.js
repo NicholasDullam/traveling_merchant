@@ -21,8 +21,8 @@ const Admin = (props) => {
 
     return (
         <Layout navbar>
-            <div style={{ marginBottom: '40px', marginTop: '40px' }}>
-                <h1 style={{ marginTop: '40px' }}> Admin </h1>
+            <div>
+                <h1> Admin </h1>
                 <div style={{ display: 'flex', marginTop: '30px', }}>
                     <div style={{ position: 'sticky', top: '30px', marginRight: '30px', display: 'flex', flexDirection: 'column' }}>
                         <Tab name='Users' handleRouter={handleRouter} location={props.location} path='/admin/users'/>

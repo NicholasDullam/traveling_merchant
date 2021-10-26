@@ -21,7 +21,7 @@ const Profile = (props) => {
 
     return (
         <Layout navbar>
-            <div style={{ marginBottom: '40px', marginTop: '40px' }}>
+            <div>
                 <h1> Profile </h1>
                 <div style={{ display: 'flex', marginTop: '30px' }}>
                     <div style={{ position: 'sticky', top: '30px', marginRight: '50px', display: 'inline-flex', flexDirection: 'column' }}>
