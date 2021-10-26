@@ -14,11 +14,11 @@ const Footer = (props) => {
                     </h1>
                 </div>
                 <div class="col">
-                    <p>Games</p>
-                    <p>Escape from Tarkov</p>
+                    <p><b>Games</b></p>
+                    <p>League of Legends</p>
+                    <p>World of Warcraft</p>
                 </div>
             </div>
-            <p> Traveling Merchant. All rights reserved.</p>
         </div>
     )
 

@@ -17,6 +17,7 @@ import Views from './Views'
 import Orders from './Orders'
 import Order from './Order'
 import Products from './Products'
+import Messages from './Messages'
 
 export { 
     Checkout,
@@ -37,5 +38,6 @@ export {
     Views,
     Orders,
     Order,
-    Products
+    Products,
+    Messages
 }

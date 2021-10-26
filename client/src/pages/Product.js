@@ -92,7 +92,7 @@ const Product = (props) => {
 
     return (
         <Layout navbar>
-            { product ? <div style={{ marginTop: '40px', marginBottom: '40px', display: 'flex', position: 'relative', maxWidth: '100%' }}>
+            { product ? <div style={{ display: 'flex', position: 'relative', maxWidth: '100%' }}>
                 <div style={{ width: '50%', height: '100%'}}>
                     <img src={product.media.length ? product.media[0] : null } style={{ height: '600px', width: '80%', backgroundColor: 'grey', borderRadius: '10px' }}/>
                 </div>

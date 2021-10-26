@@ -10,9 +10,9 @@ const createOrder = async (req, res) => {
     if (!product_id) return res.status(400).json({ error: 'No products in order'})
     let product = await Product.findById(product_id)
     if (!product) return res.status(400).json({ error: 'Product not found'})
+    if (quantity > product.stock) return res.status({ error: 'Quantity exceeds stock'})
     if (quantity < product.min_quantity) return res.status(400).json({ error: 'Quantity less than minimum'})
 
-    
     let order = new Order({
         buyer: req.user.id,
         seller: product.user_id,
@@ -96,6 +96,7 @@ const verifyPurchase = async (req, res) => {
     if (order.status !== 'payment_pending') return res.status(400).json({ error: 'Payment already verified' })
     let verified = await verifyPaymentIntent(order.pi_id)
     if (!verified) return res.status(400).json({ error: 'Payment not verified' })
+    await Product.findByIdAndUpdate(order.product_id, { $inc: { stock: `-${order.quantity}`}})
     Order.findByIdAndUpdate(_id, { status: 'delivery_pending' }).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
@@ -115,7 +116,7 @@ const getOrderById = async (req, res) => {
 const getOrders = async (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'limit']
     reserved.forEach((el) => delete query[el])
-    let queryPromise = Order.find(query)
+    let queryPromise = Order.find({ ...query, status: { $ne: 'payment_pending' }})
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))

@@ -72,7 +72,7 @@ const Game = (props) => {
 
     return (
         <Layout navbar>
-            { game ? <div style={{ marginTop: '40px', marginBottom: '40px'}}>
+            { game ? <div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <img src={game.img} style={{ borderRadius: '10px',  height: '192px', width: '144px'  }}/>
                     <div style={{ marginLeft: '40px' }}>

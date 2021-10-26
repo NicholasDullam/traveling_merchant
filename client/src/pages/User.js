@@ -32,7 +32,7 @@ const User = (props) => {
 
     return (
         <Layout navbar>
-            <div style={{ marginTop: '40px', marginBottom: '40px'}}>
+            <div>
                 { user ? <div>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <img src={user.profile_img} style={{ borderRadius: '50%', height: '150px', width: '150px' }}/>
