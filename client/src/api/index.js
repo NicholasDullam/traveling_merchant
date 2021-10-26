@@ -31,6 +31,7 @@ const getPaymentMethods = (customer_id) => connection.get(`/stripe/customers/${c
 const deletePaymentMethod = (pm_id) => connection.delete(`/stripe/payment-methods/${pm_id}`)
 const createFavorite = (payload) => connection.post('/favorites', payload)
 const deleteFavoriteById = (favorite_id) => connection.delete(`/favorites/${favorite_id}`)
+const verifyPurchase = (order_id) => connection.put(`/orders/${order_id}/verify`)
 
 let api = {
     login,
@@ -58,7 +59,8 @@ let api = {
     getPaymentMethods,
     deletePaymentMethod,
     createFavorite,
-    deleteFavoriteById
+    deleteFavoriteById,
+    verifyPurchase
 }
 
 export default api

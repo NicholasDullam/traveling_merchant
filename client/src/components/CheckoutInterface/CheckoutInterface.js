@@ -5,6 +5,11 @@ import AuthContext from "../../context/auth-context"
 import api from '../../api';
 import { Ratings } from '..';
 
+import { ReactComponent as Visa } from '../../images/visa.svg'
+import { ReactComponent as Amex } from '../../images/amex.svg'
+import { ReactComponent as Mastercard } from '../../images/mastercard.svg'
+import { ReactComponent as Discover } from '../../images/discover.svg'
+
 const CheckoutInterface = (props) => {
     const auth = useContext(AuthContext)
 
@@ -20,6 +25,19 @@ const CheckoutInterface = (props) => {
     const [first, setFirst] = useState('')
     const [last, setLast] = useState('')
     const [email, setEmail] = useState('')
+
+    const [paymentMethods, setPaymentMethods] = useState([])
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('')
+    const [savePaymentMethod, setSavePaymentMethod] = useState(false)
+
+    useEffect(() => {
+        api.getPaymentMethods(auth.user.cust_id).then((response) => {
+            if (!response.data.data.length) setPaymentMethods('new')
+            else setPaymentMethods(response.data.data)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }, [])
 
     useEffect(() => {
         if (!auth.user) history.push(`/login?redirect_uri=/checkout/${props.order_id}`)
@@ -60,7 +78,6 @@ const CheckoutInterface = (props) => {
     useEffect(() => {
         if (!product) return null
         api.getUserById(product.user_id).then((response) => {
-            console.log(response.data)
             setSeller(response.data)
         }).catch((error) => {
             console.log(error)
@@ -72,24 +89,53 @@ const CheckoutInterface = (props) => {
         if (!stripe || !elements) return
         
         const result = await stripe.confirmCardPayment(clientSecret, {
-            payment_method: {
+            payment_method: selectedPaymentMethod !== 'new' ? selectedPaymentMethod : {
                 card: elements.getElement(CardElement),
                 billing_details: {
                     name: `${first} ${last}`,
                     email
                 },
             },
-            setup_future_usage: 'off_session'
+            setup_future_usage: savePaymentMethod && selectedPaymentMethod === 'new' ? 'off_session' : ''
         })
 
         if (result.error) {
             console.log(result.error.message)
         } else {
             if (result.paymentIntent.status === 'succeeded') {
-                history.push('/')
+                api.verifyPurchase(props.order._id).then((response) => {
+                    history.push(`/orders/${props.order._id}`)
+                }).catch((error) => {
+                    console.log('Failed to verify purchase')
+                })
             }
         }
     }
+
+    const renderBrand = (brand) => {
+        switch(brand) {
+            case ('visa') : {
+                return <Visa style={{ height: '30px', width: '30px' }}/>
+            }
+
+            case ('mastercard') : {
+                return <Mastercard style={{ height: '30px', width: '30px' }}/>
+            }
+
+            case ('amex') : {
+                return <Amex style={{ height: '30px', width: '30px' }}/>
+            }
+
+            case ('discover') : {
+                return <Discover style={{ height: '30px', width: '20px', width: '30px' }}/>
+            }
+
+            default: {
+                return <Visa/>
+            }
+        }
+    }
+
 
     return (
         <div>
@@ -100,7 +146,7 @@ const CheckoutInterface = (props) => {
                     <h4 style={{ color: 'white', opacity: '.7', marginBottom: '30px' }}> To <span> {seller.first} {seller.last} </span></h4>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <img src={seller.profile_img} style={{ height: '100px', width: '100px', borderRadius: '50%' }}/>
-                        <div style={{ marginLeft: '40px', color: 'white' }}>
+                        <div style={{ marginLeft: '25px', color: 'white' }}>
                             <h3 style={{ marginBottom: '0px' }}> {seller.first} {seller.last} </h3>
                             <Ratings user_id={seller._id}/>
                         </div>
@@ -110,7 +156,7 @@ const CheckoutInterface = (props) => {
             <div style={{ position: 'absolute', left: '50%', width: '50%', minHeight: '100%', padding: '50px'}}>
                 <h3> Order Summary </h3>
                 <div style={{ borderTop: '1px solid rgba(0,0,0,.1)' }}/>
-                { product && game ? <div style={{ padding: '30px', display: 'flex', alignItems: 'center' }}>
+                { product && game ? <div style={{ padding: '30px 0px 30px 0px', display: 'flex', alignItems: 'center', margin: '5px' }}>
                     <img src={product.media.length ? product.media[0] : null} style={{ backgroundColor: 'grey', borderRadius: '5px', width: '60px', height: '60px' }}/>
                     <div style={{ marginLeft: '15px' }}>
                         <p style={{ marginBottom: '0px' }}> { product.name } </p>
@@ -121,28 +167,53 @@ const CheckoutInterface = (props) => {
                     </div>
                     <h5 style={{ marginBottom: '0px', marginLeft: 'auto' }}> ${(props.order.unit_price / 100)* props.order.quantity } </h5>
                 </div> : null }
-                <h6> Checkout </h6>
+                <h5> Checkout </h5>
                 <div style={{ borderTop: '1px solid rgba(0,0,0,.1)' }}/>
-                <div style={{ position: 'relative', padding: '30px'}}>
-                    <div style={{ display: 'flex', marginBottom: '10px' }}>
-                        <div style={{ width: '100%', marginRight: '10px' }}>
-                            <label for="first" className="form-label">First Name</label>
-                            <input value={first} onChange={(e) => setFirst(e.target.value)} type="text" className="form-control" id="first"/> 
+                <h6 style={{ marginTop: '20px', marginBottom: '20px' }}> Select a payment method </h6>
+                <div>
+                    {
+                        paymentMethods.map((paymentMethod, i) => {
+                            return (
+                                <div key={i} style={{ padding: '10px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px', cursor: 'pointer', boxShadow: selectedPaymentMethod === paymentMethod.id ? '0px 0px 0px 1px blue' : '', transition: 'box-shadow 300ms ease' }} onClick={() => setSelectedPaymentMethod(paymentMethod.id)}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        {renderBrand(paymentMethod.card.brand)}
+                                        <p style={{ marginBottom: '0px', marginLeft: '5px' }}> Ending in {paymentMethod.card.last4} </p>
+                                        <p style={{ marginBottom: '0px', marginLeft: 'auto', opacity: '.7', fontSize: '14px' }}> Expires {paymentMethod.card.exp_month}/{paymentMethod.card.exp_year} </p>
+                                    </div>
+                                </div>
+                            )
+                        })
+                    }
+                    <p style={{ textAlign: 'center', color: 'blue', opacity: '.5', margin: '10px 10px 20px 10px', fontSize: '14px', cursor: 'pointer' }} onClick={() => setSelectedPaymentMethod('new')}> Use New Payment Method </p>
+                </div>
+                <div style={{ height: selectedPaymentMethod !== 'new' ? '0px' : '320px', overflow: 'hidden', transition: 'height 300ms ease' }}>
+                    <div style={{ borderTop: '1px solid rgba(0,0,0,.1)' }}/>
+                    <div style={{ position: 'relative', margin: '5px', marginTop: '20px' }}>
+                        <div style={{ display: 'flex', marginBottom: '10px' }}>
+                            <div style={{ width: '100%', marginRight: '10px' }}>
+                                <label for="first" className="form-label">First Name</label>
+                                <input value={first} onChange={(e) => setFirst(e.target.value)} type="text" className="form-control" id="first"/> 
+                            </div>
+                            <div style={{ width: '100%' }}>
+                                <label for="last" className="form-label">Last Name</label>
+                                <input value={last} onChange={(e) => setLast(e.target.value)} type="text" className="form-control" id="last"/> 
+                            </div>
                         </div>
-                        <div style={{ width: '100%' }}>
-                            <label for="last" className="form-label">Last Name</label>
-                            <input value={last} onChange={(e) => setLast(e.target.value)} type="text" className="form-control" id="last"/> 
+                        <div style={{ width: '100%', marginBottom: '10px'  }}>
+                            <label for="email" className="form-label">Email</label>
+                            <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" className="form-control" id="email"/> 
                         </div>
-                    </div>
-                    <div style={{ width: '100%', marginBottom: '10px'  }}>
-                        <label for="email" className="form-label">Email</label>
-                        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" className="form-control" id="email"/> 
-                    </div>
 
-                    <label className="form-label">Card</label>
-                    <div style={{ borderRadius: '5px', padding: '10px', border: '1px solid rgba(0,0,0,.15)' }}>
-                        <CardElement/>
-                    </div>
+                        <label className="form-label">Card</label>
+                        <div style={{ borderRadius: '5px', padding: '10px', border: '1px solid rgba(0,0,0,.15)' }}>
+                            <CardElement/>
+                        </div>
+
+                        <div style={{ marginTop: '20px' }}>
+                            <input type="checkbox" checked={savePaymentMethod} onChange={(e) => setSavePaymentMethod(e.target.checked)} className="form-check-input" /> 
+                            <label className="form-label" style={{ marginLeft: '10px' }}>Save payment method for future use</label>
+                        </div>
+                    </div> 
                 </div>
                 <div style={{ backgroundColor: '#68B2A0', width: '100%', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'}} onClick={handleSubmit}>
                     <h6 style={{ color: 'white', textAlign: 'center', marginBottom: '0px' }}> Place Order </h6>

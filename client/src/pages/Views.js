@@ -9,7 +9,7 @@ const Views = (props) => {
     const [productsLoaded, setProductsLoaded] = useState(false)
 
     useEffect(() => {
-        api.getViews({ params: { user_id: auth.user._id }}).then((response) => {
+        api.getViews({ params: { user_id: auth.user._id, limit: 5 }}).then((response) => {
             setViews(response.data)
         }).catch((error) => {
             console.log(error)
@@ -31,6 +31,7 @@ const Views = (props) => {
 
     return (
         <div>
+            <h5 style={{ marginBottom: '20px' }}> Views </h5>
             {
                 views.map((view, i) => {
                     return <ProductCard key={i} product={view.product}/>

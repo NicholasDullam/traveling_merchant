@@ -45,31 +45,26 @@ const Login = (props) => {
     return (
         <Layout>
             <div className="row">
-            <div className="col">
-        <h1 className="brand">
-          <Link to="/" className="navbar-brand navbar-brand-black">TM</Link>
-        </h1> 
-        <h1>Login</h1>
-        <form>
-            <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>E-mail</label>
-            <input type="email" className="form-control" id="emailInput" placeholder="name@domain.com"
-            onChange={handleEmail}></input>
-            
-            <label for="passwordInput" className="form-label" style={{ marginTop: '10px' }}>Password</label>
-            <input type="password" className="form-control" id="passwordInput" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;"
-             onChange={handlePassword}></input>
+                <div className="col" style={{ padding: '30px'}}>
+                    <h1 className="brand">
+                        <Link to="/" className="navbar-brand navbar-brand-black">TM</Link>
+                    </h1> 
+                    <h1>Login</h1>
+                    <form style={{ maxWidth: '500px' }}>
+                        <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>E-mail</label>
+                        <input type="email" className="form-control" id="emailInput" placeholder="name@domain.com" onChange={handleEmail}/>
+                        
+                        <label for="passwordInput" className="form-label" style={{ marginTop: '10px' }}>Password</label>
+                        <input type="password" className="form-control" id="passwordInput" placeholder="&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;&#9679;" onChange={handlePassword}/>
 
-         
-            {/*<input type="checkbox" className="form-check-input" id=""/>
-                <label>Keep me logged in</label>*/}
-            <button  type="button" className="btn btn-primary" onClick={handleSubmit} style={{ marginTop: '20px' }}>Log in</button>
-            <p style={{ marginTop: '10px' }}>Don`t have an account? <Link to={`/signup${getRedirect() ? `?redirect_uri=${getRedirect()}` : ''}`}>Sign up</Link></p>
-        </form>
-        </div>
-        <div className="col col-picture">
-            <img src={gamer2} className="img-fluid"></img>
+                        <button type="button" className="btn btn-primary" onClick={handleSubmit} style={{ marginTop: '20px' }}>Log in</button>
+                        <p style={{ marginTop: '20px' }}>Don't have an account? <Link to={`/signup${getRedirect() ? `?redirect_uri=${getRedirect()}` : ''}`}>Sign up</Link></p>
+                    </form>
+                </div>
+                <div style={{ width: '50%' }}>
+                    <img src={gamer2} style={{ width: '100%', height: '100%' }}/>
+                </div>
             </div>
-        </div>
         </Layout>
     )
 }

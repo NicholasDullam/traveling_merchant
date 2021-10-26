@@ -11,10 +11,11 @@ import Footer from "../Footer/Footer";
 const Layout = (props) => {
   return (
     <div>
-      {props.navbar?<Navbar />:null}
-      <div className="container">{props.children}</div>
-      <Footer></Footer>
-    
+      <div>
+        { props.navbar ? <Navbar/> : null }
+        <div className="container" style={{ paddingTop: '104px', paddingBottom: '40px', minHeight: 'calc(100vh - 65px)'}}>{props.children}</div>
+      </div>
+      <Footer/>
     </div>
   );
 };

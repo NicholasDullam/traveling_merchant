@@ -47,6 +47,14 @@ const getClientSecret = async (req, res) => {
     })
 }
 
+const verifyPaymentIntent = async (pi_id) => {
+    return stripe.paymentIntents.retrieve(pi_id).then((response) => {
+        return response.status === 'succeeded'
+    }).catch((error) => {
+        return false
+    })
+}
+
 // helper functions
 
 const createPaymentIntentFromOrder = async (order_id, customer_id) => {
@@ -115,5 +123,6 @@ module.exports = {
     createPaymentIntentFromOrder,
     transferToSellerFromOrder,
     getPaymentMethods,
+    verifyPaymentIntent,
     deletePaymentMethod
 }

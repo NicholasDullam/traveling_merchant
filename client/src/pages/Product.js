@@ -21,7 +21,7 @@ const Product = (props) => {
         e.stopPropagation()
         if (!auth.isLoggedIn) history.push(`/login?redirect_uri=${props.location.pathname}`)
         api.createOrder({ quantity: Number(quantity) || product.min_quantity, product_id: product._id }).then((response) => {
-            history.push(`/checkout/${response.data._id}`)
+            history.push(`/orders/${response.data._id}/checkout`)
         }).catch((error) => {
             console.log(error)
         })
@@ -92,7 +92,7 @@ const Product = (props) => {
 
     return (
         <Layout navbar>
-            { product ? <div style={{ marginTop: '40px', marginBottom: '40px', display: 'flex', position: 'relative', maxWidth: '100%' }}>
+            { product ? <div style={{ display: 'flex', position: 'relative', maxWidth: '100%' }}>
                 <div style={{ width: '50%', height: '100%'}}>
                     <img src={product.media.length ? product.media[0] : null } style={{ height: '600px', width: '80%', backgroundColor: 'grey', borderRadius: '10px' }}/>
                 </div>
