@@ -17,7 +17,6 @@ const isBanned = async (req, res, next) => {
       }
       user.ips.forEach(ip => {
         Ip.findOne({ip:ip}).then((doc) => {
-          console.log(doc)
           if (doc) {
             return res.status(400).json({error:'Ip is banned'});
           }
@@ -33,7 +32,6 @@ const isBanned = async (req, res, next) => {
         if (doc) {
             return res.status(400).json({error:'Ip is banned'});
         }
-        return next()
     }).catch((err) => {
         console.log("beep boop:\n")
         console.log(err)
