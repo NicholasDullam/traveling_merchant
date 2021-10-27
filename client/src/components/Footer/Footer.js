@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import '../Footer/Footer.css'
+import { ReactComponent as Logo } from '../../images/logo.svg'
 
 const Footer = (props) => {
 
@@ -9,8 +10,10 @@ const Footer = (props) => {
         <div className="footer" style={{ padding: '40px' }}>   
             <div clas="row">
                 <div class="col">
-                    <h1 className="brand">
-                        <Link to="/" className="navbar-brand">TM</Link>
+                    <h1>
+                        <Link to="/">
+                            <Logo style={{ width: '65px', marginBottom: '15px' }}/>
+                        </Link>
                     </h1>
                 </div>
                 <div class="col">

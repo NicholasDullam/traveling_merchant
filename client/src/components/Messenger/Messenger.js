@@ -1,6 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { AiOutlinePlus } from 'react-icons/ai'
 import { useLocation } from 'react-router'
+import AuthContext from '../../context/auth-context'
 import MessengerContext from '../../context/messenger-context'
+import { socket, connect } from '../../socket'
 
 const Thread = (props) => {
     return (
@@ -16,7 +19,21 @@ const Messenger = (props) => {
     const [currentThread, setCurrentThread] = useState('')
 
     const messenger = useContext(MessengerContext)
+    const auth = useContext(AuthContext)
+
     const location = useLocation()
+
+    useEffect(() => {
+        socket.on('success', (res) => {
+            messenger.connect()
+        })
+
+        socket.on('error', (res) => {
+            console.log(res)
+        })
+
+        connect(auth.token)
+    }, [])
 
     useEffect(() => {
         if (messenger.isOpen) {
@@ -77,20 +94,33 @@ const Messenger = (props) => {
                                 <Thread user_id={'testing'} active={currentThread === 'testing'} onClick={setCurrentThread} src={'https://static01.nyt.com/images/2021/07/08/science/08TB-OTTERS1/08TB-OTTERS1-mobileMasterAt3x.jpg'}/> 
                             </div>
                         </div>
-                        <div style={{ height: '100%', width: '100%', borderLeft: '1px solid rgba(255,255,255,.3)'}}>
-                            <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(255, 255, 255, .3)', padding: '15px 10px 10px 10px' }}>
+                        <div style={{ height: '100%', width: '100%', borderLeft: '1px solid rgba(255,255,255,.3)', position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(255, 255, 255, .3)', padding: '15px 10px 10px 10px', height: 'auto' }}>
                                 <img src={'https://static01.nyt.com/images/2021/07/08/science/08TB-OTTERS1/08TB-OTTERS1-mobileMasterAt3x.jpg'} style={{ height: '40px', width: '40px', borderRadius: '50%' }} />
                                 <div style={{ marginLeft: '10px' }}>
                                     <h5 style={{ color: 'white', marginBottom: '0px' }}> Nicholas Dullam </h5>
                                     <h6 style={{ color: 'white', opacity: '.7', marginBottom: '0px' }}> Active</h6>
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'end', height: 'calc(100% - 50px)', padding: '20px 20px 20px 20px' }}>
-                                <div style={{ display: 'flex' }}>
-                                    <p style={{ maxWidth: '200px', backgroundColor: 'grey', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 25px 5px' }}> Testing</p>
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'end' }}>
-                                    <p style={{ maxWidth: '200px', backgroundColor: '#68B2A0', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 5px 25px' }}> Testing</p>
+                            <div style={{ height: '100%', overflow: 'hidden' }}>
+                                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', padding: '20px 20px 0px 20px' }}>
+                                    <div style={{ marginBottom: '20px',  overflowY: 'scroll' }}>
+                                        <div style={{ display: 'flex' }}>
+                                            <p style={{ maxWidth: '200px', backgroundColor: 'grey', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 25px 5px' }}> Testing</p>
+                                        </div>
+                                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                                            <div>
+                                                <p style={{ maxWidth: '200px', backgroundColor: '#68B2A0', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 5px 25px' }}> Testing</p>
+                                                <p style={{ maxWidth: '200px', color: 'white', margin: '3px', fontSize: '12px', borderRadius: '25px 25px 5px 25px', textAlign: 'end' }}> Read </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style={{ width: '100%', display: 'flex' }}>
+                                        <div style={{ borderRadius: '50%', minWidth: '36px', minHeight: '36px', backgroundColor: 'white', marginRight: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+                                            <AiOutlinePlus/>
+                                        </div>
+                                        <input className="form-control" placeholder={'Send Message'} style={{ border: 'none' }}/>
+                                    </div>
                                 </div>
                             </div>
                         </div>
