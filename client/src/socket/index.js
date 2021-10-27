@@ -3,9 +3,6 @@ import { io } from "socket.io-client";
 // URL of server
 const URL = "http://localhost:8000";
 const socket = io(URL, { autoConnect: false });
-var connected = false;
-var user;
-var uonline = [];
 
 function connect(token) {
     socket.auth = token;
@@ -14,38 +11,24 @@ function connect(token) {
 
 // id is message id
 function read(id) {
-    if (connected) {
-        socket.emit('read', {
-            id:id
-        });
-    } else {
-        console.log("Not connected.");
-    }
+    socket.emit('read', { id })
 }
 
 // id is requested user's id
 function online(id) {
-    if (connected) {
-        socket.emit('online', id);
-    } else {
-        console.log("Not connected.");
-    }
+    socket.emit('online', { id });
 }
 
-function message(to, type, content) {
-    if (connected) {
-        socket.emit({
-            to:to,
-            from:user,
-            type:type,
-            content:content
-        })
-    } else {
-        console.log("Not connected.");
-    }
+function message(to, from, type, content) {
+    socket.emit({
+        to,
+        from,
+        type,
+        content
+    })
 }
 
-socket.on('connect_error', (err) => {
+/*socket.on('connect_error', (err) => {
     console.log(err);
 });
 
@@ -65,9 +48,9 @@ socket.on('notification', (msg) => {
      *    4: not on chat page and looking at notification drop down
      *       - add notification to list
     */
-});
+//});
 
-socket.on('online', (res) => {
+/*socket.on('online', (res) => {
     var i = uonline.indexOf(res.user);
     if (i !== -1 && res.online === false) {
         uonline.splice(i, 1);
@@ -79,4 +62,12 @@ socket.on('online', (res) => {
 socket.on('success', (res) => {
     connected = true;
     user = res.userid;
-});
+});*/
+
+export {
+    socket,
+    connect,
+    read,
+    online,
+    message
+}

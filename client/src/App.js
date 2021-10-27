@@ -10,12 +10,16 @@ import Profile from './pages/Profile';
 import MessengerContext from "./context/messenger-context";
 
 function App() {
+  // Auth attributes
   const [token, setToken] = useState(null)
   const [user, setUser] = useState(null)
   const [userId, setUserId] = useState(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLogging, setIsLogging] = useState(true)
+
+  // Messenger attributes
   const [messengerOpen, setMessengerOpen] = useState(false)
+  const [isConnected, setIsConnected] = useState(false)
 
   const login = useCallback((token, user) => {
       setToken(token)
@@ -54,6 +58,10 @@ function App() {
       }}>
         <MessengerContext.Provider value={{
           isOpen: messengerOpen,
+          isConnected,
+          connect: () => {
+            setIsConnected(true)
+          },
           open: () => {
             setMessengerOpen(true)
           },
