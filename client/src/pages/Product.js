@@ -5,6 +5,7 @@ import Layout from '../components/Layout/Layout'
 import Ratings from '../components/Ratings/Ratings'
 import AuthContext from '../context/auth-context'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
+import MessengerContext from '../context/messenger-context'
 
 const Product = (props) => {
     const [user, setUser] = useState(null)

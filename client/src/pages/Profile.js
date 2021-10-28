@@ -1,7 +1,7 @@
 import React from 'react'
 import { Layout } from '../components'
 import { useHistory, Switch, Route } from "react-router-dom";
-import { AdminUsers, Favorites, Info, Orders, Reviews, Views, Products, Billing, Preferences } from '.';
+import { Favorites, Info, Orders, Reviews, Views, Products, Billing, Preferences } from '.';
 
 const Tab = (props) => {
     let active = props.location.pathname === props.path
@@ -15,6 +15,7 @@ const Tab = (props) => {
 
 const Profile = (props) => {
     const history = useHistory()
+
     const handleRouter = (pathname) => {
         history.push(pathname)
     }

@@ -19,6 +19,10 @@ function App() {
 
   // Messenger attributes
   const [messengerOpen, setMessengerOpen] = useState(false)
+  const [messengerThread, setMessengerThread] = useState(null)
+  const [messengerThreadId, setMessengerThreadId] = useState(null)
+  const [messengerThreads, setMessengerThreads] = useState([])
+  const [messengerMessages, setMessengerMessages] = useState({})
   const [isConnected, setIsConnected] = useState(false)
 
   const login = useCallback((token, user) => {
@@ -46,6 +50,17 @@ function App() {
     })
   }, []);
 
+  const setActiveThreadId = (thread_id) => {
+    let active = messengerThreads.find((thread) => thread.user._id === thread_id)
+    setMessengerThread(active)
+    setMessengerThreadId(active.user._id)
+  }
+
+  const setActiveThread = (thread) => {
+    setMessengerThread(thread)
+    setMessengerThreadId(thread.user._id)
+  }
+
   return (
       <AuthContext.Provider
       value={{
@@ -59,18 +74,29 @@ function App() {
         <MessengerContext.Provider value={{
           isOpen: messengerOpen,
           isConnected,
+          threads: messengerThreads,
+          activeThread: messengerThread,
+          activeThreadId: messengerThreadId,
+          messages: messengerMessages,
           connect: () => {
             setIsConnected(true)
           },
-          open: () => {
+          open: (thread_id) => {
             setMessengerOpen(true)
+            if (thread_id) {
+              setActiveThreadId(thread_id)
+            }
           },
           close: () => {
             setMessengerOpen(false)
-          }
+          },
+          setActiveThread: setActiveThread,
+          setActiveThreadId: setActiveThreadId,
+          setThreads: setMessengerThreads,
+          setMessages: setMessengerMessages
         }}>
           <Router>
-            <Messenger/>
+            { isLoggedIn ? <Messenger/> : null }
             <Switch>
               { !isLogging ? <Switch>
                   {/* Do not contain sub-routes */}
