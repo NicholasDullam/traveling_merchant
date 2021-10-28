@@ -1,4 +1,6 @@
 const Ip = require('../models/ip');
+const User = require('../models/user')
+var ips = [];
 
 const addBanned = (req, res) => {
     let {ip} = req.body;
@@ -13,6 +15,13 @@ const addBanned = (req, res) => {
     newIp.save().then().catch((err) => {
         return res.status(400).json(err);
     });
+    ips.push(ip);
+    User.find({ips:ip}).then((users) => {
+        users.forEach((el) => {
+            el.banned = true;
+            el.save().then().catch();
+        })
+    })
 }
 
 const removeBanned = (req, res) => {
@@ -22,9 +31,31 @@ const removeBanned = (req, res) => {
     Ip.findOneAndDelete({ip:ip}).then().catch((err) => {
         return res.status(400).json(err);
     });
+    var i = ips.indexOf(ip);
+    if (i != -1) {
+        ips.splice(i, 1);
+    }
+    User.find({ips:ip}).then((users) => {
+        users.forEach((el) => {
+            el.banned = false;
+            el.save().then().catch();
+        })
+    })
+}
+
+const init = (req, res) => {
+    var i = 0;
+    Ip.find().then((ip) => {
+        ip.forEach((el) => {
+            ips[i] = el.ip;
+            i++;
+        })
+    })
 }
 
 module.exports = {
     addBanned,
-    removeBanned
+    removeBanned,
+    init,
+    ips
 }
