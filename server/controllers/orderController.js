@@ -114,11 +114,12 @@ const getOrderById = async (req, res) => {
 }
 
 const getOrders = async (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'limit']
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
     reserved.forEach((el) => delete query[el])
     let queryPromise = Order.find({ ...query, status: { $ne: 'payment_pending' }})
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
+    if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
 
     queryPromise.then((response) => {

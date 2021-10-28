@@ -23,12 +23,13 @@ const createView = async (req, res) => {
 }
 
 const getViews = (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'limit']
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
     if (req.cookies.view_history && !req.user.id) query.token = req.cookies.view_history
     reserved.forEach((el) => delete query[el])
     let queryPromise = View.find(query)
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
+    if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
 
     queryPromise.then((response) => {
