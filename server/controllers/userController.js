@@ -27,11 +27,12 @@ const createUser = async (req, res) => {
 }
 
 const getUsers = async (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'limit']
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
     reserved.forEach((el) => delete query[el])
     let queryPromise = User.find(query)
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
+    if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
 
     queryPromise.then((response) => {
