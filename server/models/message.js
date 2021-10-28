@@ -7,7 +7,7 @@ const Message = new mongoose.Schema({
     from: { type: mongoose.Types.ObjectId, ref:'User' },
     content: String,
     attachments: [ String ],
-    read: Boolean,
+    read: { type: Boolean, default: false },
     read_at: Date
 }, {
     timestamps: {

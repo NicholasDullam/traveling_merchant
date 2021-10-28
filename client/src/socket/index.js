@@ -1,10 +1,45 @@
 import { io } from "socket.io-client";
 
-// URL of server
-const URL = "http://localhost:8000";
-const socket = io(URL, { autoConnect: false });
+class Socket {
+    constructor(token) {
+        this.token = token
+        this.url = 'http://localhost:8000'
+        this.socket = io(this.url, { autoConnect: false, auth: { token } })
+    }
 
-function connect(token) {
+    connect () {
+        this.socket.connect()
+    }
+
+    on (event, listener) {
+        this.socket.on(event, listener)
+    }
+
+    emit (event, args) {
+        this.socket.emit(event, args)
+    }
+
+    read (id) {
+        this.socket.emit('read', { id })
+    }
+
+    online (id) {
+        this.socket.emit('online', { id });
+    }
+
+    message (to, from, type, content) {
+        this.socket.emit('message', {
+            to,
+            from,
+            type,
+            content
+        })
+    }
+}
+
+export default Socket
+
+/*function connect(token) {
     socket.auth = token;
     socket.connect();
 };
@@ -27,7 +62,7 @@ function message(to, from, type, content) {
         content
     })
 }
-
+*/
 /*socket.on('connect_error', (err) => {
     console.log(err);
 });
@@ -63,11 +98,3 @@ socket.on('success', (res) => {
     connected = true;
     user = res.userid;
 });*/
-
-export {
-    socket,
-    connect,
-    read,
-    online,
-    message
-}

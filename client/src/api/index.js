@@ -32,6 +32,7 @@ const deletePaymentMethod = (pm_id) => connection.delete(`/stripe/payment-method
 const createFavorite = (payload) => connection.post('/favorites', payload)
 const deleteFavoriteById = (favorite_id) => connection.delete(`/favorites/${favorite_id}`)
 const verifyPurchase = (order_id) => connection.put(`/orders/${order_id}/verify`)
+const getMessageThreads = (req) => connection.get(`/messages/threads`, req)
 
 let api = {
     login,
@@ -60,7 +61,8 @@ let api = {
     deletePaymentMethod,
     createFavorite,
     deleteFavoriteById,
-    verifyPurchase
+    verifyPurchase,
+    getMessageThreads
 }
 
 export default api

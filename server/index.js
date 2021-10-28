@@ -4,10 +4,9 @@ var dotenv = require('dotenv').config()
 const express = require('express');
 const cookieParser = require('cookie-parser')
 const sslRedirect = require('heroku-ssl-redirect');
-var cors = require('cors');
-
+const http = require("http");
 const db = require('./db')
-const io = require('./socket')
+var cors = require('cors');
 
 // create an express app
 const app = express()
@@ -45,6 +44,7 @@ const reviewRouter = require('./routes/reviewRouter')
 const viewRouter = require('./routes/viewRouter')
 const socketRouter = require('./routes/socketRouter')
 const ipRouter = require('./routes/ipRouter')
+const messageRouter = require('./routes/messageRouter')
 
 // generate routes
 app.use('/api', userRouter)
@@ -59,6 +59,7 @@ app.use('/api', reviewRouter)
 app.use('/api', viewRouter)
 app.use('/api', socketRouter)
 app.use('/api', ipRouter)
+app.use('/api', messageRouter)
 
 // attach non-api requests to client build; redirect non-ssl traffic
 if (process.env.NODE_ENV === 'production') {
@@ -69,5 +70,19 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-// start the server listening for requests
-app.listen(port, () => console.log(`Server running on port ${port}`));
+let server = http.createServer(app)
+let io = require('socket.io')(server, {
+    cors: {
+        origin: process.env.NODE_ENV === 'production' ? process.env.ORIGIN || '*' : 'http://localhost:3000' || '*',
+        transports: ['websocket', 'polling'],
+        methods: ['GET', 'POST'],
+        credentials: true  
+    },
+    allowEIO3: true 
+})
+
+require('./socket')(io)
+
+server.listen(port, () => console.log(`Server running on port ${port}`));
+
+module.exports = io
