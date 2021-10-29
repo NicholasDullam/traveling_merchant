@@ -6,6 +6,7 @@ const { createCustomer } = require('./stripeController')
 // assume req has seller_id, customer_id, first and last name, email, password, admin status, profile_img, and settings
 const createUser = async (req, res) => {
     let { email, first, last, password, admin } = req.body
+    if (!email || !first || !last || !password) return res.status(400).json({ error: "Invalid input"})
     let existing = await User.find({ email })
     if (existing.length) return res.status(500).json({ error: "USER EXISTS WITH THAT EMAIL"})
     const user = new User({ email, first, last, admin })
@@ -26,11 +27,12 @@ const createUser = async (req, res) => {
 }
 
 const getUsers = async (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'limit']
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
     reserved.forEach((el) => delete query[el])
     let queryPromise = User.find(query)
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
+    if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
 
     queryPromise.then((response) => {

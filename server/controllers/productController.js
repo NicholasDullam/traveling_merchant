@@ -3,6 +3,7 @@ const User = require('../models/user')
 
 const createProduct = async (req, res) => {
     let { name, type, delivery_type, delivery_speed, description, unit_price, min_quantity, stock, game_id } = req.body
+    if (!name || !type || !delivery_type || !delivery_speed || !description || !unit_price || !min_quantity || !stock || !game_id) return res.status(400).json({ error: "Invalid input"})
     let product = new Product({
         user_id: req.user.id,
         game_id,
@@ -24,11 +25,12 @@ const createProduct = async (req, res) => {
 }
 
 const getProducts = (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'limit']
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
     reserved.forEach((el) => delete query[el])
     let queryPromise = Product.find(query)
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
+    if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
 
     queryPromise.then((response) => {

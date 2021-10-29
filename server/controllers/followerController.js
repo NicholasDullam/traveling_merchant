@@ -2,6 +2,7 @@ const Follower = require("../models/follower");
 
 const createFollower = async (req, res) => {
     let { following } = req.body;
+    if (!following) return res.status(400).json({ error: "Invalid input"})
     const follower = new Follower({ follower: req.user.id, following })
     follower.save().then((response) => {
         return res.status(200).json(response)
@@ -11,11 +12,12 @@ const createFollower = async (req, res) => {
 }
 
 const getFollowers = (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'limit']
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
     reserved.forEach((el) => delete query[el])
     let queryPromise = Follower.find(query)
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
+    if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
 
     queryPromise.then((response) => {
@@ -47,6 +49,6 @@ module.exports = {
     createFollower,
     getFollowers,
     getFollowerById,
-    deleteFollowerById,
+    deleteFollowerById
     
 }

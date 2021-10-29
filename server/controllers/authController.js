@@ -6,6 +6,7 @@ const token_secret = process.env.TOKEN_SECRET;
 //assume req has email and password
 const login = async (req, res) => {
     let { email, password } = req.body
+    if (!email || !password) return res.status(400).json({ error: "Invalid input"})
 
     const user = await User.findOne({ email })
     if (!user) return res.status(400).json({ error: 'Account not found'})

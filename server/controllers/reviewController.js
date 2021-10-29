@@ -5,6 +5,7 @@ const Order = require("../models/order")
 // Assume request has user's email, the sellers email, the rating, and the content
 const addReview = async (req, res) => {
     let { seller, rating, content } = req.body;
+    if (!seller || !rating || !content) return res.status(400).json({ error: "Invalid input"})
     const review = new Review({ reviewer: req.user.id, seller, rating, content });
     let order = await Order.findOne({ buyer: req.user.id, seller })
     if (order) review.verified = true
@@ -16,11 +17,12 @@ const addReview = async (req, res) => {
 }
 
 const getReviews = (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'limit']
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
     reserved.forEach((el) => delete query[el])
     let queryPromise = Review.find(query)
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
+    if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
 
     queryPromise.then((response) => {

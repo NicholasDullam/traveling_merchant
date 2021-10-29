@@ -5,12 +5,14 @@ import Layout from '../components/Layout/Layout'
 import Ratings from '../components/Ratings/Ratings'
 import AuthContext from '../context/auth-context'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
-import { FaCoins } from 'react-icons/fa'
+
+import MessengerContext from '../context/messenger-context'
 
 const Product = (props) => {
     const [user, setUser] = useState(null)
     const [product, setProduct] = useState(null)
     const [favorited, setFavorited] = useState(null)
+    const [reviews, setReviews] = useState([])
     const [quantity, setQuantity] = useState('')
     const auth = useContext(AuthContext)
     const { product_id } = useParams()
@@ -21,7 +23,7 @@ const Product = (props) => {
         e.stopPropagation()
         if (!auth.isLoggedIn) history.push(`/login?redirect_uri=${props.location.pathname}`)
         api.createOrder({ quantity: Number(quantity) || product.min_quantity, product_id: product._id }).then((response) => {
-            history.push(`/checkout/${response.data._id}`)
+            history.push(`/orders/${response.data._id}/checkout`)
         }).catch((error) => {
             console.log(error)
         })
@@ -65,6 +67,15 @@ const Product = (props) => {
         })
     }, [product])
 
+    useEffect(() => {
+        if (!user) return
+        api.getReviews({ params: { seller: user._id }}).then((response) => {
+            setReviews(response.data)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }, [user])
+
     const handleFavorite = () => {
         api.createFavorite({ product_id }).then((response) => {
             setFavorited(true)
@@ -94,7 +105,7 @@ const Product = (props) => {
 
     return (
         <Layout navbar>
-            { product ? <div style={{ marginTop: '40px', marginBottom: '40px', display: 'flex', position: 'relative', maxWidth: '100%' }}>
+            { product ? <div style={{ display: 'flex', position: 'relative', maxWidth: '100%' }}>
                 <div style={{ width: '50%', height: '100%'}}>
                     <img src={product.media.length ? product.media[0] : null } style={{ height: '600px', width: '80%', backgroundColor: 'grey', borderRadius: '10px' }}/>
                 </div>
@@ -129,6 +140,18 @@ const Product = (props) => {
                                 </div>
                             </div>
                         </div> 
+                        <div style={{ borderTop: '1px solid rgba(0,0,0,.1)', margin: '20px 0px 20px 0px' }}/>
+                        <h4> Seller Reviews </h4>
+                        {
+                            reviews.map((review) => {
+                                return (
+                                    <div style={{ display: 'flex', marginBottom: '15px', alignItems: 'center'}}>
+                                        <Ratings count={review.rating}/>
+                                        <h6 style={{ marginBottom: '-3px' , marginLeft: '10px'}}> {review.content} </h6>
+                                    </div>
+                                )
+                            })
+                        }
                     </div> : null }
             
                 </div>

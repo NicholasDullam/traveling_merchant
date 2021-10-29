@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {Link, useParams} from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import api from '../api'
 import Layout from '../components/Layout/Layout'
 import ProductCard from '../components/ProductCard/ProductCard'
 import Ratings from '../components/Ratings/Ratings'
 import AuthContext from '../context/auth-context'
-import ProfileIcon from '../images/profile_icon.png'
+import MessengerContext from '../context/messenger-context'
 
 const User = (props) => {
     const [user, setUser] = useState(null)
     const [products, setProducts] = useState([])
     const auth = useContext(AuthContext)
+    const messenger = useContext(MessengerContext)
     const { user_id } = useParams()
 
     useEffect(() => {
@@ -30,9 +31,13 @@ const User = (props) => {
         })
     }, [user])
 
+    const handleMessage = () => {
+        messenger.open(user_id)
+    }
+
     return (
         <Layout navbar>
-            <div style={{ marginTop: '40px', marginBottom: '40px'}}>
+            <div>
                 { user ? <div>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <img src={user.profile_img} style={{ borderRadius: '50%', height: '150px', width: '150px' }}/>
@@ -42,7 +47,7 @@ const User = (props) => {
                                 <Ratings user_id={user._id}/>
                             </div>
                         </div>
-                        <button className="btn btn-primary" style={{ marginLeft: 'auto' }}> Message </button>
+                        <button className="btn btn-primary" style={{ marginLeft: 'auto' }} onClick={handleMessage}> Message </button>
                     </div>
                     <div style={{ borderTop: '1px solid rgba(0,0,0,.1)', marginTop: '30px', marginBottom: '30px'}}/>
                     <h3> Products </h3>

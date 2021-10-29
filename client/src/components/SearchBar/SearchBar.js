@@ -14,9 +14,9 @@ const SearchBar = (props) => {
     }
 
     return (
-        <div className="search-bar mx-auto col-md-6 col-lg-4"> 
+        <div className="search-bar col-md-6 col-lg-4" style={{ marginLeft: '10%' }}> 
             <div className="input-group">
-                <input
+                <input style={{ border: 'none' }}
                   className="form-control me-2"
                   type="search"
                   placeholder="Search games"

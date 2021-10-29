@@ -2,7 +2,7 @@ const express = require('express')
 
 const ViewController = require('../controllers/viewController')
 
-const { auth, getUserFromToken } = require('../middleware/auth')
+const { getUserFromToken } = require('../middleware/auth')
 
 const router = express.Router()
 

@@ -16,7 +16,7 @@ const ProductCard = (props) => {
         if (!auth.isLoggedIn) history.push(`/login?redirect_uri=${location.pathname}`)
         api.createOrder({ quantity: props.product.min_quantity, product_id: props.product._id }).then((response) => {
             console.log(response.data._id)
-            history.push(`/checkout/${response.data._id}`)
+            history.push(`/orders/${response.data._id}/checkout`)
         }).catch((error) => {
             console.log(error)
         })
