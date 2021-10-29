@@ -21,10 +21,13 @@ const Messenger = (props) => {
     const [socket, setSocket] = useState(null)
     const [rendered, setRendered] = useState(false)
     const [backdrop, setBackdrop] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [scrollPosition, setScrollPosition] = useState(true)
     const [content, setContent] = useState('')
 
     const messenger = useContext(MessengerContext)
     const messengerRef = useRef(messenger)
+    const messageList = useRef()
     const auth = useContext(AuthContext)
 
     const location = useLocation()
@@ -37,11 +40,16 @@ const Messenger = (props) => {
         })  
     }
 
+    // handler for message_received event
     const messageReceivedHandler = (message) => {
         messenger.setMessages((messages) => {
             let updated = messages[message.from] ? [...messages[message.from], message] : [message]
             return { ...messages, [message.from]: updated }
         })  
+
+        if (messengerRef.current.activeThreadId === message.from) {
+            //socket.read(message._id)
+        }
     }
 
     // socket initialization
@@ -71,6 +79,25 @@ const Messenger = (props) => {
         messengerRef.current = messenger
     }, [messenger])
 
+    // reset scroll on new message
+    useEffect(() => {
+        if (scrollPosition) messageList.current.scrollTop = messageList.current.scrollHeight
+    }, [messenger.messages])
+
+    // load messages for active thread
+    useEffect(() => {
+        if (!messenger.activeThreadId || !messenger.isOpen || messenger.activeThread.loaded || loading) return
+        setLoading(true)
+        api.getMessagesFromThread(messenger.activeThreadId).then((response) => {
+            socket.emit('read_all', { thread_id: messenger.activeThreadId })
+            updateThread(messenger.activeThreadId, { ...messenger.activeThread, unread: 0, loaded: true })
+            addMessages(messenger.activeThreadId, response.data)
+            setLoading(false)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }, [messenger.activeThreadId, messenger.isOpen, loading])
+
     // updates messenger state on location change
     useEffect(() => {
         messenger.close()
@@ -97,8 +124,21 @@ const Messenger = (props) => {
 
     // actions
     const message = () => {
-        console.log(messenger)
         if (content !== '') socket.message(messenger.activeThreadId, auth.userId, 'test', content)
+    }
+
+    const updateThread = (thread_id, new_thread) => {
+        let threads = messenger.threads
+        let old_thread_index = threads.findIndex((thread) => thread.user._id === thread_id)
+        threads[old_thread_index] = { ...new_thread }
+        if (thread_id === messenger.activeThreadId) messenger.setActiveThread(new_thread)
+    }
+
+    const addMessages = (thread_id, new_messages) => {
+        let messages = { ...messenger.messages }
+        let thread_messages = messages[thread_id]
+        messages[thread_id] = thread_messages ? [...thread_messages, ...new_messages] : [...new_messages]
+        messenger.setMessages(messages)
     }
 
     return (
@@ -142,10 +182,10 @@ const Messenger = (props) => {
                             </div>
                             <div style={{ height: '100%', overflow: 'hidden', position: 'relative' }}>
                                 <div style={{ position: 'absolute', backgroundImage: 'linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0))', top: '0px', left: 'auto', height: '15px', width: '100%'}}/>
-                                <div style={{ position: 'absolute', backgroundImage: 'linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0))', bottom: '56px', left: 'auto', height: '15px', width: '100%'}}/>
+                                <div style={{ position: 'absolute', backgroundImage: 'linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0))', bottom: '46px', left: 'auto', height: '15px', width: '100%'}}/>
                                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', padding: '0px 0px 0px 20px' }}>
-                                    <div style={{ marginBottom: '30px',  overflowY: 'scroll' }}>
-                                        <div style={{ marginTop: '15px' }}>
+                                    <div onScroll={(event) => setScrollPosition(event.target.scrollHeight - event.target.scrollTop === event.target.clientHeight)} ref={messageList} style={{ marginBottom: '10px',  overflowY: 'scroll' }}>
+                                        <div style={{ marginTop: '15px', marginBottom: '15px' }}>
                                             {
                                                 messenger.messages[messenger.activeThreadId] ? messenger.messages[messenger.activeThreadId].map((message, i) => {
                                                     if (message.from === auth.userId) {

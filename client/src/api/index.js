@@ -33,6 +33,7 @@ const createFavorite = (payload) => connection.post('/favorites', payload)
 const deleteFavoriteById = (favorite_id) => connection.delete(`/favorites/${favorite_id}`)
 const verifyPurchase = (order_id) => connection.put(`/orders/${order_id}/verify`)
 const getMessageThreads = (req) => connection.get(`/messages/threads`, req)
+const getMessagesFromThread = (thread_id) => connection.get(`/messages/threads/${thread_id}`)
 
 let api = {
     login,
@@ -62,7 +63,8 @@ let api = {
     createFavorite,
     deleteFavoriteById,
     verifyPurchase,
-    getMessageThreads
+    getMessageThreads,
+    getMessagesFromThread
 }
 
 export default api
