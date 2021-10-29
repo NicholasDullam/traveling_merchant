@@ -5,6 +5,7 @@ var mongoose = require('mongoose');
 const Follower = new mongoose.Schema({
     follower: { type:mongoose.Types.ObjectId, ref: 'User' },
     following: { type:mongoose.Types.ObjectId, ref: 'User' },
+    notifications: { type: Boolean, default: true }
 }, {
     timestamps: {
         createdAt: 'created_at',

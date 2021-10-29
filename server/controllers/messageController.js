@@ -1,6 +1,25 @@
 const Message = require('../models/message')
 const mongoose = require('mongoose')
 
+const getMessagesFromThread = (req, res) => {
+    console.log(req.params)
+    Message.find({ $or: [
+            { 
+                from: mongoose.Types.ObjectId(req.user.id),
+                to: mongoose.Types.ObjectId(req.params._id)            
+            },
+            {
+                from: mongoose.Types.ObjectId(req.params._id),
+                to: mongoose.Types.ObjectId(req.user.id)    
+            }
+        ] 
+    }).sort('created_at').then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error })
+    })
+}
+
 const getThreads = (req, res) => { 
     Message.aggregate([
         {
@@ -66,5 +85,6 @@ const getThreads = (req, res) => {
 }
 
 module.exports = {
+    getMessagesFromThread,
     getThreads
 }
