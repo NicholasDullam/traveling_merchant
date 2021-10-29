@@ -14,7 +14,6 @@ const User = new mongoose.Schema({
     acct_details_submitted: Boolean,
     admin: Boolean,
     banned: Boolean,
-    ips: [String],
     settings: {
         /* ... */
     }

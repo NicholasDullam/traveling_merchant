@@ -1,10 +1,17 @@
 const User = require('../models/user')
+const Login = require('../models/login')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { createCustomer } = require('./stripeController')
 
 // assume req has seller_id, customer_id, first and last name, email, password, admin status, profile_img, and settings
 const createUser = async (req, res) => {
+    Login.findOne({ip:req.ip,banned:true}).then((doc) => {
+        if (doc != null) {
+            return res.status(400).json({ error: 'IP is banned'})
+        }
+    })
+
     let { email, first, last, password, admin } = req.body
     if (!email || !first || !last || !password) return res.status(400).json({ error: "Invalid input"})
     let existing = await User.find({ email })
@@ -18,11 +25,16 @@ const createUser = async (req, res) => {
     user.cust_id = customer.id
 
     user.save().then((response) => {
-      token = jwt.sign({ id: response._id, acct_id: response.acct_id, cust_id: response.cust_id, admin: response.admin, banned: response.banned }, process.env.TOKEN_SECRET)
-      return res.cookie('access_token', token, { httpOnly: true, secure:process.env.NODE_ENV === "production" }).status(200).json({ token, user: response })
+        var login = new Login({ id: response._id, cust_id: response.cust_id, acct_id: response.acct_id, admin: response.admin, banned: response.banned, ip: req.ip });
+        login.save().then().catch((error) => {
+            console.log(error)
+            return res.status(400).json({ error: error.message })
+        })
+        token = jwt.sign({ id: response._id, acct_id: response.acct_id, cust_id: response.cust_id, admin: response.admin, banned: response.banned }, process.env.TOKEN_SECRET)
+        return res.cookie('access_token', token, { httpOnly: true, secure:process.env.NODE_ENV === "production" }).status(200).json({ token, user: response })
     }).catch((error) => {
         console.log(error)
-      return res.status(400).json({ error: error.message })
+        return res.status(400).json({ error: error.message })
     })
 }
 
@@ -73,6 +85,17 @@ const deleteUserById = async (req, res) => {
 const banUser = async (req, res) => {
     let { _id } = req.params
     if (!req.user.admin) return res.status(400).json({ error: 'Invalid permissions' })
+    
+    Login.find({id:_id}).then((docs) => {
+        docs.forEach((el) => {
+            el.banned = true
+            el.save().then().catch((err) => {
+                return res.status(400).json({error:err})
+            })
+        })
+    }).catch((err) => {
+        return res.status(400).json({error:err})
+    })
     User.findByIdAndUpdate(_id, { banned: true }, { new: true }).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
@@ -83,6 +106,17 @@ const banUser = async (req, res) => {
 const unbanUser = async (req, res) => {
     let { _id } = req.params
     if (!req.user.admin) return res.status(400).json({ error: 'Invalid permissions' })
+    
+    Login.find({id:_id}).then((docs) => {
+        docs.forEach((el) => {
+            el.banned = false
+            el.save().then().catch((err) => {
+                return res.status(400).json({error:err})
+            })
+        })
+    }).catch((err) => {
+        return res.status(400).json({error:err})
+    })
     User.findByIdAndUpdate(_id, { banned: false }, { new: true }).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
