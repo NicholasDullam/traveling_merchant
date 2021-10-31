@@ -1,5 +1,4 @@
 const Product = require('../models/product')
-const User = require('../models/user')
 
 const createProduct = async (req, res) => {
     let { name, type, delivery_type, delivery_speed, description, unit_price, min_quantity, stock, game_id } = req.body

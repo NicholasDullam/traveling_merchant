@@ -6,12 +6,35 @@ import AuthContext from '../../context/auth-context'
 import MessengerContext from '../../context/messenger-context'
 import Socket from "../../socket";
 
+const getStatus = (user) => {
+    switch(user.status) {
+        case ('online'): 
+            return 'Online'
+        case ('away'):
+            return 'Away'
+        default:
+            return 'Offline'
+    }
+}
+
+const getStatusColor = (user) => {
+    switch(user.status) {
+        case ('online'): 
+            return 'green'
+        case ('away'):
+            return 'orange'
+        default:
+            return 'grey'
+    }
+}
+
 const Thread = (props) => {
     return (
         <div style={{ padding: '5px 5px 10px 5px', position: 'relative' }}>
             { props.thread.unread ? <div style={{  backgroundColor: 'red', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', position: 'absolute', top: '0px', right: '-10px', zIndex: '2' }}>
                 <p style={{ marginBottom: '0px', fontSize: '14px', color: 'white' }}>{props.thread.unread}</p>
             </div> : null }
+            <div style={{ backgroundColor: getStatusColor(props.thread.user), borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', position: 'absolute', bottom: '6px', right: '-6px', zIndex: '2', boxShadow: '0px 0px 0px 4px rgba(0, 0, 0, 1)' }}/>
             <img src={props.thread.user.profile_img} style={{ height: '50px', width: '50px', borderRadius: '50%', boxShadow: props.active ? '0px 0px 0px 4px #68B2A0' : null, transition: 'box-shadow 300ms ease', cursor: 'pointer' }} onClick={() => props.onClick(props.thread)}/>
         </div>
     )
@@ -141,6 +164,38 @@ const Messenger = (props) => {
         messenger.setMessages(messages)
     }
 
+    const parseMessage = (message) => {
+        let regex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
+        let components = [], urls = [], curr = message
+        let index = curr.search(regex), startIndex = 0
+
+        while (index >= 0) {
+            if (index > startIndex) {
+                components.push(<span> {curr.slice(startIndex, index)} </span>)
+                curr = curr.slice(index, curr.length)
+            }
+
+            let endIndex = curr.indexOf(' '), url = curr
+
+            if (endIndex === -1) {
+                urls.push(url)
+                components.push(<a href={url}> {url} </a>)
+                curr = ''
+                break
+            }
+
+            url = curr.slice(0, endIndex)
+            urls.push(url)
+
+            components.push(<a href={url}> {url} </a>)
+            curr = curr.slice(endIndex, curr.length)
+            index = curr.search(regex)
+        }
+
+        if (curr.length) components.push(<span> {curr} </span>)
+        return { components, urls }
+    }
+
     return (
         <div>
             { rendered ? <div style={{ position: 'fixed', height: '100%', width: '100%', backgroundColor: 'black', opacity: backdrop ? '.7' : '0', zIndex: '1', transition: 'opacity 400ms ease-out' }} onClick={() => messenger.close()}/> : null }
@@ -176,7 +231,7 @@ const Messenger = (props) => {
                                     <img src={messenger.activeThread.user.profile_img} style={{ height: '40px', width: '40px', borderRadius: '50%' }} />
                                     <div style={{ marginLeft: '10px' }}>
                                         <h5 style={{ color: 'white', marginBottom: '0px' }}> {messenger.activeThread.user.first} {messenger.activeThread.user.last} </h5>
-                                        <h6 style={{ color: 'white', opacity: '.7', marginBottom: '0px' }}> Active </h6>
+                                        <h6 style={{ color: 'white', opacity: '.7', marginBottom: '0px' }}> {getStatus(messenger.activeThread.user)} </h6>
                                     </div>
                                 </div> : null }
                             </div>
@@ -192,15 +247,15 @@ const Messenger = (props) => {
                                                         return (
                                                             <div key={i} style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '5px' }}>
                                                                 <div>
-                                                                    <p style={{ maxWidth: '200px', backgroundColor: '#68B2A0', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 5px 25px', wordWrap: 'break-word' }}> {message.content} </p>
-                                                                    { i === messenger.messages[messenger.activeThreadId].length - 1 && message.read ? <p style={{ maxWidth: '200px', color: 'white', margin: '3px', fontSize: '12px', borderRadius: '25px 25px 5px 25px', textAlign: 'end' }}> Read </p> : null}
+                                                                    <p style={{ maxWidth: '200px', backgroundColor: '#68B2A0', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 5px 25px', wordWrap: 'break-word' }}> {parseMessage(message.content).components} </p>
+                                                                    { i === messenger.messages[messenger.activeThreadId].length - 1 && message.read ? <p style={{ maxWidth: '300px', color: 'white', margin: '3px', fontSize: '12px', borderRadius: '25px 25px 5px 25px', textAlign: 'end' }}> Read </p> : null}
                                                                 </div>
                                                             </div>
                                                         ) 
                                                     } else { 
                                                         return (
                                                             <div key={i} style={{ display: 'flex', marginBottom: '5px' }}>
-                                                                <p style={{ maxWidth: '200px', backgroundColor: 'grey', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 25px 5px', wordWrap: 'break-word' }}> {message.content} </p>
+                                                                <p style={{ maxWidth: '300px', backgroundColor: 'grey', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 25px 5px', wordWrap: 'break-word' }}> {parseMessage(message.content).components} </p>
                                                             </div>
                                                         )
                                                     }
