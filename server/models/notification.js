@@ -1,10 +1,10 @@
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
+const io = require('../')
 
 // Notification Schema
-
 const Notification = new mongoose.Schema({
-    sender: { type: mongoose.Types.ObjectId, ref:'User' },
-    receiver: { type: mongoose.Types.ObjectId, ref:'User' },
+    sender: { type: mongoose.Types.ObjectId, ref: 'User' },
+    receiver: { type: mongoose.Types.ObjectId, ref: 'User' },
     type: String,
     link: String,
     content: String,
@@ -16,11 +16,5 @@ const Notification = new mongoose.Schema({
         updatedAt: 'updated_at'
     }
 });
-
-// Method to mark as seen
-Notification.methods.markAsSeen = function markAsSeen() {
-    this.seen = true;
-    this.seen_at = new Date();
-}
 
 module.exports = mongoose.model('Notification', Notification);
