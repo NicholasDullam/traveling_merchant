@@ -42,7 +42,6 @@ const Product = (props) => {
 
     useEffect(() => {
         api.getFavorites({ params: { product_id }}).then((response) => {
-            console.log(response.data)
             setFavorited(response.data.length ? response.data[0]._id : null )
         }).catch((error) => {
             console.log(error)
@@ -69,7 +68,7 @@ const Product = (props) => {
     useEffect(() => {
         if (!user) return
         api.getReviews({ params: { seller: user._id }}).then((response) => {
-            setReviews(response.data)
+            setReviews(response.data.data)
         }).catch((error) => {
             console.log(error)
         })
@@ -77,7 +76,7 @@ const Product = (props) => {
 
     const handleFavorite = () => {
         api.createFavorite({ product_id }).then((response) => {
-            setFavorited(true)
+            setFavorited(response.data._id)
         }).catch((error) => {
             console.log(error)
         })
@@ -119,8 +118,8 @@ const Product = (props) => {
                     { user ? <div>
                         <div style={{ borderTop: '1px solid rgba(0,0,0,.1)', margin: '20px 0px 20px 0px' }}/>
                         <div>
-                            <h4> Sold by </h4>
-                            <div style={{ display: 'flex', alignItems: 'center' }} onClick={() => history.push(`/users/${user._id}`)}>
+                            <h5> Sold by </h5>
+                            <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px' }} onClick={() => history.push(`/users/${user._id}`)}>
                                 <img src={user.profile_img} style={{ height: '60px', width: '60px', borderRadius: '50%' }}/>
                                 <div style={{ marginLeft: '20px'}}>
                                     <h5 style={{ marginBottom: '0px' }}> {user.first} {user.last} </h5>
@@ -129,17 +128,21 @@ const Product = (props) => {
                             </div>
                         </div> 
                         <div style={{ borderTop: '1px solid rgba(0,0,0,.1)', margin: '20px 0px 20px 0px' }}/>
-                        <h4> Seller Reviews </h4>
-                        {
-                            reviews.map((review) => {
-                                return (
-                                    <div style={{ display: 'flex', marginBottom: '15px', alignItems: 'center'}}>
-                                        <Ratings count={review.rating}/>
-                                        <h6 style={{ marginBottom: '-3px' , marginLeft: '10px'}}> {review.content} </h6>
-                                    </div>
-                                )
-                            })
-                        }
+                        <h5> Seller Reviews </h5>
+                        <div style={{ marginTop: '20px' }}>
+                            {
+                                reviews.map((review, i) => {
+                                    return (
+                                        <div key={i} style={{ padding: '10px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px', cursor: 'pointer' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                <Ratings count={review.rating}/>
+                                                <h6 style={{ marginBottom: '-3px' , marginLeft: '10px'}}> {review.content} </h6>
+                                            </div>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
                     </div> : null }
             
                 </div>

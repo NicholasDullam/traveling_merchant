@@ -11,16 +11,25 @@ const createGame = (req, res) => {
     })
 }
 
+const getSort = (sortString) => {
+    let direction = 1
+    if (sortString.indexOf('-')) direction = -1
+    return { [sortString.replace('-', '')]: direction }
+}
+
 const getGames = (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q'], pipeline = []
     reserved.forEach((el) => delete query[el])
-    let queryPromise = Game.find(query)
 
-    if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
-    if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
-    if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
+    if (req.query.q) pipeline.push({ $search: { index: 'gameSearch', text: { query: req.query.q, path: { wildcard: '*' }}}})
+    pipeline.push({ $match: query })
+    if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
+    if (req.query.skip) pipeline.push({ $skip: Number(req.query.skip) })
+    if (req.query.limit) pipeline.push({ $limit: Number(req.query.limit) })
 
-    queryPromise.then((response) => {
+    console.log(pipeline)
+
+    Game.aggregate(pipeline).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })

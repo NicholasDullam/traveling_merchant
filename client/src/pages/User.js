@@ -7,10 +7,20 @@ import Ratings from '../components/Ratings/Ratings'
 import AuthContext from '../context/auth-context'
 import MessengerContext from '../context/messenger-context'
 
+const getStatusColor = (user) => {
+    switch(user.status) {
+        case ('online'): 
+            return 'green'
+        case ('away'):
+            return 'orange'
+        default:
+            return 'grey'
+    }
+}
+
 const User = (props) => {
     const [user, setUser] = useState(null)
     const [products, setProducts] = useState([])
-    const auth = useContext(AuthContext)
     const messenger = useContext(MessengerContext)
     const { user_id } = useParams()
 
@@ -25,7 +35,7 @@ const User = (props) => {
     useEffect(() => {
         if (!user) return
         api.getProducts({ params: { user_id }}).then((response) => {
-            setProducts(response.data)
+            setProducts(response.data.data)
         }).catch((error) => {
             console.log(error)
         })
@@ -40,17 +50,22 @@ const User = (props) => {
             <div>
                 { user ? <div>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img src={user.profile_img} style={{ borderRadius: '50%', height: '150px', width: '150px' }}/>
+                        <div style={{ position: 'relative' }}> 
+                            <img src={user.profile_img} style={{ borderRadius: '50%', height: '150px', width: '150px' }}/>
+                            <div style={{ backgroundColor: getStatusColor(user), borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', position: 'absolute', bottom: '8px', right: '2px', boxShadow: '0px 0px 0px 4px rgba(255, 255, 255, 1)' }}/>
+                        </div>
                         <div style={{ marginLeft: '30px' }}>
                             <h2 style={{ marginBottom: '0px' }}> {user.first} {user.last} </h2>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <Ratings user_id={user._id}/>
                             </div>
                         </div>
-                        <button className="btn btn-primary" style={{ marginLeft: 'auto' }} onClick={handleMessage}> Message </button>
+                        <div style={{ marginLeft: 'auto' }} >
+                            <button className="btn btn-primary" onClick={handleMessage}> Follow </button>
+                            <button className="btn btn-primary" style={{ marginLeft: '20px' }} onClick={handleMessage}> Message </button>
+                        </div>
                     </div>
-                    <div style={{ borderTop: '1px solid rgba(0,0,0,.1)', marginTop: '30px', marginBottom: '30px'}}/>
-                    <h3> Products </h3>
+                    <h4 style={{ borderBottom: '1px solid rgba(0,0,0,.1)', paddingBottom: '10px', marginTop: '20px' }}> Products </h4>
                     {
                         products.map((product) => {
                             return (
