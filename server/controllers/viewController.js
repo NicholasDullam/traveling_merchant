@@ -1,14 +1,12 @@
 const View = require("../models/view")
 const jwt = require('jsonwebtoken');
-const Product = require("../models/product");
 
 // assume request has product
 const createView = async (req, res) => {
     let { product_id } = req.body;
     if (!product_id) return res.status(400).json({ error: "Invalid input"})
-    const product = await Product.findById(product_id);
     token = req.cookies.view_history
-    let view = new View({ product_id:product_id, type:product.type, platform:product.platform, server:product.server })
+    let view = new View({ product_id:product_id })
     if (req.user.id) view.user_id = req.user.id
     if (token) view.token = token
     else {

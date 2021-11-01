@@ -4,6 +4,7 @@ const View = require('../models/view')
 const Product = require('../models/product')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
 const { createCustomer } = require('./stripeController')
 
 // assume req has seller_id, customer_id, first and last name, email, password, admin status, profile_img, and settings
@@ -128,12 +129,25 @@ const unbanUser = async (req, res) => {
 
 const findMostCommon = async (req, res) => {
     if (!req.user) return res.status(400).json({error:"No user"});
-    const filter = { user_id: req.user.id};
+    const filter = { user_id: mongoose.Types.ObjectId(req.user.id)};
     let type = await View.aggregate([
         { $match: filter },
+        { 
+            $lookup: {
+                from: "products",
+                localField: "product_id",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+        {
+            $project: {
+                product: { $arrayElemAt: [ "$product", 0 ]}
+            }
+        },
         {
             $group: {
-                _id: '$type',
+                _id: '$product.type',
                 count: { $sum: 1 }
             }
         },
@@ -148,9 +162,22 @@ const findMostCommon = async (req, res) => {
     ]);
     let platform = await View.aggregate([
         { $match: filter },
+        { 
+            $lookup: {
+                from: "products",
+                localField: "product_id",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+        {
+            $project: {
+                product: { $arrayElemAt: [ "$product", 0 ]}
+            }
+        },
         {
             $group: {
-                _id: '$platform',
+                _id: '$product.platform',
                 count: { $sum: 1 }
             }
         },
@@ -158,16 +185,26 @@ const findMostCommon = async (req, res) => {
             $sort: {
                 "count": -1
             }
-        },
-        {
-            $limit: 1
         }
     ]);
     let server = await View.aggregate([
         { $match: filter },
+        { 
+            $lookup: {
+                from: "products",
+                localField: "product_id",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+        {
+            $project: {
+                product: { $arrayElemAt: [ "$product", 0 ]}
+            }
+        },
         {
             $group: {
-                _id: '$server',
+                _id: '$product.server',
                 count: { $sum: 1 }
             }
         },
@@ -175,12 +212,12 @@ const findMostCommon = async (req, res) => {
             $sort: {
                 "count": -1
             }
-        },
-        {
-            $limit: 1
         }
     ]);
-    let products = await Product.find({type:type._id,platform:platform._id,server:server._id});
+    console.log(type)
+    console.log(platform)
+    console.log(server)
+    let products = await Product.find({ $or: [{type:type._id,platform:platform._id,server:server._id},{platform:platform._id,server:server._id}] });
     return res.status(200).json(products)
 }
 
