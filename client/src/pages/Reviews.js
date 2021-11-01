@@ -7,10 +7,13 @@ import { Ratings } from "../components";
 const Reviews = (props) => {
     const auth = useContext(AuthContext)
     const [reviews, setReviews] = useState([])
+    const [hasMore, setHasMore] = useState(false)
 
     useEffect(() => {
         api.getReviews({ params: { reviewer: auth.user._id }}).then((response) => {
-            setReviews(response.data)
+            let { data, has_more } = response.data
+            setReviews(data)
+            setHasMore(has_more)
         }).catch((error) => {
             console.log(error)
         })

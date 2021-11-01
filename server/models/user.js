@@ -14,8 +14,7 @@ const User = new mongoose.Schema({
     acct_details_submitted: Boolean,
     admin: Boolean,
     banned: Boolean,
-    chatrooms: [{ type: mongoose.Types.ObjectId, ref: 'User' }],
-    ips: [String],
+    status: String,
     settings: {
         /* ... */
     }
@@ -25,11 +24,5 @@ const User = new mongoose.Schema({
         updatedAt: 'updated_at'
     }
 });
-  
-// Method to check the entered password is correct or not 
-User.methods.validPassword = (password) => {
-    console.log(this.password, password)
-    return bcrypt.compare(this.password, password)
-}
-  
+
 module.exports = mongoose.model('User', User);

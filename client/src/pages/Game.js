@@ -7,6 +7,7 @@ import Layout from '../components/Layout/Layout'
 const Game = (props) => {
     const [game, setGame] = useState(null)
     const [products, setProducts] = useState([])
+    const [hasMore, setHasMore] = useState(false)
     const [name, setName] = useState('')
     const [productType, setProductType] = useState('')
     const [deliveryType, setDeliveryType] = useState('')
@@ -29,8 +30,10 @@ const Game = (props) => {
     }, [game])
 
     const getProducts = (req) => {
-        api.getProducts({ params: req}).then((response) => {
-            setProducts(response.data)
+        api.getProducts({ params: req }).then((response) => {
+            let { data, has_more } = response.data
+            setProducts(data)
+            setHasMore(has_more)
         }).catch((error) => {
             console.log(error)
         })
@@ -38,7 +41,7 @@ const Game = (props) => {
 
     const handleSearch = () => {
         let params = { game_id }
-        if (name.length) params.name = name 
+        if (name.length) params.q = name 
         if (deliveryType.length) params.delivery_type = deliveryType
         if (productType.length) params.type = productType
         if (server.length) params.server = server

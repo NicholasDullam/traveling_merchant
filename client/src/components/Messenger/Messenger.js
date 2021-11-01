@@ -6,12 +6,35 @@ import AuthContext from '../../context/auth-context'
 import MessengerContext from '../../context/messenger-context'
 import Socket from "../../socket";
 
+const getStatus = (user) => {
+    switch(user.status) {
+        case ('online'): 
+            return 'Online'
+        case ('away'):
+            return 'Away'
+        default:
+            return 'Offline'
+    }
+}
+
+const getStatusColor = (user) => {
+    switch(user.status) {
+        case ('online'): 
+            return 'green'
+        case ('away'):
+            return 'orange'
+        default:
+            return 'grey'
+    }
+}
+
 const Thread = (props) => {
     return (
         <div style={{ padding: '5px 5px 10px 5px', position: 'relative' }}>
             { props.thread.unread ? <div style={{  backgroundColor: 'red', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', position: 'absolute', top: '0px', right: '-10px', zIndex: '2' }}>
                 <p style={{ marginBottom: '0px', fontSize: '14px', color: 'white' }}>{props.thread.unread}</p>
             </div> : null }
+            <div style={{ backgroundColor: getStatusColor(props.thread.user), borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', position: 'absolute', bottom: '6px', right: '-6px', zIndex: '2', boxShadow: '0px 0px 0px 4px rgba(0, 0, 0, 1)' }}/>
             <img src={props.thread.user.profile_img} style={{ height: '50px', width: '50px', borderRadius: '50%', boxShadow: props.active ? '0px 0px 0px 4px #68B2A0' : null, transition: 'box-shadow 300ms ease', cursor: 'pointer' }} onClick={() => props.onClick(props.thread)}/>
         </div>
     )
@@ -21,10 +44,13 @@ const Messenger = (props) => {
     const [socket, setSocket] = useState(null)
     const [rendered, setRendered] = useState(false)
     const [backdrop, setBackdrop] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [scrollPosition, setScrollPosition] = useState(true)
     const [content, setContent] = useState('')
 
     const messenger = useContext(MessengerContext)
     const messengerRef = useRef(messenger)
+    const messageList = useRef()
     const auth = useContext(AuthContext)
 
     const location = useLocation()
@@ -37,11 +63,21 @@ const Messenger = (props) => {
         })  
     }
 
+    // handler for message_received event
     const messageReceivedHandler = (message) => {
         messenger.setMessages((messages) => {
-            let updated = messages[message.from] ? [...messages[message.from], message] : [message]
-            return { ...messages, [message.from]: updated }
+            return { ...messages, [message.from]: messages[message.from] ? [...messages[message.from], message] : [message] }
         })  
+
+        if (messengerRef.current.activeThreadId === message.from && messenger.isOpen) return socket.emit('read', messengerRef.current.activeThreadId)
+        updateThread(messengerRef.current.activeThreadId, { ...messengerRef.current.activeThread, unread: messengerRef.current.activeThread.unread + 1 })
+    }
+
+    // handler for status event
+    const statusHandler = (event) => {
+        let thread = messengerRef.current.threads.find((thread) => thread._id === event.thread_id )
+        console.log(thread, event)
+        if (thread) updateThread(event.thread_id, { ...thread, user: { ...thread.user, status: event.status }})
     }
 
     // socket initialization
@@ -52,15 +88,17 @@ const Messenger = (props) => {
         io.on('success', messenger.connect)
         io.on('message_sent', messageSentHandler)
         io.on('message_received', messageReceivedHandler)
-        io.on('error', (response) => {})
-
+        io.on('status', statusHandler)
+        io.on('error', (response) => {
+            console.log(response)
+        })
         setSocket(io)    
         
         api.getMessageThreads().then((response) => {
             // remove threads without a user & not themselves
             let threads = response.data.filter((thread) => thread.user && thread.user._id !== auth.userId)
-            messenger.setThreads(threads)
             if (threads.length) messenger.setActiveThread(threads[0])
+            messenger.setThreads(threads)
         }).catch((error) => {
             console.log(error)
         })
@@ -70,6 +108,25 @@ const Messenger = (props) => {
     useEffect(() => {
         messengerRef.current = messenger
     }, [messenger])
+
+    // reset scroll on new message
+    useEffect(() => {
+        if (scrollPosition) messageList.current.scrollTop = messageList.current.scrollHeight
+    }, [messenger.messages])
+
+    // load messages for active thread
+    useEffect(() => {
+        if (!messenger.activeThreadId || !messenger.isOpen || messenger.activeThread.loaded || loading) return
+        setLoading(true)
+        api.getMessagesFromThread(messenger.activeThreadId).then((response) => {
+            socket.emit('read', messenger.activeThreadId)
+            updateThread(messenger.activeThreadId, { ...messenger.activeThread, unread: 0, loaded: true })
+            addMessages(messenger.activeThreadId, response.data)
+            setLoading(false)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }, [messenger.activeThreadId, messenger.isOpen, loading])
 
     // updates messenger state on location change
     useEffect(() => {
@@ -97,8 +154,53 @@ const Messenger = (props) => {
 
     // actions
     const message = () => {
-        console.log(messenger)
         if (content !== '') socket.message(messenger.activeThreadId, auth.userId, 'test', content)
+    }
+
+    const updateThread = (thread_id, new_thread) => {
+        let threads = messengerRef.current.threads
+        let old_thread_index = threads.findIndex((thread) => thread.user._id === thread_id)
+        threads[old_thread_index] = { ...new_thread }
+        if (thread_id === messengerRef.current.activeThreadId) messenger.setActiveThread(new_thread)
+    }
+
+    const addMessages = (thread_id, new_messages) => {
+        let messages = { ...messenger.messages }
+        let thread_messages = messages[thread_id]
+        messages[thread_id] = thread_messages ? [...thread_messages, ...new_messages] : [...new_messages]
+        messenger.setMessages(messages)
+    }
+
+    const parseMessage = (message) => {
+        let regex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig
+        let components = [], urls = [], curr = message
+        let index = curr.search(regex), startIndex = 0
+
+        while (index >= 0) {
+            if (index > startIndex) {
+                components.push(<span> {curr.slice(startIndex, index)} </span>)
+                curr = curr.slice(index, curr.length)
+            }
+
+            let endIndex = curr.indexOf(' '), url = curr
+
+            if (endIndex === -1) {
+                urls.push(url)
+                components.push(<a href={url}> {url} </a>)
+                curr = ''
+                break
+            }
+
+            url = curr.slice(0, endIndex)
+            urls.push(url)
+
+            components.push(<a href={url}> {url} </a>)
+            curr = curr.slice(endIndex, curr.length)
+            index = curr.search(regex)
+        }
+
+        if (curr.length) components.push(<span> {curr} </span>)
+        return { components, urls }
     }
 
     return (
@@ -136,31 +238,31 @@ const Messenger = (props) => {
                                     <img src={messenger.activeThread.user.profile_img} style={{ height: '40px', width: '40px', borderRadius: '50%' }} />
                                     <div style={{ marginLeft: '10px' }}>
                                         <h5 style={{ color: 'white', marginBottom: '0px' }}> {messenger.activeThread.user.first} {messenger.activeThread.user.last} </h5>
-                                        <h6 style={{ color: 'white', opacity: '.7', marginBottom: '0px' }}> Active </h6>
+                                        <h6 style={{ color: 'white', opacity: '.7', marginBottom: '0px' }}> {getStatus(messenger.activeThread.user)} </h6>
                                     </div>
                                 </div> : null }
                             </div>
                             <div style={{ height: '100%', overflow: 'hidden', position: 'relative' }}>
                                 <div style={{ position: 'absolute', backgroundImage: 'linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0))', top: '0px', left: 'auto', height: '15px', width: '100%'}}/>
-                                <div style={{ position: 'absolute', backgroundImage: 'linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0))', bottom: '56px', left: 'auto', height: '15px', width: '100%'}}/>
+                                <div style={{ position: 'absolute', backgroundImage: 'linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0))', bottom: '46px', left: 'auto', height: '15px', width: '100%'}}/>
                                 <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', height: '100%', padding: '0px 0px 0px 20px' }}>
-                                    <div style={{ marginBottom: '30px',  overflowY: 'scroll' }}>
-                                        <div style={{ marginTop: '15px' }}>
+                                    <div onScroll={(event) => setScrollPosition(event.target.scrollHeight - event.target.scrollTop === event.target.clientHeight)} ref={messageList} style={{ marginBottom: '10px',  overflowY: 'scroll' }}>
+                                        <div style={{ marginTop: '15px', marginBottom: '15px' }}>
                                             {
                                                 messenger.messages[messenger.activeThreadId] ? messenger.messages[messenger.activeThreadId].map((message, i) => {
                                                     if (message.from === auth.userId) {
                                                         return (
                                                             <div key={i} style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '5px' }}>
                                                                 <div>
-                                                                    <p style={{ maxWidth: '200px', backgroundColor: '#68B2A0', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 5px 25px', wordWrap: 'break-word' }}> {message.content} </p>
-                                                                    { i === messenger.messages[messenger.activeThreadId].length - 1 && message.read ? <p style={{ maxWidth: '200px', color: 'white', margin: '3px', fontSize: '12px', borderRadius: '25px 25px 5px 25px', textAlign: 'end' }}> Read </p> : null}
+                                                                    <p style={{ maxWidth: '200px', backgroundColor: '#68B2A0', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 5px 25px', wordWrap: 'break-word' }}> {parseMessage(message.content).components} </p>
+                                                                    { i === messenger.messages[messenger.activeThreadId].length - 1 && message.read ? <p style={{ maxWidth: '300px', color: 'white', margin: '3px', fontSize: '12px', borderRadius: '25px 25px 5px 25px', textAlign: 'end' }}> Read </p> : null}
                                                                 </div>
                                                             </div>
                                                         ) 
                                                     } else { 
                                                         return (
                                                             <div key={i} style={{ display: 'flex', marginBottom: '5px' }}>
-                                                                <p style={{ maxWidth: '200px', backgroundColor: 'grey', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 25px 5px', wordWrap: 'break-word' }}> {message.content} </p>
+                                                                <p style={{ maxWidth: '300px', backgroundColor: 'grey', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 25px 5px', wordWrap: 'break-word' }}> {parseMessage(message.content).components} </p>
                                                             </div>
                                                         )
                                                     }

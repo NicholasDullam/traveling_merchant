@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 const View = new mongoose.Schema({
     user_id: { type: mongoose.Types.ObjectId, ref: 'User' },
     product_id: { type: mongoose.Types.ObjectId, ref: 'Product' },
-    token: String
+    token: String,
 }, {
     timestamps: {
         createdAt: 'created_at',

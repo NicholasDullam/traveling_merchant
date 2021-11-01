@@ -12,7 +12,7 @@ const Products = (props) => {
 
     useEffect(() => {
         api.getProducts({ params: { user_id: auth.user._id }}).then((response) => {
-            setProducts(response.data)
+            setProducts(response.data.data)
         }).catch((error) => {
             console.log(error)
         })

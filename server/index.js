@@ -43,8 +43,9 @@ const followerRouter = require('./routes/followerRouter')
 const reviewRouter = require('./routes/reviewRouter')
 const viewRouter = require('./routes/viewRouter')
 const socketRouter = require('./routes/socketRouter')
-const ipRouter = require('./routes/ipRouter')
+const loginRouter = require('./routes/loginRouter')
 const messageRouter = require('./routes/messageRouter')
+const notificationRouter = require('./routes/notificationRouter')
 
 // generate routes
 app.use('/api', userRouter)
@@ -58,8 +59,9 @@ app.use('/api', followerRouter)
 app.use('/api', reviewRouter)
 app.use('/api', viewRouter)
 app.use('/api', socketRouter)
-app.use('/api', ipRouter)
+app.use('/api', loginRouter)
 app.use('/api', messageRouter)
+app.use('/api', notificationRouter)
 
 // attach non-api requests to client build; redirect non-ssl traffic
 if (process.env.NODE_ENV === 'production') {
@@ -70,6 +72,7 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
+// create http server with app, attach socket.io instance
 let server = http.createServer(app)
 let io = require('socket.io')(server, {
     cors: {
@@ -81,6 +84,7 @@ let io = require('socket.io')(server, {
     allowEIO3: true 
 })
 
+// add io functions to socket object
 require('./socket')(io)
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
