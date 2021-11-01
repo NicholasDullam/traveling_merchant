@@ -4,8 +4,6 @@ var mongoose = require('mongoose');
 
 const Login = new mongoose.Schema({
     id: { type: mongoose.Types.ObjectId, ref: 'User' },
-    cust_id: { type: mongoose.Types.ObjectId, ref: 'User' },
-    acct_id: { type: mongoose.Types.ObjectId, ref: 'User' },
     admin: Boolean,
     banned: Boolean,
     ip: String

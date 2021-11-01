@@ -1,7 +1,10 @@
 const User = require('../models/user')
 const Login = require('../models/login')
+const View = require('../models/view')
+const Product = require('../models/product')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const mongoose = require('mongoose')
 const { createCustomer } = require('./stripeController')
 
 // assume req has seller_id, customer_id, first and last name, email, password, admin status, profile_img, and settings
@@ -25,7 +28,7 @@ const createUser = async (req, res) => {
     user.cust_id = customer.id
 
     user.save().then((response) => {
-        var login = new Login({ id: response._id, cust_id: response.cust_id, acct_id: response.acct_id, admin: response.admin, banned: response.banned, ip: req.ip });
+        var login = new Login({ id: response._id, admin: response.admin, banned: response.banned, ip: req.ip });
         login.save().then().catch((error) => {
             console.log(error)
             return res.status(400).json({ error: error.message })
@@ -124,6 +127,109 @@ const unbanUser = async (req, res) => {
     })
 }
 
+const findMostCommon = async (req, res) => {
+    if (!req.user) return res.status(400).json({error:"No user"});
+    const filter = { user_id: mongoose.Types.ObjectId(req.user.id)};
+    let type = await View.aggregate([
+        { $match: filter },
+        { 
+            $lookup: {
+                from: "products",
+                localField: "product_id",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+        {
+            $project: {
+                product: { $arrayElemAt: [ "$product", 0 ]}
+            }
+        },
+        {
+            $group: {
+                _id: '$product.type',
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: {
+                "count": -1
+            }
+        },
+        {
+            $limit: 1
+        }
+    ]);
+    let platform = await View.aggregate([
+        { $match: filter },
+        { 
+            $lookup: {
+                from: "products",
+                localField: "product_id",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+        {
+            $project: {
+                product: { $arrayElemAt: [ "$product", 0 ]}
+            }
+        },
+        {
+            $group: {
+                _id: '$product.platform',
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: {
+                "count": -1
+            }
+        }
+    ]);
+    let server = await View.aggregate([
+        { $match: filter },
+        { 
+            $lookup: {
+                from: "products",
+                localField: "product_id",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+        {
+            $project: {
+                product: { $arrayElemAt: [ "$product", 0 ]}
+            }
+        },
+        {
+            $group: {
+                _id: '$product.server',
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: {
+                "count": -1
+            }
+        }
+    ]);
+
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
+    reserved.forEach((el) => delete query[el])
+    let queryPromise = Product.find({ $or: [{type:type._id,platform:platform._id,server:server._id},{platform:platform._id,server:server._id}] })
+
+    if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
+    if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
+    if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
+
+    queryPromise.then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
 module.exports = {
     createUser,
     getUsers,
@@ -131,5 +237,6 @@ module.exports = {
     updateUserById,
     deleteUserById,
     banUser,
-    unbanUser
+    unbanUser,
+    findMostCommon
 }
