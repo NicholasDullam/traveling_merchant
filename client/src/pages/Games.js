@@ -6,8 +6,9 @@ const Games = (props) => {
     const [games, setGames] = useState([])
 
     useEffect(() => {
-        let name = new URLSearchParams(props.location.search).get("q")
-        api.getGames({ params: { name }}).then((response) => {
+        let q = new URLSearchParams(props.location.search).get("q")
+        console.log(q)
+        api.getGames({ params: { q }}).then((response) => {
             setGames(response.data)
         }).catch((error) => {
             console.log(error)

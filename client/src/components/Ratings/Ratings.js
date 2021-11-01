@@ -8,15 +8,8 @@ const Ratings = (props) => {
 
     useEffect(() => {
         if (props.count) return
-        api.getReviews({ params: { seller: props.user_id  }}).then((response) => {
-            if (response.data.length > 1) {
-                console.log(response.data)
-                let start = response.data.map((a) => a.rating / 5).reduce((a, b) => a + b) / response.data.length * 100
-                setReviewRating(start)
-            } else if (response.data.length) {
-                setReviewRating(response.data[0] / 5 * 100)
-            } 
-
+        api.getReviewRating(props.user_id).then((response) => {
+            setReviewRating(response.data.avg ? response.data.avg / 5 * 100 : null)
             setRatingLoaded(true)
         }).catch((error) => {
             setRatingLoaded(true)
