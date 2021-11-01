@@ -66,13 +66,18 @@ const Messenger = (props) => {
     // handler for message_received event
     const messageReceivedHandler = (message) => {
         messenger.setMessages((messages) => {
-            let updated = messages[message.from] ? [...messages[message.from], message] : [message]
-            return { ...messages, [message.from]: updated }
+            return { ...messages, [message.from]: messages[message.from] ? [...messages[message.from], message] : [message] }
         })  
 
-        if (messengerRef.current.activeThreadId === message.from) {
-            //socket.read(message._id)
-        }
+        if (messengerRef.current.activeThreadId === message.from && messenger.isOpen) return socket.emit('read', messengerRef.current.activeThreadId)
+        updateThread(messengerRef.current.activeThreadId, { ...messengerRef.current.activeThread, unread: messengerRef.current.activeThread.unread + 1 })
+    }
+
+    // handler for status event
+    const statusHandler = (event) => {
+        let thread = messengerRef.current.threads.find((thread) => thread._id === event.thread_id )
+        console.log(thread, event)
+        if (thread) updateThread(event.thread_id, { ...thread, user: { ...thread.user, status: event.status }})
     }
 
     // socket initialization
@@ -83,15 +88,17 @@ const Messenger = (props) => {
         io.on('success', messenger.connect)
         io.on('message_sent', messageSentHandler)
         io.on('message_received', messageReceivedHandler)
-        io.on('error', (response) => {})
-
+        io.on('status', statusHandler)
+        io.on('error', (response) => {
+            console.log(response)
+        })
         setSocket(io)    
         
         api.getMessageThreads().then((response) => {
             // remove threads without a user & not themselves
             let threads = response.data.filter((thread) => thread.user && thread.user._id !== auth.userId)
-            messenger.setThreads(threads)
             if (threads.length) messenger.setActiveThread(threads[0])
+            messenger.setThreads(threads)
         }).catch((error) => {
             console.log(error)
         })
@@ -112,7 +119,7 @@ const Messenger = (props) => {
         if (!messenger.activeThreadId || !messenger.isOpen || messenger.activeThread.loaded || loading) return
         setLoading(true)
         api.getMessagesFromThread(messenger.activeThreadId).then((response) => {
-            socket.emit('read_all', { thread_id: messenger.activeThreadId })
+            socket.emit('read', messenger.activeThreadId)
             updateThread(messenger.activeThreadId, { ...messenger.activeThread, unread: 0, loaded: true })
             addMessages(messenger.activeThreadId, response.data)
             setLoading(false)
@@ -151,10 +158,10 @@ const Messenger = (props) => {
     }
 
     const updateThread = (thread_id, new_thread) => {
-        let threads = messenger.threads
+        let threads = messengerRef.current.threads
         let old_thread_index = threads.findIndex((thread) => thread.user._id === thread_id)
         threads[old_thread_index] = { ...new_thread }
-        if (thread_id === messenger.activeThreadId) messenger.setActiveThread(new_thread)
+        if (thread_id === messengerRef.current.activeThreadId) messenger.setActiveThread(new_thread)
     }
 
     const addMessages = (thread_id, new_messages) => {
