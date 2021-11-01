@@ -1,6 +1,7 @@
 const Review = require("../models/review");
 const User = require("../models/user");
-const Order = require("../models/order")
+const Order = require("../models/order");
+const mongoose = require("mongoose");
 
 // Assume request has user's email, the sellers email, the rating, and the content
 const addReview = async (req, res) => {
@@ -23,15 +24,42 @@ const getReviews = (req, res) => {
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
     if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
-    if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
+    if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit) + 1)
 
     queryPromise.then((response) => {
-        return res.status(200).json(response)
+        let results = { has_more: false, data: response }
+        if (req.query.limit && response.length > Number(req.query.limit)) results = { has_more: true, data: response.slice(0, response.length - 1) }
+        return res.status(200).json(results)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })
 }
 
+const getReviewRating = (req, res) => {
+    let { _id } = req.params
+    if (!_id) return res.status(400).json({ error: 'No user_id given' })
+    Review.aggregate([
+        {
+            $match: {
+                seller: mongoose.Types.ObjectId(_id)
+            }
+        },
+        {
+            $group: {
+                _id: '$seller',
+                avg: {
+                    $avg: '$rating'
+                }
+            }
+        }
+    ]).then((response) => {
+        if (response.length) return res.status(200).json(response[0])
+        return res.status({ _id, avg: null })
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+ 
 const getReviewById = (req, res) => {
     let { _id } = req.params
     Review.findById(_id).then((response) => {
@@ -64,5 +92,6 @@ module.exports = {
     getReviews,
     getReviewById,
     updateReviewById,
-    deleteReviewById
+    deleteReviewById,
+    getReviewRating
 }
