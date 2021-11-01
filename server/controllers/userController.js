@@ -214,11 +214,20 @@ const findMostCommon = async (req, res) => {
             }
         }
     ]);
-    console.log(type)
-    console.log(platform)
-    console.log(server)
-    let products = await Product.find({ $or: [{type:type._id,platform:platform._id,server:server._id},{platform:platform._id,server:server._id}] });
-    return res.status(200).json(products)
+
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
+    reserved.forEach((el) => delete query[el])
+    let queryPromise = Product.find({ $or: [{type:type._id,platform:platform._id,server:server._id},{platform:platform._id,server:server._id}] })
+
+    if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
+    if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
+    if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
+
+    queryPromise.then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
 }
 
 module.exports = {
