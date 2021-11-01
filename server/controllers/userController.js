@@ -1,5 +1,7 @@
 const User = require('../models/user')
 const Login = require('../models/login')
+const View = require('../models/view')
+const Product = require('../models/product')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { createCustomer } = require('./stripeController')
@@ -25,7 +27,7 @@ const createUser = async (req, res) => {
     user.cust_id = customer.id
 
     user.save().then((response) => {
-        var login = new Login({ id: response._id, cust_id: response.cust_id, acct_id: response.acct_id, admin: response.admin, banned: response.banned, ip: req.ip });
+        var login = new Login({ id: response._id, admin: response.admin, banned: response.banned, ip: req.ip });
         login.save().then().catch((error) => {
             console.log(error)
             return res.status(400).json({ error: error.message })
@@ -124,6 +126,64 @@ const unbanUser = async (req, res) => {
     })
 }
 
+const findMostCommon = async (req, res) => {
+    if (!req.user) return res.status(400).json({error:"No user"});
+    const filter = { user_id: req.user.id};
+    let type = await View.aggregate([
+        { $match: filter },
+        {
+            $group: {
+                _id: '$type',
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: {
+                "count": -1
+            }
+        },
+        {
+            $limit: 1
+        }
+    ]);
+    let platform = await View.aggregate([
+        { $match: filter },
+        {
+            $group: {
+                _id: '$platform',
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: {
+                "count": -1
+            }
+        },
+        {
+            $limit: 1
+        }
+    ]);
+    let server = await View.aggregate([
+        { $match: filter },
+        {
+            $group: {
+                _id: '$server',
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: {
+                "count": -1
+            }
+        },
+        {
+            $limit: 1
+        }
+    ]);
+    let products = await Product.find({type:type._id,platform:platform._id,server:server._id});
+    return res.status(200).json(products)
+}
+
 module.exports = {
     createUser,
     getUsers,
@@ -131,5 +191,6 @@ module.exports = {
     updateUserById,
     deleteUserById,
     banUser,
-    unbanUser
+    unbanUser,
+    findMostCommon
 }

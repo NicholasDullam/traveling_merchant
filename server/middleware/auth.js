@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const token_secret = process.env.TOKEN_SECRET;
-const Ips = require('../controllers/ipController');
 const User = require('../models/user')
 
 const auth = async (req, res, next) => {

@@ -9,6 +9,7 @@ const router = express.Router()
 // GET requests
 router.get('/products', ProductController.getProducts)
 router.get('/products/:_id', ProductController.getProductById)
+router.get('/similarProducts/:_id', ProductController.getSimilarProduct)
 
 // POST requests
 router.post('/products', auth, ProductController.createProduct) // create product

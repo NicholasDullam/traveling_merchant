@@ -23,6 +23,14 @@ const createProduct = async (req, res) => {
     })
 }
 
+const getSimilarProduct = async (req, res) => {
+    let { _id } = req.params
+    const product = await Product.findById(_id)
+    if (!product) return res.status(400).json({error:'No product found'})
+    let products = await Product.find({type:product.type,platform:product.platform,server:product.server});
+    return res.status(200).json(products)
+}
+
 const getProducts = (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
     reserved.forEach((el) => delete query[el])
@@ -68,6 +76,7 @@ const deleteProductById = (req, res) => {
 
 module.exports = {
     createProduct,
+    getSimilarProduct,
     getProducts,
     getProductById,
     updateProductById,

@@ -24,7 +24,7 @@ const login = async (req, res) => {
         return res.status(400).json({ error: 'Password incorrect'})
     }
     
-    var login = new Login({ id: user._id, cust_id: user.cust_id, acct_id: user.acct_id, admin: user.admin, banned: user.banned, ip: req.ip });
+    var login = new Login({ id: user._id, admin: user.admin, banned: user.banned, ip: req.ip });
     login.save().then().catch((error) => {
         console.log(error)
         return res.status(400).json({ error: error.message })

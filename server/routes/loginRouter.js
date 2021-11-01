@@ -10,3 +10,5 @@ const router = express.Router()
 router.post('/banIp', auth, LoginController.banIp) // ban ip
 router.post('/unbanIp', auth, LoginController.unbanIp) // unban ip
 router.post('/unbanUserLogins', auth, LoginController.unbanUserLogins) // unban user
+
+module.exports = router
