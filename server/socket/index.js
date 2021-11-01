@@ -28,12 +28,12 @@ module.exports = (io) => {
         status[socket.user.id] = 'online'
 
         // update user status to online
-        User.findByIdAndUpdate(socket.user.id, { status: status[socket.user._id] }).then(async (response) => {
+        User.findByIdAndUpdate(socket.user.id, { status: status[socket.user.id] }).then(async (response) => {
             let threads = await getThreadsHelper(socket.user.id)
             threads.forEach((thread) => {
-                socket.to(thread.user._id).emit('status', {
-                    thread_id: thread.user._id,
-                    status: status[socket.user._id]
+                if (thread.user) socket.to(thread.user._id.toString()).emit('status', {
+                    thread_id: socket.user.id,
+                    status: status[socket.user.id]
                 })
             })
         }).catch((error) => {
@@ -43,11 +43,11 @@ module.exports = (io) => {
         // disconnect handler
         socket.on('disconnect', () => {
             status[socket.user.id] = 'offline'
-            User.findByIdAndUpdate(socket.user.id, { status: status[socket.user.id] }).then(async (response) => {
+            User.findByIdAndUpdate(socket.user.id, { status: status[socket.user.id] }, { new: true }).then(async (response) => {
                 let threads = await getThreadsHelper(socket.user.id)
                 threads.forEach((thread) => {
-                    socket.to(thread.user._id).emit('status', {
-                        thread_id: thread.user._id,
+                    if (thread.user) socket.to(thread.user._id.toString()).emit('status', {
+                        thread_id: socket.user.id,
                         status: status[socket.user.id]
                     })
                 })
@@ -62,8 +62,8 @@ module.exports = (io) => {
             User.findByIdAndUpdate(socket.user.id, { status: status[socket.user.id] }).then(async (response) => {
                 let threads = await getThreadsHelper(socket.user.id)
                 threads.forEach((thread) => {
-                    socket.to(thread.user._id).emit('status', {
-                        thread_id: thread.user._id,
+                    if (thread.user) socket.to(thread.user._id.toString()).emit('status', {
+                        thread_id: socket.user.id,
                         status: status[socket.user.id]
                     })
                 })
