@@ -1,33 +1,35 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../api'
-import { ProductCard } from '../components'
+import { Pagination, ProductCard } from '../components'
 import Layout from '../components/Layout/Layout'
 
 const Game = (props) => {
     const [game, setGame] = useState(null)
     const [products, setProducts] = useState([])
-    const [hasMore, setHasMore] = useState(false)
     const [name, setName] = useState('')
     const [productType, setProductType] = useState('')
     const [deliveryType, setDeliveryType] = useState('')
     const [server, setServer] = useState('')
     const [platform, setPlatform] = useState('')
+    
+    const [limit, setLimit] = useState(1)
+    const [page, setPage] = useState(1)
+    const [hasMore, setHasMore] = useState(false)
+
     const { game_id } = useParams()
 
     useEffect(() => {
         api.getGameById(game_id).then((response) => {
-            console.log('test')
             setGame(response.data)
         }).catch((error) => {
             console.log(error)
         })
-    }, [])
+    }, [game_id])
 
     useEffect(() => {
-        if (game)
-        getProducts({ game_id })
-    }, [game])
+        if (game) handleSearch()
+    }, [game, page, limit])
 
     const getProducts = (req) => {
         api.getProducts({ params: req }).then((response) => {
@@ -40,7 +42,7 @@ const Game = (props) => {
     }
 
     const handleSearch = () => {
-        let params = { game_id }
+        let params = { game_id, limit, skip: (page - 1) ? (page - 1) * limit : 0 }
         if (name.length) params.q = name 
         if (deliveryType.length) params.delivery_type = deliveryType
         if (productType.length) params.type = productType
@@ -144,6 +146,7 @@ const Game = (props) => {
                         return <ProductCard product={product}/>
                     })}
                 </div>
+                <Pagination limit={limit} page={page} hasMore={hasMore} handlePageChange={setPage} handleLimitChange={setLimit}/>
             </div> : null }
         </Layout>
     )

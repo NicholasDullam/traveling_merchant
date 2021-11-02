@@ -65,7 +65,7 @@ const User = (props) => {
                             <button className="btn btn-primary" style={{ marginLeft: '20px' }} onClick={handleMessage}> Message </button>
                         </div>
                     </div>
-                    <h4 style={{ borderBottom: '1px solid rgba(0,0,0,.1)', paddingBottom: '10px', marginTop: '20px' }}> Products </h4>
+                    <h4 style={{ borderBottom: '1px solid rgba(0,0,0,.1)', paddingBottom: '10px', marginTop: '20px', marginBottom: '10px' }}> Products </h4>
                     {
                         products.map((product) => {
                             return (
