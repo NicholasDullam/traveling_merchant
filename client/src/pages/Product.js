@@ -93,8 +93,8 @@ const Product = (props) => {
     return (
         <Layout navbar>
             { product ? <div style={{ display: 'flex', position: 'relative', maxWidth: '100%' }}>
-                <div style={{ width: '50%', height: '100%'}}>
-                    <img src={product.media.length ? product.media[0] : null } style={{ height: '600px', width: '80%', backgroundColor: 'grey', borderRadius: '10px' }}/>
+                <div style={{ width: '50%' }}>
+                    <img src={product.media.length ? product.media[0] : null } style={{ height: '600px', width: '80%', backgroundColor: 'grey', borderRadius: '10px', position: 'sticky' }}/>
                 </div>
                 <div style={{ width: '50%'}}>
                     <div style={{ position: 'absolute', top: '0px', right: '0px', fontSize: '20px', cursor: 'pointer' }}>
@@ -129,7 +129,7 @@ const Product = (props) => {
                         </div> 
                         <div style={{ borderTop: '1px solid rgba(0,0,0,.1)', margin: '20px 0px 20px 0px' }}/>
                         <h5> Seller Reviews </h5>
-                        <div style={{ marginTop: '20px' }}>
+                        <div style={{ marginTop: '20px', height: reviews ? 'calc(auto)' : '0px' , overflow: 'hidden', transition: 'height 300ms ease' }}>
                             {
                                 reviews.map((review, i) => {
                                     return (

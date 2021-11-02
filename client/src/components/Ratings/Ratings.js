@@ -20,8 +20,12 @@ const Ratings = (props) => {
 
     const generateStars = (count) => {
         let arr = []
-        for (var i = 0; i < count; i++) {
+        for (let i = 0; i < count; i++) {
             arr[i] = <FaStar/>
+        }
+
+        for (let i = count; i < 5; i++) {
+            arr[i] = <FaStar style={{ opacity: '.2' }}/>
         }
 
         return arr
