@@ -35,6 +35,8 @@ const verifyPurchase = (order_id) => connection.put(`/orders/${order_id}/verify`
 const getMessageThreads = (req) => connection.get(`/messages/threads`, req)
 const getMessagesFromThread = (thread_id) => connection.get(`/messages/threads/${thread_id}`)
 const getReviewRating = (user_id) => connection.get(`/reviews/rating/${user_id}`)
+const getSimilarProducts = (product_id, req) => connection.get(`/products/${product_id}/similar`, req)
+const getRecommendedProducts = (req) => connection.get(`/products/recommended`, req)
 
 let api = {
     login,
@@ -66,7 +68,9 @@ let api = {
     verifyPurchase,
     getMessageThreads,
     getMessagesFromThread,
-    getReviewRating
+    getReviewRating,
+    getSimilarProducts,
+    getRecommendedProducts
 }
 
 export default api
