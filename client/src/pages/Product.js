@@ -93,14 +93,6 @@ const Product = (props) => {
     var icon ="";
     
 
-    function displayIcon() {
-    if (product.type == "currency") {
-     icon = <FaCoins/>   
-    }
-
-    return icon;
-}
-
 
     return (
         <Layout navbar>
@@ -120,7 +112,7 @@ const Product = (props) => {
 
                     <p style={{ marginBottom: '0px' }}> Product ID: {product._id} </p>
                     <div style={{ borderTop: '1px solid rgba(0,0,0,.1)', margin: '10px 0px 10px 0px' }}/>
-                    <p style={{ marginBottom: '0px' }}> {displayIcon()} {product.type} </p>
+                    <p style={{ marginBottom: '0px' }}> {product.type} </p>
                     <div style={{ borderTop: '1px solid rgba(0,0,0,.1)', margin: '10px 0px 10px 0px' }}/>
                     <p style={{ marginBottom: '0px' }}> Delivery Method: {product.delivery_type} </p>
                     <div style={{ borderTop: '1px solid rgba(0,0,0,.1)', margin: '10px 0px 10px 0px' }}/>
