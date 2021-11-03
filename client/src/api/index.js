@@ -24,6 +24,8 @@ const getViews = (req) => connection.get('/views', req)
 const getProducts = (req) => connection.get('/products', req)
 const getOrders = (req) => connection.get('/orders', req)
 const getReviews = (req) => connection.get('/reviews', req)
+const updateReviewById = (review_id, payload) => connection.put(`/reviews/${review_id}`, payload)
+const deleteReviewById = (review_id) => connection.delete(`/reviews/${review_id}`)
 const updateUserById = (user_id, payload) => connection.put(`/users/${user_id}`, payload)
 const createOrder = (payload) => connection.post('/orders', payload)
 const createView = (payload) => connection.post('/views', payload)
@@ -37,6 +39,9 @@ const getMessagesFromThread = (thread_id) => connection.get(`/messages/threads/$
 const getReviewRating = (user_id) => connection.get(`/reviews/rating/${user_id}`)
 const getSimilarProducts = (product_id, req) => connection.get(`/products/${product_id}/similar`, req)
 const getRecommendedProducts = (req) => connection.get(`/products/recommended`, req)
+const getFilters = (req) => connection.get('/filters', req)
+const createFilter = (payload) => connection.post('/filters', payload)
+const deleteFilterById = (filter_id) => connection.delete(`/filters/${filter_id}`)
 
 let api = {
     login,
@@ -57,6 +62,8 @@ let api = {
     getViews,
     getProducts,
     getReviews,
+    updateReviewById,
+    deleteReviewById,
     updateUserById,
     getOrders,
     createOrder,
@@ -70,7 +77,10 @@ let api = {
     getMessagesFromThread,
     getReviewRating,
     getSimilarProducts,
-    getRecommendedProducts
+    getRecommendedProducts,
+    getFilters,
+    createFilter,
+    deleteFilterById
 }
 
 export default api
