@@ -46,6 +46,7 @@ const socketRouter = require('./routes/socketRouter')
 const loginRouter = require('./routes/loginRouter')
 const messageRouter = require('./routes/messageRouter')
 const notificationRouter = require('./routes/notificationRouter')
+const filterRouter = require('./routes/filterRouter')
 
 // generate routes
 app.use('/api', userRouter)
@@ -62,6 +63,7 @@ app.use('/api', socketRouter)
 app.use('/api', loginRouter)
 app.use('/api', messageRouter)
 app.use('/api', notificationRouter)
+app.use('/api', filterRouter)
 
 // attach non-api requests to client build; redirect non-ssl traffic
 if (process.env.NODE_ENV === 'production') {

@@ -193,6 +193,9 @@ const getSimilar = async (req, res) => {
     let { platform, server, type } = product
 
     pipeline.push({ $search: { index: `productSearch`, text: { query: `${platform || ''} ${server || ''} ${type || ''}`.trim(), path: { wildcard: `*` }}}})
+    if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
+    if (req.query.skip) pipeline.push({ $skip: Number(req.query.skip) })
+    if (req.query.limit) pipeline.push({ $limit: Number(req.query.limit) })
 
     Product.aggregate(pipeline).then((response) => {
         return res.status(200).json(response)
