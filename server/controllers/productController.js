@@ -1,4 +1,5 @@
 const Product = require('../models/product')
+const View = require('../models/view')
 const mongoose = require('mongoose')
 
 const createProduct = async (req, res) => {
@@ -22,14 +23,6 @@ const createProduct = async (req, res) => {
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })
-}
-
-const getSimilarProduct = async (req, res) => {
-    let { _id } = req.params
-    const product = await Product.findById(_id)
-    if (!product) return res.status(400).json({error:'No product found'})
-    let products = await Product.find({type:product.type,platform:product.platform,server:product.server});
-    return res.status(200).json(products)
 }
 
 const getProducts = (req, res) => {
@@ -83,11 +76,140 @@ const deleteProductById = (req, res) => {
     })
 }
 
+const getViewModes = async (user_id) => {
+    const filter = { user_id: mongoose.Types.ObjectId(user_id) };
+    
+    let type = await View.aggregate([
+        { $match: filter },
+        { 
+            $lookup: {
+                from: "products",
+                localField: "product_id",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+        {
+            $project: {
+                product: { $arrayElemAt: [ "$product", 0 ]}
+            }
+        },
+        {
+            $group: {
+                _id: '$product.type',
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: {
+                "count": -1
+            }
+        },
+        {
+            $limit: 1
+        }
+    ]);
+
+    let platform = await View.aggregate([
+        { $match: filter },
+        { 
+            $lookup: {
+                from: "products",
+                localField: "product_id",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+        {
+            $project: {
+                product: { $arrayElemAt: [ "$product", 0 ]}
+            }
+        },
+        {
+            $group: {
+                _id: '$product.platform',
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: {
+                "count": -1
+            }
+        }
+    ]);
+
+    let server = await View.aggregate([
+        { $match: filter },
+        { 
+            $lookup: {
+                from: "products",
+                localField: "product_id",
+                foreignField: "_id",
+                as: "product"
+            }
+        },
+        {
+            $project: {
+                product: { $arrayElemAt: [ "$product", 0 ]}
+            }
+        },
+        {
+            $group: {
+                _id: '$product.server',
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: {
+                "count": -1
+            }
+        }
+    ])
+
+    return { type: type[0]._id, platform: platform[0]._id, server: server[0]._id }
+}
+
+const getRecommended = async (req, res) => {
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q'], pipeline = []
+    reserved.forEach((el) => delete query[el])
+    let { platform, server, type } = await getViewModes(req.user.id)
+
+    pipeline.push({ $search: { index: `productSearch`, text: { query: `${platform || ''} ${server || ''} ${type || ''}`.trim(), path: { wildcard: `*` }}}})
+    if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
+    if (req.query.skip) pipeline.push({ $skip: Number(req.query.skip) })
+    if (req.query.limit) pipeline.push({ $limit: Number(req.query.limit) })
+
+    Product.aggregate(pipeline).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
+const getSimilar = async (req, res) => {
+    let { _id } = req.params
+    let product = await Product.findById(_id), pipeline = []
+    if (!product) return res.status(400).json({ error:'No product found' })
+    let { platform, server, type } = product
+
+    pipeline.push({ $search: { index: `productSearch`, text: { query: `${platform || ''} ${server || ''} ${type || ''}`.trim(), path: { wildcard: `*` }}}})
+    if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
+    if (req.query.skip) pipeline.push({ $skip: Number(req.query.skip) })
+    if (req.query.limit) pipeline.push({ $limit: Number(req.query.limit) })
+
+    Product.aggregate(pipeline).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
 module.exports = {
     createProduct,
-    getSimilarProduct,
+    getSimilar,
     getProducts,
     getProductById,
     updateProductById,
-    deleteProductById
+    deleteProductById,
+    getRecommended
 }

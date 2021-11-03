@@ -74,6 +74,7 @@ const updateReviewById = (req, res) => {
     Review.findByIdAndUpdate(_id, req.body, { new: true }).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
+        console.log(error)
         return res.status(400).json({ error: error.message })
     })
 }

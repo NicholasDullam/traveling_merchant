@@ -8,6 +8,7 @@ import Ratings from './Ratings/Ratings'
 import ViewGallery from './ViewGallery/ViewGallery'
 import ProductCard from './ProductCard/ProductCard'
 import Messenger from './Messenger/Messenger'
+import Pagination from './Pagination/Pagination'
 
 export {
     CheckoutInterface,
@@ -19,5 +20,6 @@ export {
     Ratings,
     ViewGallery,
     ProductCard,
-    Messenger
+    Messenger,
+    Pagination
 }

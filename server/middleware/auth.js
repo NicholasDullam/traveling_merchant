@@ -14,6 +14,20 @@ const auth = async (req, res, next) => {
   }
 }
 
+const adminAuth = async (req, res, next) => {
+  const token = req.cookies.access_token;
+  if (!token) return res.sendStatus(403);
+  try {
+    const data = jwt.verify(token, token_secret);
+    req.user = data
+    if (req.user.banned) return res.status(403).json({ error: 'You are banned' })
+    if (!req.user.admin) return res.status(403).json({ error: 'Requires admin status' })
+    return next()
+  } catch {
+    return res.sendStatus(403);
+  }
+}
+
 const getUserFromToken = async (req, res, next) => {
   const token = req.cookies.access_token;
   if (token) req.user = jwt.verify(token, token_secret)
@@ -23,5 +37,6 @@ const getUserFromToken = async (req, res, next) => {
 
 module.exports = {
   auth,
+  adminAuth,
   getUserFromToken
 }

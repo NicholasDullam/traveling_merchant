@@ -8,6 +8,7 @@ const Game = new mongoose.Schema({
     product_types: [ String ],
     platforms: [ String ],
     servers: [ String ], 
+    banner_img: String,
     img: String,
 }, {
     timestamps: {
