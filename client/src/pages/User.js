@@ -70,18 +70,18 @@ setBtnText("follow")
 
    var followButton =  <button className="btn btn-primary" onClick={handleFollow}> {btnText} </button>
 
-    // const displayFollowButton = () => {
-    //     console.log("displayFollowButton() !!!!!!!!!")
-    //     console.log("user._id" +user._id);
-    //     console.log("auth.userId" +auth.userId);
 
-    //     if() {
-    //         return null;
-    //     }
-    //     else {
-    //     }
 
-    // }
+
+   function displayFollowers() {
+       console.log(user_id)
+       api.getFollowerById(user_id)
+       .then((res) => {
+           console.log(res.data)
+       })
+            return <h1>Folloers</h1>
+
+    }
         
     //TODO: deactivate follow button if it's my profile
         const css=
@@ -138,7 +138,7 @@ setBtnText("follow")
                     }</div>
   <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
   <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-                    <Badge count = {5}></Badge>
+                    {displayFollowers()}
 
 
   </div>

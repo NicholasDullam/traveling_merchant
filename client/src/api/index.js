@@ -50,7 +50,7 @@ const cancelOrder = (order_id) => connection.put(`/orders/${order_id}/cancel`)
 const getAccountOnboarding = (acct_id) => connection.get(`/stripe/accounts/${acct_id}/onboarding`)
 const createAccount = () => connection.post('/stripe/accounts')
 const getNotifications = (req) => connection.get('/notifications', req)
-
+const getFollowerById = (user_id) => connection.get(`/followers/${user_id}`)
 let api = {
     login,
     logout,
@@ -96,7 +96,8 @@ let api = {
     createAccount,
     getAccountOnboarding,
     deliverOrder,
-    getNotifications
+    getNotifications,
+    getFollowerById
 }
 
 export default api

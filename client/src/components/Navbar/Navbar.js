@@ -14,6 +14,7 @@ import AuthContext from "../../context/auth-context";
 import { FaBell } from "react-icons/fa";
 
 import MessengerContext from "../../context/messenger-context";
+import Badge from '../Badge/Badge'
 
 import "./Navbar.css";
 import "../Layout/Layout.css"; // reason for this is to get all global variables (colors, font weights, etc...)
