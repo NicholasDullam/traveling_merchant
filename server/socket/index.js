@@ -8,7 +8,6 @@ let status = {}
 
 module.exports = (io) => {
     Notification.watch().on('change', async (doc) => {
-        console.log('testing', doc)
         if (doc.operationType === 'insert') {
             console.log('sending', doc.fullDocument)
             io.to(doc.fullDocument.receiver.toString()).emit('notification', doc.fullDocument)
@@ -94,13 +93,15 @@ module.exports = (io) => {
             message.save().then(async (response) => {
                 io.to(socket.user.id).emit('message_sent', response)
                 io.to(response.to.toString()).emit('message_received', response)
-                if (status[socket.user.id] === 'online') return
+                if (status[response.to.toString()] === 'online') return
                 let notification = new Notification({
                     sender: socket.user.id,
                     receiver: response.to.toString(),
                     type: 'message',
                     content: response.content,
-                    link: ''
+                    metadata: {
+                        thread_id: socket.user.id
+                    }
                 }) 
 
                 await notification.save()
