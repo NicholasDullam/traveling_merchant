@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import api from '../api'
 import { Layout, ProductCard } from '../components'
-import { AiOutlineClockCircle } from 'react-icons/ai'
+import { AiOutlineClockCircle, AiFillCheckCircle } from 'react-icons/ai'
 import AuthContext from '../context/auth-context'
 
 const Order = (props) => {
@@ -23,6 +23,7 @@ const Order = (props) => {
     useEffect(() => {
         if (!order_id) return
         api.getOrderById(order_id).then((response) => {
+            console.log(response.data)
             setOrder(response.data)
         }).catch((error) => {
             console.log(error)
@@ -111,16 +112,52 @@ const Order = (props) => {
         }
     }
 
+    const renderStatus = () => {
+        if (!order) return null
+        switch(order.status) {
+            case ('delivery_pending') : {
+                return ( <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'rgba(255,165,0,.9)', padding: '7px 11px 7px 11px', borderRadius: '25px', color: 'white' }}>
+                    <AiOutlineClockCircle style={{ fontSize: '20px' }}/>
+                    <p style={{ marginBottom: '0px', marginLeft: '5px', fontSize: '14px' }}> Delivery Pending </p>
+                </div> )
+            }
+
+            case ('denied_delivery_pending') : {
+                return ( <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'rgba(255,165,0,.9)', padding: '7px 11px 7px 11px', borderRadius: '25px', color: 'white' }}>
+                    <AiOutlineClockCircle style={{ fontSize: '20px' }}/>
+                    <p style={{ marginBottom: '0px', marginLeft: '5px', fontSize: '14px' }}> Denied, Delivery Pending </p>
+                </div> )
+            }
+
+            case ('confirmation_pending') : {
+                return ( <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'rgba(255,165,0,.9)', padding: '7px 11px 7px 11px', borderRadius: '25px', color: 'white' }}>
+                    <AiOutlineClockCircle style={{ fontSize: '20px' }}/>
+                    <p style={{ marginBottom: '0px', marginLeft: '5px', fontSize: '14px' }}> Confirmation Pending </p>
+                </div> )
+            }
+
+            case ('confirmed') : {
+                return ( <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'green', padding: '7px 11px 7px 11px', borderRadius: '25px', color: 'white' }}>
+                    <AiFillCheckCircle style={{ fontSize: '20px' }}/>
+                    <p style={{ marginBottom: '0px', marginLeft: '5px', fontSize: '14px' }}> Confirmed </p>
+                </div> )
+            }
+        }
+    }
+
+    const getAutoConfirmationDate = () => {
+        let date = new Date(order.auto_confirm_at)
+        return `${date.getHours()}:${date.getMinutes()}, ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
+    }
+
     return (
         <Layout navbar>
             <div>
                 <h1> Order </h1>
-                <h5 style={{ opacity: '.7', marginBottom: '10px' }}> {order_id} </h5>
-                <div style={{ display: 'flex', marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', backgroundColor: 'rgba(255,165,0,.9)', padding: '6px 9px 6px 9px', borderRadius: '25px', color: 'white' }}>
-                        <AiOutlineClockCircle/>
-                        <p style={{ marginBottom: '0px', marginLeft: '5px', fontSize: '12px' }}> { order ? order.status : null } </p>
-                    </div>
+                <h5 style={{ opacity: '.7', marginBottom: '10px' }}> #{order_id} </h5>
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                    { renderStatus() }
+                    { order && order.auto_confirm_at ? <p style={{ marginBottom: '0px', fontSize: '14px', marginLeft: '10px', opacity: '.7' }}> Auto-confirms at <span style={{ color: 'blue' }}>{getAutoConfirmationDate()}</span> </p> : null }
                 </div>
 
                 {/* context action */}

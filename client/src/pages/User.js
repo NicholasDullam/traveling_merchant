@@ -61,7 +61,7 @@ const User = (props) => {
     }
 
     const handleFollow = () => {
-        api.createFollower(user._id).then((response) => {
+        api.createFollower({ following: user._id }).then((response) => {
             setIsFollowing(true)
             setFollower(response.data)
         }).catch((error) => {
