@@ -2,6 +2,9 @@ const Follower = require("../models/follower");
 
 const createFollower = async (req, res) => {
     let { following } = req.body;
+    // console.log("req.user.id" + req.user.id)
+    // console.log("req.body" + req.body)
+
     if (!following) return res.status(400).json({ error: "Invalid input"})
     const follower = new Follower({ follower: req.user.id, following })
     follower.save().then((response) => {
