@@ -6,6 +6,8 @@ import ProductCard from '../components/ProductCard/ProductCard'
 import Ratings from '../components/Ratings/Ratings'
 import AuthContext from '../context/auth-context'
 import MessengerContext from '../context/messenger-context'
+import Badge from './../components/Badge/Badge';
+
 
 const getStatusColor = (user) => {
     switch(user.status) {
@@ -19,6 +21,8 @@ const getStatusColor = (user) => {
 }
 
 const User = (props) => {
+const [btnText, setBtnText] = useState("Follow")
+
     const [user, setUser] = useState(null)
     const [products, setProducts] = useState([])
     const messenger = useContext(MessengerContext)
@@ -44,9 +48,52 @@ const User = (props) => {
     const handleMessage = () => {
         messenger.open(user_id)
     }
+    const auth = useContext(AuthContext);
 
+    const handleFollow = () => {
+        const toFollow = user._id
+            api.createFollower(toFollow) //follower is following user w user_id
+            .then((response) => {
+                console.log(response)
+            }).catch((error) => {
+                console.log(error)
+            })
+            if(btnText == "follow") {
+                setBtnText("following")
+
+            }
+else {
+setBtnText("follow")
+
+}
+        }
+
+   var followButton =  <button className="btn btn-primary" onClick={handleFollow}> {btnText} </button>
+
+    // const displayFollowButton = () => {
+    //     console.log("displayFollowButton() !!!!!!!!!")
+    //     console.log("user._id" +user._id);
+    //     console.log("auth.userId" +auth.userId);
+
+    //     if() {
+    //         return null;
+    //     }
+    //     else {
+    //     }
+
+    // }
+        
+    //TODO: deactivate follow button if it's my profile
+        const css=
+        `   .nav-tabs .nav-link{
+         color:black;           
+        }`
+ 
     return (
         <Layout navbar>
+            <style>
+             {css}
+                </style>
             <div>
                 { user ? <div>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -61,18 +108,41 @@ const User = (props) => {
                             </div>
                         </div>
                         <div style={{ marginLeft: 'auto' }} >
-                            <button className="btn btn-primary" onClick={handleMessage}> Follow </button>
-                            <button className="btn btn-primary" style={{ marginLeft: '20px' }} onClick={handleMessage}> Message </button>
+                       {user._id != auth.userId? 
+   followButton: null}
+<button className="btn btn-primary" style={{ marginLeft: '20px' }} onClick={handleMessage}> Message </button>
                         </div>
                     </div>
+                
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Products</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Following</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Followers</button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
                     <h4 style={{ borderBottom: '1px solid rgba(0,0,0,.1)', paddingBottom: '10px', marginTop: '20px', marginBottom: '10px' }}> Products </h4>
+                
                     {
                         products.map((product) => {
                             return (
                                 <ProductCard product={product}/>
                             )
                         })
-                    }
+                    }</div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
+  <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                    <Badge count = {5}></Badge>
+
+
+  </div>
+</div>
                 </div> : null }
             </div>
         </Layout>
