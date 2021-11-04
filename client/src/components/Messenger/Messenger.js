@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
-import { useLocation } from 'react-router'
+import { useHistory, useLocation } from 'react-router'
 import api from '../../api'
 import AuthContext from '../../context/auth-context'
 import MessengerContext from '../../context/messenger-context'
@@ -42,6 +42,8 @@ const Thread = (props) => {
 }
 
 const Messenger = (props) => {
+    const [messengerWasOpen, setMessengerWasOpen] = useState(null)
+    const [pathname, setPathname] = useState(null)
     const [socket, setSocket] = useState(null)
     const [rendered, setRendered] = useState(false)
     const [backdrop, setBackdrop] = useState(false)
@@ -56,6 +58,9 @@ const Messenger = (props) => {
     const auth = useContext(AuthContext)
 
     const location = useLocation()
+    const history = useHistory()
+
+    /* Socket Handlers */
 
     // handler for message_sent event
     const messageSentHandler = (message) => {
@@ -75,6 +80,7 @@ const Messenger = (props) => {
         updateThread(messengerRef.current.activeThreadId, { ...messengerRef.current.activeThread, unread: messengerRef.current.activeThread.unread + 1 })
     }
 
+    // handler for notification event
     const notificationReceivedHandler = (newNotification) => {
         console.log(newNotification)
         notification.setNotifications((notifications) => {
@@ -87,6 +93,8 @@ const Messenger = (props) => {
         let thread = messengerRef.current.threads.find((thread) => thread._id === event.thread_id )
         if (thread) updateThread(event.thread_id, { ...thread, user: { ...thread.user, status: event.status }})
     }
+
+    /* useEffect hooks */
 
     // socket initialization
     useEffect(() => {
@@ -102,9 +110,8 @@ const Messenger = (props) => {
         setSocket(io)    
         
         api.getMessageThreads().then((response) => {
-            // remove threads without a user & not themselves
             let threads = response.data.filter((thread) => thread.user && thread.user._id !== auth.userId)
-            if (threads.length) messenger.setActiveThread(threads[0])
+            if (threads.length && !messenger.activeThread) messenger.setActiveThread(threads[0])
             messenger.setThreads(threads)
         }).catch((error) => {
             console.log(error)
@@ -121,9 +128,14 @@ const Messenger = (props) => {
         if (scrollPosition) messageList.current.scrollTop = messageList.current.scrollHeight
     }, [messenger.messages])
 
+    // reset scroll on new thread
+    useEffect(() => {
+        if (scrollPosition) messageList.current.scrollTop = messageList.current.scrollHeight
+    }, [messenger.activeThreadId])
+
     // load messages for active thread
     useEffect(() => {
-        if (!messenger.activeThreadId || !messenger.isOpen || messenger.activeThread.loaded || loading) return
+        if (!messenger.activeThread || !messenger.isOpen || messenger.activeThread.loaded || loading) return
         setLoading(true)
         api.getMessagesFromThread(messenger.activeThreadId).then((response) => {
             socket.emit('read', messenger.activeThreadId)
@@ -133,15 +145,23 @@ const Messenger = (props) => {
         }).catch((error) => {
             console.log(error)
         })
-    }, [messenger.activeThreadId, messenger.isOpen, loading])
+    }, [messenger.activeThread, messenger.isOpen, loading])
 
     // updates messenger state on location change
     useEffect(() => {
-        messenger.close()
-    }, [location])
+        if (pathname && pathname !== location.pathname) handleClose()
+        setPathname(location.pathname)
+    }, [location.pathname])
+
+    // loads messenger when query string contains messenger thread
+    useEffect(() => {
+        const search = new URLSearchParams(window.location.search)
+        if (search.get('m')) return messenger.open(search.get('m'))
+    }, [location.search])
 
     // messenger unrender and re-render
     useEffect(() => {
+        if (messengerWasOpen === null) return setMessengerWasOpen(messenger.isOpen)
         if (messenger.isOpen) {
             document.body.style.overflow = 'hidden'
             setRendered(true)
@@ -157,9 +177,12 @@ const Messenger = (props) => {
                 setRendered(false)
             }, 400)
         }
+
+        setMessengerWasOpen(messenger.isOpen)
     }, [messenger.isOpen])
 
-    // actions
+    /* Client Actions */
+
     const message = () => {
         if (content !== '') socket.message(messenger.activeThreadId, auth.userId, 'test', content)
     }
@@ -176,6 +199,13 @@ const Messenger = (props) => {
         let thread_messages = messages[thread_id]
         messages[thread_id] = thread_messages ? [...thread_messages, ...new_messages] : [...new_messages]
         messenger.setMessages(messages)
+    }
+
+    const handleClose = () => {
+        const search = new URLSearchParams(location.search)
+        search.delete('m')
+        history.replace({ search: search.toString() })
+        messenger.close()
     }
 
     const parseMessage = (message) => {
@@ -212,7 +242,7 @@ const Messenger = (props) => {
 
     return (
         <div>
-            { rendered ? <div style={{ position: 'fixed', height: '100%', width: '100%', backgroundColor: 'black', opacity: backdrop ? '.7' : '0', zIndex: '1', transition: 'opacity 400ms ease-out' }} onClick={() => messenger.close()}/> : null }
+            { rendered ? <div style={{ position: 'fixed', height: '100%', width: '100%', backgroundColor: 'black', opacity: backdrop ? '.7' : '0', zIndex: '1', transition: 'opacity 400ms ease-out' }} onClick={handleClose}/> : null }
             <div style={{ position: 'fixed', height: '100%', width: (window.innerWidth < 600 ? 'calc(100%)' : 'calc(50%)'), right: messenger.isOpen && rendered ? '0' : (window.innerWidth < 600 ? 'calc(-100%)' : 'calc(-50%)'), backgroundColor: 'black', transition: 'right 400ms ease', zIndex: '1' }}>
                 <div style={{ padding: '105px 40px 40px 40px', height: '100%', position: 'relative' }}>
                     <div style={{ position: 'absolute', display: 'flex', top: '64px', left: '40px', alignItems: 'center', backgroundColor: 'rgba(255,255,255,.1)', padding: '6px 9px 6px 9px', borderRadius: '25px' }}>

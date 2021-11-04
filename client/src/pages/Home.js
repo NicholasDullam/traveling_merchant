@@ -34,8 +34,8 @@ const Home = (props) => {
                     auth.isLoggedIn ? <div style={{ marginTop: '20px', marginBottom: '30px' }}>
                         <h4 style={{ borderBottom: '1px solid rgba(0,0,0,.1)', paddingBottom: '10px', marginTop: '10px' }} onClick={() => history.push('/games')}> Recommended </h4>
                         {
-                            recommended.map((product) => {
-                                return <ProductCard product={product} />
+                            recommended.map((product, i) => {
+                                return <ProductCard key={i} product={product} />
                             })
                         }
                     </div> : null 
