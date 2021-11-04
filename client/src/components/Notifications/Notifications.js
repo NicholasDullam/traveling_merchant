@@ -27,8 +27,8 @@ const Notifications = (props) => {
     }, [notifications.isOpen])
 
     useEffect(() => {
-        api.getNotifications({}).then((response) => {
-            notifications.setNotifications(response.data)
+        api.getNotifications({ params: { sort: 'created_at'} }).then((response) => {
+            notifications.setNotifications(response.data.data)
         }).catch((error) => {
             console.log(error)
         })
@@ -53,7 +53,6 @@ const Notifications = (props) => {
                     <h1 style={{ color: 'white', marginBottom: '20px' }}> Notifications </h1>
                     <div style={{ height: 'calc(100% - 92px)', position: 'relative', overflowY: 'scroll' }}>
                         <div>
-                            <h5 style={{ color: 'white', position: 'sticky', padding: '10px 0px 20px 0px', top: '0px', backgroundColor: 'black' }}> Unread </h5>
                             { 
                                 notifications.notifications.filter((notification) => !notification.seen ).map((notification) => {
                                     return renderNotification(notification)
@@ -61,7 +60,6 @@ const Notifications = (props) => {
                             } 
                         </div>
                         <div>
-                            <h5 style={{ color: 'white' }}> Read </h5>
                             {
                                 notifications.notifications.filter((notification) => notification.seen ).map((notification) => {
                                     return renderNotification(notification)
