@@ -8,6 +8,7 @@ import Ratings from './Ratings/Ratings'
 import ViewGallery from './ViewGallery/ViewGallery'
 import ProductCard from './ProductCard/ProductCard'
 import Messenger from './Messenger/Messenger'
+import Notifications from './Notifications/Notifications'
 import Pagination from './Pagination/Pagination'
 
 export {
@@ -21,5 +22,6 @@ export {
     ViewGallery,
     ProductCard,
     Messenger,
-    Pagination
+    Pagination,
+    Notifications
 }

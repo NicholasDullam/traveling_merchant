@@ -10,7 +10,7 @@ const AdminOrders = (props) => {
     const [page, setPage] = useState(1)
 
     useEffect(() => {
-        api.getOrders({ params: { limit, skip: (page - 1) ? (page - 1) * limit : 0 }}).then((response) => {
+        api.getOrders({ params: { limit, skip: (page - 1) ? (page - 1) * limit : 0, sort: '-created_at' }}).then((response) => {
             setHasMore(response.data.has_more)
             setOrders(response.data.data)
         }).catch((error) => {

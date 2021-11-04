@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const io = require('../')
+const User = require('./user');
+const nodeMailer = require('nodemailer')
 
 // Notification Schema
 const Notification = new mongoose.Schema({
@@ -16,5 +17,26 @@ const Notification = new mongoose.Schema({
         updatedAt: 'updated_at'
     }
 });
+
+Notification.post('save', async (doc, next) => {
+    let receiver = await User.findById(doc.receiver)
+    let transport = nodeMailer.createTransport({
+        service: 'gmail',
+        auth : {
+            user: process.env.EMAIL,
+            pass: process.env.EMAIL_PASS
+        }
+    })
+
+    let mailer = {
+        to : receiver.email,
+        from : process.env.EMAIL,
+        subject: 'New Notification',
+        html : '<h1>You have a new notification :D</h1>'
+    }
+
+    await transport.sendMail(mailer)
+    next()
+})
 
 module.exports = mongoose.model('Notification', Notification);

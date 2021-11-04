@@ -4,6 +4,7 @@ import { useLocation } from 'react-router'
 import api from '../../api'
 import AuthContext from '../../context/auth-context'
 import MessengerContext from '../../context/messenger-context'
+import NotificationContext from '../../context/notification-context'
 import Socket from "../../socket";
 
 const getStatus = (user) => {
@@ -48,6 +49,7 @@ const Messenger = (props) => {
     const [scrollPosition, setScrollPosition] = useState(true)
     const [content, setContent] = useState('')
 
+    const notification = useContext(NotificationContext)
     const messenger = useContext(MessengerContext)
     const messengerRef = useRef(messenger)
     const messageList = useRef()
@@ -73,10 +75,16 @@ const Messenger = (props) => {
         updateThread(messengerRef.current.activeThreadId, { ...messengerRef.current.activeThread, unread: messengerRef.current.activeThread.unread + 1 })
     }
 
+    const notificationReceivedHandler = (newNotification) => {
+        console.log(newNotification)
+        notification.setNotifications((notifications) => {
+            return [newNotification, ...notifications]
+        })
+    }
+
     // handler for status event
     const statusHandler = (event) => {
         let thread = messengerRef.current.threads.find((thread) => thread._id === event.thread_id )
-        console.log(thread, event)
         if (thread) updateThread(event.thread_id, { ...thread, user: { ...thread.user, status: event.status }})
     }
 
@@ -88,10 +96,9 @@ const Messenger = (props) => {
         io.on('success', messenger.connect)
         io.on('message_sent', messageSentHandler)
         io.on('message_received', messageReceivedHandler)
+        io.on('notification', notificationReceivedHandler)
         io.on('status', statusHandler)
-        io.on('error', (response) => {
-            console.log(response)
-        })
+        io.on('error', (response) => { console.log(response) })
         setSocket(io)    
         
         api.getMessageThreads().then((response) => {
