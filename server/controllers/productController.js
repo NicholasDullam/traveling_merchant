@@ -24,7 +24,11 @@ const createProduct = async (req, res) => {
         return res.status(400).json({ error: error.message })
     })
 }
-
+const getSort = (sortString) => {
+    let direction = 1
+    if (sortString.indexOf('-')) direction = -1
+    return { [sortString.replace('-', '')]: direction }
+}
 const getProducts = (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q'], indices = ['game_id', 'user_id'], pipeline = []
     indices.forEach((el) => {
