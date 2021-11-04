@@ -21,11 +21,13 @@ const getStatusColor = (user) => {
 }
 
 const User = (props) => {
-const [btnText, setBtnText] = useState("Follow")
+    const messenger = useContext(MessengerContext)
+    const auth = useContext(AuthContext);
 
     const [user, setUser] = useState(null)
     const [products, setProducts] = useState([])
-    const messenger = useContext(MessengerContext)
+    const [isFollowing, setIsFollowing] = useState(false)
+    const [follower, setFollower] = useState(null)
     const { user_id } = useParams()
 
     useEffect(() => {
@@ -35,6 +37,7 @@ const [btnText, setBtnText] = useState("Follow")
             console.log(error)
         })
     }, [])
+
 
     useEffect(() => {
         if (!user) return
@@ -48,27 +51,25 @@ const [btnText, setBtnText] = useState("Follow")
     const handleMessage = () => {
         messenger.open(user_id)
     }
-    const auth = useContext(AuthContext);
+
+    const handleUnfollow = () => {
+        api.deleteFollowerById().then((response) => {
+
+        }).catch((error) => {
+
+        })
+    }
 
     const handleFollow = () => {
-        const toFollow = user._id
-            api.createFollower(toFollow) //follower is following user w user_id
-            .then((response) => {
-                console.log(response)
-            }).catch((error) => {
-                console.log(error)
-            })
-            if(btnText == "follow") {
-                setBtnText("following")
+        api.createFollower(user._id).then((response) => {
+            setIsFollowing(true)
+            setFollower(response.data)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
 
-            }
-else {
-setBtnText("follow")
-
-}
-        }
-
-   var followButton =  <button className="btn btn-primary" onClick={handleFollow}> {btnText} </button>
+   var followButton =  <button className="btn btn-primary" onClick={() => isFollowing ? handleUnfollow() : handleFollow()}> { isFollowing ? 'Unfollow' : 'Follow' } </button>
 
 
 
