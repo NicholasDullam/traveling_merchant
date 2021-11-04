@@ -30,6 +30,17 @@ function App() {
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [notifications, setNotifications] = useState([])
 
+  useEffect(() => {
+    setIsLogging(true)
+    api.verifyToken().then((response) => {
+        let { token, user } = response.data
+        login(token, user)
+        setIsLogging(false)
+    }).catch((error) => {
+        setIsLogging(false)
+    })
+  }, [])
+
   const login = useCallback((token, user) => {
       setToken(token)
       setUser(user)
@@ -44,21 +55,10 @@ function App() {
       setIsLoggedIn(false)
   }, []);
 
-  useEffect(() => {
-    setIsLogging(true)
-    api.verifyToken().then((response) => {
-        let { token, user } = response.data
-        login(token, user)
-        setIsLogging(false)
-    }).catch((error) => {
-        setIsLogging(false)
-    })
-  }, []);
-
   const setActiveThreadId = (thread_id) => {
     let active = messengerThreads.find((thread) => thread.user._id === thread_id)
-    setMessengerThread(active)
-    setMessengerThreadId(active.user._id)
+    setMessengerThread(active || null)
+    setMessengerThreadId(thread_id)
   }
 
   const setActiveThread = (thread) => {

@@ -34,8 +34,8 @@ const ViewGallery = (props) => {
     return (
         <div>
             {
-                views.map((view) => {
-                    return <ProductCard product={view.product}/>
+                views.map((view, i) => {
+                    return <ProductCard key={i} product={view.product}/>
                 })
             }
         </div>

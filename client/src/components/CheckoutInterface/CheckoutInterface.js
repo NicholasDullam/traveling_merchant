@@ -177,7 +177,7 @@ const CheckoutInterface = (props) => {
                                 <div key={i} style={{ padding: '10px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px', cursor: 'pointer', boxShadow: selectedPaymentMethod === paymentMethod.id ? '0px 0px 0px 1px blue' : '', transition: 'box-shadow 300ms ease' }} onClick={() => setSelectedPaymentMethod(paymentMethod.id)}>
                                     <div style={{ display: 'flex', alignItems: 'center' }}>
                                         {renderBrand(paymentMethod.card.brand)}
-                                        <p style={{ marginBottom: '0px', marginLeft: '5px' }}> Ending in {paymentMethod.card.last4} </p>
+                                        <p style={{ marginBottom: '0px', marginLeft: '10px' }}> Ending in {paymentMethod.card.last4} </p>
                                         <p style={{ marginBottom: '0px', marginLeft: 'auto', opacity: '.7', fontSize: '14px' }}> Expires {paymentMethod.card.exp_month}/{paymentMethod.card.exp_year} </p>
                                     </div>
                                 </div>

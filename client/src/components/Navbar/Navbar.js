@@ -1,6 +1,6 @@
 import React, {useContext} from "react";
 
-import { Link } from "react-router-dom";
+import { Link, useHistory, useLocation } from "react-router-dom";
 
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -24,6 +24,8 @@ const Navbar = (props) => {
   const auth = useContext(AuthContext);
   const messenger = useContext(MessengerContext)
   const notifications = useContext(NotificationContext)
+  const history = useHistory()
+  const location = useLocation()
 
   const handleLogout = () => {
     api.logout().then((response) => {
@@ -67,7 +69,12 @@ const Navbar = (props) => {
               <p style={{ marginBottom: '0px' }} className="nav-link" to="/messages">Notifications</p>
             </li>
             <li className="nav-item" onClick={() => {
-              if (messenger.isOpen) messenger.close()
+              if (messenger.isOpen) {
+                const search = new URLSearchParams(location.search)
+                search.delete('m')
+                history.replace({ search: search.toString() })
+                messenger.close()
+              }
               if (!messenger.isOpen) messenger.open()
             }}>
               <p style={{ marginBottom: '0px' }} className="nav-link" to="/messages">Messages</p>
