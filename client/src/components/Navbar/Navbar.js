@@ -10,15 +10,22 @@ import $ from 'jquery';
 import Popper from 'popper.js';
 
 import AuthContext from "../../context/auth-context";
+
+import { FaBell } from "react-icons/fa";
+
 import MessengerContext from "../../context/messenger-context";
 
 import "./Navbar.css";
 import "../Layout/Layout.css"; // reason for this is to get all global variables (colors, font weights, etc...)
 import SearchBar from "../SearchBar/SearchBar";
 import api from "../../api";
+import NotificationContext from "../../context/notification-context";
+import Badge from "../Badge/Badge";
+
 const Navbar = (props) => {
   const auth = useContext(AuthContext);
   const messenger = useContext(MessengerContext)
+  const notifications = useContext(NotificationContext)
 
   const handleLogout = () => {
     api.logout().then((response) => {
@@ -56,6 +63,12 @@ const Navbar = (props) => {
               <Link className="nav-link" to="/admin/users">Admin</Link>
             </li> : null }
             <li className="nav-item" onClick={() => {
+              if (notifications.isOpen) notifications.close()
+              if (!notifications.isOpen) notifications.open()
+            }}>
+              <p style={{ marginBottom: '0px' }} className="nav-link" to="/messages">Notifications</p>
+            </li>
+            <li className="nav-item" onClick={() => {
               if (messenger.isOpen) messenger.close()
               if (!messenger.isOpen) messenger.open()
             }}>
@@ -72,7 +85,7 @@ const Navbar = (props) => {
               <li><a class="dropdown-item">
             <Link  to="/profile/favorites">Favorites</Link>
               </a></li>
-              <li><a class="dropdown-item">
+              <li><a class="dropdsown-item">
             <Link  to="/profile/reviews">Review</Link>
               </a></li>
               <li><a class="dropdown-item">

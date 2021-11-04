@@ -8,7 +8,7 @@ const addJob = (id, time, task) => {
 
 const removeJob = (id) => {
     let job = jobs[id]
-    job.cancel()
+    if (job) job.cancel()
     delete jobs[id]
 }
 

@@ -24,7 +24,11 @@ const createProduct = async (req, res) => {
         return res.status(400).json({ error: error.message })
     })
 }
-
+const getSort = (sortString) => {
+    let direction = 1
+    if (sortString.indexOf('-')) direction = -1
+    return { [sortString.replace('-', '')]: direction }
+}
 const getProducts = (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q'], indices = ['game_id', 'user_id'], pipeline = []
     indices.forEach((el) => {
@@ -193,6 +197,9 @@ const getSimilar = async (req, res) => {
     let { platform, server, type } = product
 
     pipeline.push({ $search: { index: `productSearch`, text: { query: `${platform || ''} ${server || ''} ${type || ''}`.trim(), path: { wildcard: `*` }}}})
+    if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
+    if (req.query.skip) pipeline.push({ $skip: Number(req.query.skip) })
+    if (req.query.limit) pipeline.push({ $limit: Number(req.query.limit) })
 
     Product.aggregate(pipeline).then((response) => {
         return res.status(200).json(response)

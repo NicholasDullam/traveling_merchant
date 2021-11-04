@@ -9,7 +9,7 @@ const ViewGallery = (props) => {
     const [productsLoaded, setProductsLoaded] = useState(false)
 
     useEffect(() => {
-        let params = { limit: 5, sort: '-created_at' }
+        let params = { limit: 3, sort: '-created_at' }
         if (auth.user) params.user_id = auth.user._id
         api.getViews({ params }).then((response) => {
             setViews(response.data)

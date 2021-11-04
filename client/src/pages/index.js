@@ -18,6 +18,9 @@ import Orders from './Orders'
 import Order from './Order'
 import Products from './Products'
 import Messages from './Messages'
+import AdminReviews from './AdminReviews'
+import AdminOrders from './AdminOrders'
+import AdminFilters from './AdminFilters'
 
 export { 
     Checkout,
@@ -39,5 +42,8 @@ export {
     Orders,
     Order,
     Products,
-    Messages
+    Messages,
+    AdminReviews,
+    AdminOrders,
+    AdminFilters
 }

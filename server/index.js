@@ -4,6 +4,7 @@ var dotenv = require('dotenv').config()
 const express = require('express');
 const cookieParser = require('cookie-parser')
 const sslRedirect = require('heroku-ssl-redirect');
+const { handlePastDueConfirmations } = require('./controllers/orderController')
 const http = require("http");
 const db = require('./db')
 var cors = require('cors');
@@ -46,6 +47,7 @@ const socketRouter = require('./routes/socketRouter')
 const loginRouter = require('./routes/loginRouter')
 const messageRouter = require('./routes/messageRouter')
 const notificationRouter = require('./routes/notificationRouter')
+const filterRouter = require('./routes/filterRouter')
 
 // generate routes
 app.use('/api', userRouter)
@@ -62,6 +64,7 @@ app.use('/api', socketRouter)
 app.use('/api', loginRouter)
 app.use('/api', messageRouter)
 app.use('/api', notificationRouter)
+app.use('/api', filterRouter)
 
 // attach non-api requests to client build; redirect non-ssl traffic
 if (process.env.NODE_ENV === 'production') {
@@ -86,6 +89,8 @@ let io = require('socket.io')(server, {
 
 // add io functions to socket object
 require('./socket')(io)
+
+handlePastDueConfirmations()
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
 
