@@ -4,13 +4,36 @@ const Product = require('../models/product')
 const { transferToSellerFromOrder, createPaymentIntentFromOrder, verifyPaymentIntent } = require('./stripeController')
 const { addJob, removeJob } = require('../cron')
 
+const handlePastDueConfirmations = () => {
+    // Orders requiring immediate transfer
+    Order.find({ auto_confirm_at: { $lte: Date.now() }}).populate('seller').then((response) => {
+        response.forEach( async (order) => {
+            if (!order.pi_id) return
+            await transferToSellerFromOrder(order)
+        })
+    }).catch((error) => {
+        console.log(error)
+    })
+
+    // Order requiring auto_confirm cron
+    Order.find({ auto_confirm_at: { $gt: Date.now() }}).populate('seller').then((response) => {
+        response.forEach((order) => {
+            if (!order.pi_id) return
+            addJob(order._id, order.auto_confirm_at, () => {
+                if (order.status !== 'confirmation_pending') return
+                transferToSellerFromOrder(order)
+            })
+        })
+    })
+}
+
 const createOrder = async (req, res) => {
     let { product_id, quantity, requirements } = req.body
     
     if (!product_id) return res.status(400).json({ error: 'No products in order'})
     let product = await Product.findById(product_id)
     if (!product) return res.status(400).json({ error: 'Product not found'})
-    if (quantity > product.stock) return res.status({ error: 'Quantity exceeds stock'})
+    //if (quantity > product.stock) return res.status({ error: 'Quantity exceeds stock'})
     if (quantity < product.min_quantity) return res.status(400).json({ error: 'Quantity less than minimum'})
 
     let order = new Order({
@@ -37,7 +60,9 @@ const deliverOrder = async (req, res) => {
     if (!_id) return res.status(400).json({ error: 'Missing order_id' })
     let order = await Order.findById(_id)
     if (req.user.id !== order.seller.toString()) return res.status(402).json({ error: 'Invalid permissions' })
-    Order.findOneAndUpdate({ _id }, { status: 'confirmation_pending', delivered_at: Date.now(), auto_confirm_at: Date.now() + 259200 }, { new: true }).then((response) => {
+    let date = new Date()
+    date.setDate(date.getDate() + 3)
+    Order.findOneAndUpdate({ _id }, { status: 'confirmation_pending', delivered_at: Date.now(), auto_confirm_at: date.getTime() }, { new: true }).then((response) => {
         // initialize cronjob to handle auto-confirmations
         addJob(response._id, response.auto_confirm_at, () => {
             let order = Order.findById(response._id)
@@ -80,7 +105,7 @@ const cancelOrder = async (req, res) => {
     let { _id } = req.params
     if (!_id) return res.status(400).json({ error: 'Missing order_id' })
     let order = await Order.findById(_id)
-    if (req.user.id !== order.seller.toString()) return res.status(402).json({ error: 'Invalid permissions' })
+    if (req.user.id !== order.seller.toString() && !req.user.admin) return res.status(402).json({ error: 'Invalid permissions' })
     if (order.status === 'transfer_completed') return res.status(400).json({ error: 'Order already completed' })
     Order.findByIdAndUpdate(_id, { status: 'canceled', refunded: true }, { new: true }).then((response) => {
         return res.status(200).json(response)
@@ -140,4 +165,5 @@ module.exports = {
     verifyPurchase,
     getOrderById,
     getOrders,
+    handlePastDueConfirmations
 }

@@ -44,8 +44,6 @@ const displayNotifications = () => {
 api.getNotifications().then((response)=> {
   console.log(response.data)
 })
-return     <li><a class="dropdown-item" href="#">Notification here</a></li>
-
 }
 
   // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
@@ -96,7 +94,6 @@ return     <li><a class="dropdown-item" href="#">Notification here</a></li>
     <li><a class="dropdown-item" href="#">Action</a></li>
     <li><a class="dropdown-item" href="#">Another action</a></li>
     <li><a class="dropdown-item" href="#">Something else here</a></li>
-    {/* {displayNotifications} */}
   </ul>            </div>
               </li>
             <li class="nav-item dropdown" style={{ marginLeft: '20px' }}>
@@ -128,7 +125,7 @@ return     <li><a class="dropdown-item" href="#">Notification here</a></li>
               <li><a class="dropdown-item">
             <Link  to="/profile/preferences">Preferences</Link>
               </a></li>
-              <li onClick={handleLogout()}><a class="dropdown-item">
+              <li onClick={handleLogout}><a class="dropdown-item">
             <Link  to="/">Sign out</Link>
               </a></li>
           </ul>

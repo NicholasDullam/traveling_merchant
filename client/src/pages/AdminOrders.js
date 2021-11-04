@@ -18,6 +18,16 @@ const AdminOrders = (props) => {
         })
     }, [page, limit])
 
+    const cancelOrder = (order_id) => {
+        api.cancelOrder(order_id).then((response) => {
+            let newOrders = [...orders], newOrder = newOrders.findIndex((order) => order._id === order_id)
+            newOrders[newOrder] = response.data
+            setOrders(newOrders)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
     return (
         <div>
             <h5 style={{ marginBottom: '20px' }}> Orders </h5>
@@ -26,12 +36,15 @@ const AdminOrders = (props) => {
                 orders.map((order, i) => {
                     return ( <div key={i} style={{ padding: '10px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px 0px 5px 0px', cursor: 'pointer' }}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <h6 style={{ marginBottom: '-3px' , marginLeft: '10px'}}> {order.content} </h6>
-                            <div style={{ display: 'flex', marginLeft: 'auto' }}>
-                                <FaTrashAlt style={{ marginLeft: '10px', marginRight: '10px'}}/>
+                            <p style={{ marginBottom: '0px', width: '70px', textOverflow: 'ellipsis', overflow: 'hidden' }}> {order._id} </p>
+                            <p style={{ marginBottom: '0px', marginLeft: '20px' }}> {order.status} </p>
+                            <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}>
+                                <p style={{ marginBottom: '0px', marginLeft: 'auto' }}> {(new Date(order.created_at)).getMonth() + 1}/{(new Date(order.created_at)).getDate()} </p>                            <div style={{ display: 'flex', marginLeft: 'auto' }}>
+                                <FaTrashAlt style={{ marginLeft: '10px', marginRight: '10px'}} onClick={() => cancelOrder(order._id)}/>
                             </div>
                         </div>
-                    </div> )
+                    </div>
+                </div> )
                 })
             }
 
