@@ -16,9 +16,11 @@ import "./Navbar.css";
 import "../Layout/Layout.css"; // reason for this is to get all global variables (colors, font weights, etc...)
 import SearchBar from "../SearchBar/SearchBar";
 import api from "../../api";
+import NotificationContext from "../../context/notification-context";
 const Navbar = (props) => {
   const auth = useContext(AuthContext);
   const messenger = useContext(MessengerContext)
+  const notifications = useContext(NotificationContext)
 
   const handleLogout = () => {
     api.logout().then((response) => {
@@ -55,6 +57,12 @@ const Navbar = (props) => {
             { auth.user.admin ? <li className="nav-item">
               <Link className="nav-link" to="/admin/users">Admin</Link>
             </li> : null }
+            <li className="nav-item" onClick={() => {
+              if (notifications.isOpen) notifications.close()
+              if (!notifications.isOpen) notifications.open()
+            }}>
+              <p style={{ marginBottom: '0px' }} className="nav-link" to="/messages">Notifications</p>
+            </li>
             <li className="nav-item" onClick={() => {
               if (messenger.isOpen) messenger.close()
               if (!messenger.isOpen) messenger.open()

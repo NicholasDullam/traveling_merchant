@@ -7,8 +7,12 @@ const { getThreadsHelper } = require('../controllers/messageController');
 let status = {}
 
 module.exports = (io) => {
-    Notification.watch().on('change', (doc) => {
-        if (doc.operationType === 'insert') io.to(doc.receiver).emit('notification', doc.fullDocument)
+    Notification.watch().on('change', async (doc) => {
+        console.log('testing', doc)
+        if (doc.operationType === 'insert') {
+            console.log('sending', doc.fullDocument)
+            io.to(doc.fullDocument.receiver.toString()).emit('notification', doc.fullDocument)
+        }
     })
 
     io.use((socket, next) => {
