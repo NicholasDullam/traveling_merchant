@@ -75,6 +75,28 @@ const Game = (props) => {
         if (e.key === 'Enter') handleSearch()
     }
 
+var [b, setB] = useState(1);
+var sortString = ""
+    const handleSort = () => {
+if( b == 1) {
+    console.log("sorting one way")
+    sortString = '-unit_price'
+    setB(0);
+}  
+else {
+    console.log("sorting the other way")
+    sortString ='unit_price'
+setB(1)
+}
+api.getProducts({ params: {sort: sortString}}).then((response) => {
+            let { data, has_more } = response.data
+            setProducts(data)
+            setHasMore(has_more)
+        }).catch((error) => {
+            console.log(error)
+        })
+    } 
+
     return (
         <Layout navbar>
             { game ? <div>
@@ -140,6 +162,8 @@ const Game = (props) => {
                         </div>
                     </div>
                 </div>
+
+                <button class="btn btn-primary" onClick={handleSort}>Sort</button>
 
                 <div>
                     { products.map((product) => {

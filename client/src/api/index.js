@@ -43,7 +43,6 @@ const getFilters = (req) => connection.get('/filters', req)
 const createFilter = (payload) => connection.post('/filters', payload)
 const deleteFilterById = (filter_id) => connection.delete(`/filters/${filter_id}`)
 const createFollower = (req) => connection.post('/followers', req)
-const getNotifications = (req) => connection.get('/notifications', req)
 const confirmOrder = (order_id) => connection.put(`/orders/${order_id}/confirm`)
 const denyOrder = (order_id) => connection.put(`/orders/${order_id}/deny`)
 const deliverOrder = (order_id) => connection.put(`/orders/${order_id}/deliver`)
@@ -51,7 +50,7 @@ const cancelOrder = (order_id) => connection.put(`/orders/${order_id}/cancel`)
 const getAccountOnboarding = (acct_id) => connection.get(`/stripe/accounts/${acct_id}/onboarding`)
 const createAccount = () => connection.post('/stripe/accounts')
 const getNotifications = (req) => connection.get('/notifications', req)
-
+const getFollowerById = (user_id) => connection.get(`/followers/${user_id}`)
 let api = {
     login,
     logout,
@@ -97,7 +96,8 @@ let api = {
     createAccount,
     getAccountOnboarding,
     deliverOrder,
-    getNotifications
+    getNotifications,
+    getFollowerById
 }
 
 export default api
