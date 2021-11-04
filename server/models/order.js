@@ -35,8 +35,10 @@ Order.post('findOneAndUpdate', async (doc, next) => {
                 type: 'order',
                 sender: doc.buyer,
                 receiver: doc.seller,
-                link: process.env.NODE_ENV === 'production' ? `${process.env.ORIGIN}/orders/${doc._id}` : `localhost:3000/orders/${doc._id}`,
-                content: 'New Order: Awaiting delivery'
+                content: 'New Order: Awaiting delivery',
+                metadata: {
+                    order_id: doc._id
+                }
             }
             break;    
         }
@@ -46,8 +48,10 @@ Order.post('findOneAndUpdate', async (doc, next) => {
                 type: 'order',
                 sender: doc.seller,
                 receiver: doc.buyer,
-                link: process.env.NODE_ENV === 'production' ? `${process.env.ORIGIN}/orders/${doc._id}` : `localhost:3000/orders/${doc._id}`,
-                content: 'Order Delivered: Awaiting confirmation'
+                content: 'Order Delivered: Awaiting confirmation',
+                metadata: {
+                    order_id: doc._id
+                }
             }
             break;
         }
@@ -57,8 +61,10 @@ Order.post('findOneAndUpdate', async (doc, next) => {
                 type: 'order',
                 sender: doc.buyer,
                 receiver: doc.seller,
-                link: process.env.NODE_ENV === 'production' ? `${process.env.ORIGIN}/orders/${doc._id}` : `localhost:3000/orders/${doc._id}`,
-                content: 'Order Denied: Awaiting delivery'
+                content: 'Order Denied: Awaiting delivery',
+                metadata: {
+                    order_id: doc._id
+                }
             }
             break;
         }
@@ -68,8 +74,10 @@ Order.post('findOneAndUpdate', async (doc, next) => {
                 type: 'order',
                 sender: doc.buyer,
                 receiver: doc.seller,
-                link: process.env.NODE_ENV === 'production' ? `${process.env.ORIGIN}/orders/${doc._id}` : `localhost:3000/orders/${doc._id}`,
-                content: 'Order Confirmed'
+                content: 'Order Confirmed',
+                metadata: {
+                    order_id: doc._id
+                }
             }
             break;
         }

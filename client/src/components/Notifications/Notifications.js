@@ -1,12 +1,19 @@
 import React, { useContext, useState, useEffect } from 'react'
 import api from '../../api'
 import NotificationContext from '../../context/notification-context'
-import { FiPackage } from 'react-icons/fi'
+import { FiPackage, FiShoppingCart } from 'react-icons/fi'
+import { useHistory, useLocation } from 'react-router'
 
 const Notifications = (props) => {
     const [rendered, setRendered] = useState(false)
     const [backdrop, setBackdrop] = useState(false)
     const notifications = useContext(NotificationContext)
+    const history = useHistory()
+    const location = useLocation()
+
+    useEffect(() => {
+        notifications.close()
+    }, [location])
 
     useEffect(() => {
         if (notifications.isOpen) {
@@ -37,12 +44,26 @@ const Notifications = (props) => {
     const renderNotification = (notification) => {
         switch(notification.type) {
             case ('order') : {
-                return ( <div style={{ height: '60px', padding: '20px', backgroundColor: 'rgba(255,255,255,.05)', borderRadius: '15px', width: '100%', margin: '0px 0px 20px 0px', display: 'flex', alignItems: 'center' }}>
+                return ( <div style={{ height: '60px', padding: '20px', backgroundColor: 'rgba(255,255,255,.05)', borderRadius: '15px', width: '100%', margin: '0px 0px 20px 0px', display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => history.push(`/orders/${notification.metadata.order_id}`)}>
                     <FiPackage style={{ fontSize: '20px', color: 'white', marginRight: '10px' }} />
                     <p style={{ marginBottom: '0px', color: 'white' }}> { notification.content } </p>
+                    <p style={{ marginLeft: 'auto', color: 'white', opacity: '.7', marginBottom: '0px' }}> { getTime(notification.created_at) } </p>
                 </div> )           
             }
+
+            case ('product') : {
+                return ( <div style={{ height: '60px', padding: '20px', backgroundColor: 'rgba(255,255,255,.05)', borderRadius: '15px', width: '100%', margin: '0px 0px 20px 0px', display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => history.push(`/products/${notification.metadata.product_id}`)}>
+                    <FiShoppingCart style={{ fontSize: '20px', color: 'white', marginRight: '10px' }} />
+                    <p style={{ marginBottom: '0px', color: 'white' }}> { notification.content } </p>
+                    <p style={{ marginLeft: 'auto', color: 'white', opacity: '.7', marginBottom: '0px' }}> { getTime(notification.created_at) } </p>
+                </div> )  
+            }
         }
+    }
+
+    const getTime = (time) => {
+        let date = new Date(time)
+        return `${date.getHours()}:${date.getMinutes()}, ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
     }
 
     return (
