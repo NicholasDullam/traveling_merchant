@@ -25,6 +25,7 @@ const login = async (req, res) => {
     }
     
     var login = new Login({ id: user._id, admin: user.admin, banned: user.banned, ip: req.ip });
+    console.log(req.ip)
     login.save().then().catch((error) => {
         console.log(error)
         return res.status(400).json({ error: error.message })

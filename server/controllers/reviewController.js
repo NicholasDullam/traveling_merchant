@@ -2,6 +2,7 @@ const Review = require("../models/review");
 const User = require("../models/user");
 const Order = require("../models/order");
 const mongoose = require("mongoose");
+const { response } = require("express");
 
 // Assume request has user's email, the sellers email, the rating, and the content
 const addReview = async (req, res) => {
@@ -78,6 +79,34 @@ const updateReviewById = (req, res) => {
     })
 }
 
+const verifyReviewById = async (req, res) => {
+    if (!req.user.admin) return res.status(400).json({error:"Invalid Permissions"});
+    let {_id} = req.params
+    if (!_id) return res.status(400).json({error:"No id"});
+    Review.findById(_id).then((doc) => {
+        if (!doc) return res.status(400).json({error:"Could not find review"});
+        Order.find({buyer:doc.reviewer,seller:doc.seller}).then((order) => {
+            if (!order) {
+                doc.verified = false;
+                doc.save().then((response) => {
+                    return res.status(200).json({message:"doc not verified",review:response})
+                }).catch((err) => {
+                    return res.status(400).json(err);
+                })
+            } else {
+                doc.verified = true;
+                doc.save().then((response) => {
+                    return res.status(200).json({message:"Review verified",review:response})
+                }).catch((err) => {
+                    return res.status(400).json(err);
+                })
+            }
+        }).catch((err) => {
+            return res.status(400).json(err);
+        })
+    })
+}
+
 const deleteReviewById = (req, res) => {
     let { _id } = req.params
     Review.findByIdAndDelete(_id).then((response) => {
@@ -91,6 +120,7 @@ module.exports = {
     addReview,
     getReviews,
     getReviewById,
+    verifyReviewById,
     updateReviewById,
     deleteReviewById,
     getReviewRating

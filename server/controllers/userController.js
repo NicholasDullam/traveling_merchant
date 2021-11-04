@@ -7,11 +7,10 @@ const { createCustomer } = require('./stripeController')
 
 // assume req has seller_id, customer_id, first and last name, email, password, admin status, profile_img, and settings
 const createUser = async (req, res) => {
-    Login.findOne({ip:req.ip,banned:true}).then((doc) => {
-        if (doc != null) {
-            return res.status(400).json({ error: 'IP is banned'})
-        }
-    })
+    const log = await Login.findOne({ip:req.ip,banned:true});
+    if (log != null) {
+        return res.status(400).json({ error: 'IP is banned'})
+    }
 
     let { email, first, last, password, admin } = req.body
     if (!email || !first || !last || !password) return res.status(400).json({ error: "Invalid input"})

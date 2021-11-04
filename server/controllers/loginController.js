@@ -20,7 +20,7 @@ const banIp = (req, res) => {
     }).catch((err) => {
         return res.status(400).json({error:err})
     })
-    res.status(200)
+    return res.status(200).json({message:"OK"})
 }
 
 const unbanIp = (req, res) => {
@@ -41,7 +41,7 @@ const unbanIp = (req, res) => {
     }).catch((err) => {
         return res.status(400).json({error:err})
     })
-    res.status(200)
+    return res.status(200).json({message:"OK"})
 }
 
 const unbanUserLogins = (req, res) => {
