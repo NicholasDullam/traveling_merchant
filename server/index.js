@@ -4,6 +4,7 @@ var dotenv = require('dotenv').config()
 const express = require('express');
 const cookieParser = require('cookie-parser')
 const sslRedirect = require('heroku-ssl-redirect');
+const { handlePastDueConfirmations } = require('./controllers/orderController')
 const http = require("http");
 const db = require('./db')
 var cors = require('cors');
@@ -88,6 +89,8 @@ let io = require('socket.io')(server, {
 
 // add io functions to socket object
 require('./socket')(io)
+
+handlePastDueConfirmations()
 
 server.listen(port, () => console.log(`Server running on port ${port}`));
 

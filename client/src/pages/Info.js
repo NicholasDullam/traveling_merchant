@@ -1,9 +1,11 @@
 import React, { useContext, useState } from "react";
+import { useHistory } from "react-router";
 import api from "../api";
 import AuthContext from "../context/auth-context";
 
 const Info = (props) => {
     const auth = useContext(AuthContext)
+    const history = useHistory()
 
     const [first, setFirst] = useState(auth.user.first)
     const [last, setLast] = useState(auth.user.last)
@@ -24,6 +26,23 @@ const Info = (props) => {
     function handleSubmit(e) {
         api.updateUserById(auth.user._id, { first, last, email }).then((response) => {
             auth.login(auth.token, response.data)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
+    const handleSeller = () => {
+        api.createAccount().then(async(response) => {
+            let onboarding = await api.getAccountOnboarding(response.data.acct_id)
+            window.location.href = onboarding.data.url
+        }).catch((error) => {
+            console.log(error)
+        })
+    }
+
+    const handleContinueSeller = () => {
+        api.getAccountOnboarding(auth.user.acct_id).then((response) => {
+            window.location.href = response.data.url
         }).catch((error) => {
             console.log(error)
         })
@@ -50,8 +69,11 @@ const Info = (props) => {
                 <input type="email" value={email} className="form-control" id="emailInput" placeholder="name@domain.com"
                 onChange={handleEmail}></input>
             </div>
-
-            <button style={{ marginTop: '20px' }} type="button" className="btn btn-primary" onClick={handleSubmit}>Save</button>
+            <div style={{ display: 'flex', marginTop: '20px' }}>
+                <button type="button" className="btn btn-primary" onClick={handleSubmit} style={{ marginRight: '10px' }}>Save</button>
+                { !auth.user.acct_id ? <button type="button" className="btn btn-primary" onClick={handleSeller}> Become a Seller </button> : null }
+                { auth.user.acct_id && !auth.user.acct_details_submitted ? <button type="button" className="btn btn-primary" onClick={handleContinueSeller}> Continue Onboarding </button> : null }
+            </div>
         </div>
     )
 }

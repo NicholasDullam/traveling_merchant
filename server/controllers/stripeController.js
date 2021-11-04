@@ -2,8 +2,6 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET)
 const User = require('../models/user')
 const Order = require('../models/order')
 
-// route controllers
-
 const createCustomer = (name, email) => {
     return stripe.customers.create({ name, email })
 }
@@ -54,8 +52,6 @@ const verifyPaymentIntent = async (pi_id) => {
         return false
     })
 }
-
-// helper functions
 
 const createPaymentIntentFromOrder = async (order_id, customer_id) => {
     const order = await Order.findById(order_id)
@@ -115,6 +111,31 @@ const deletePaymentMethod = async (req, res) => {
     })
 }
 
+const webHooks = async (req, res) => {
+    const sig = req.headers['stripe-signature']
+    let event
+
+    try {
+        event = stripe.webhooks.constructEvent(req.rawBody, sig, process.env.STRIPE_ENDPOINT);
+    } catch (err) {
+        res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    switch (event.type) {
+        case 'account.updated' : {
+            await User.findOneAndUpdate({ 'acct_id' : event.data.object.account.id }, { acct_details_submitted: event.data.object.account.details_submitted }) 
+            break 
+        }
+
+        default: {
+            return res.status(400).end();
+        }
+    }
+
+    res.json({ received: true });
+}
+
+
 module.exports = {
     createAccount,
     createCustomer,
@@ -124,5 +145,6 @@ module.exports = {
     transferToSellerFromOrder,
     getPaymentMethods,
     verifyPaymentIntent,
-    deletePaymentMethod
+    deletePaymentMethod,
+    webHooks
 }
