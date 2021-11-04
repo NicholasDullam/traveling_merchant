@@ -42,6 +42,12 @@ const getRecommendedProducts = (req) => connection.get(`/products/recommended`, 
 const getFilters = (req) => connection.get('/filters', req)
 const createFilter = (payload) => connection.post('/filters', payload)
 const deleteFilterById = (filter_id) => connection.delete(`/filters/${filter_id}`)
+const confirmOrder = (order_id) => connection.put(`/orders/${order_id}/confirm`)
+const denyOrder = (order_id) => connection.put(`/orders/${order_id}/deny`)
+const deliverOrder = (order_id) => connection.put(`/orders/${order_id}/deliver`)
+const cancelOrder = (order_id) => connection.put(`/orders/${order_id}/cancel`)
+const getAccountOnboarding = (acct_id) => connection.get(`/stripe/accounts/${acct_id}/onboarding`)
+const createAccount = () => connection.post('/stripe/accounts')
 
 let api = {
     login,
@@ -80,7 +86,13 @@ let api = {
     getRecommendedProducts,
     getFilters,
     createFilter,
-    deleteFilterById
+    deleteFilterById,
+    confirmOrder,
+    denyOrder,
+    cancelOrder,
+    createAccount,
+    getAccountOnboarding,
+    deliverOrder
 }
 
 export default api
