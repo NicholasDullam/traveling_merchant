@@ -114,7 +114,7 @@ setBtnText("follow")
                         </div>
                     </div>
                 
-                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist" style={{ marginTop: '20px' }}>
   <li class="nav-item" role="presentation">
     <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Products</button>
   </li>
