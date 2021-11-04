@@ -42,7 +42,8 @@ const getRecommendedProducts = (req) => connection.get(`/products/recommended`, 
 const getFilters = (req) => connection.get('/filters', req)
 const createFilter = (payload) => connection.post('/filters', payload)
 const deleteFilterById = (filter_id) => connection.delete(`/filters/${filter_id}`)
-
+const createFollower = (req) => connection.post('/followers', req)
+const getNotifications = (req) => connection.get('/notifications', req)
 let api = {
     login,
     logout,
@@ -80,7 +81,8 @@ let api = {
     getRecommendedProducts,
     getFilters,
     createFilter,
-    deleteFilterById
+    deleteFilterById,
+    createFollower
 }
 
 export default api
