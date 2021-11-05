@@ -35,7 +35,7 @@ const Thread = (props) => {
             { props.thread.unread ? <div style={{  backgroundColor: 'red', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', position: 'absolute', top: '0px', right: '-10px', zIndex: '2' }}>
                 <p style={{ marginBottom: '0px', fontSize: '14px', color: 'white' }}>{props.thread.unread}</p>
             </div> : null }
-            <div style={{ backgroundColor: getStatusColor(props.thread.user), borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', position: 'absolute', bottom: '6px', right: '-6px', zIndex: '2', boxShadow: '0px 0px 0px 4px rgba(0, 0, 0, 1)' }}/>
+            <div style={{ backgroundColor: getStatusColor(props.thread.user), borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', position: 'absolute', bottom: '9px', right: '-3px', zIndex: '2', boxShadow: '0px 0px 0px 4px rgba(0, 0, 0, 1)' }}/>
             <img src={props.thread.user.profile_img} style={{ height: '50px', width: '50px', borderRadius: '50%', boxShadow: props.active ? '0px 0px 0px 4px #68B2A0' : null, transition: 'box-shadow 300ms ease', cursor: 'pointer' }} onClick={() => props.onClick(props.thread)}/>
         </div>
     )
@@ -71,18 +71,18 @@ const Messenger = (props) => {
     }
 
     // handler for message_received event
-    const messageReceivedHandler = (message) => {
+    const messageReceivedHandler = (message, io) => {
         messenger.setMessages((messages) => {
             return { ...messages, [message.from]: messages[message.from] ? [...messages[message.from], message] : [message] }
         })  
 
-        if (messengerRef.current.activeThreadId === message.from && messenger.isOpen) return socket.emit('read', messengerRef.current.activeThreadId)
-        updateThread(messengerRef.current.activeThreadId, { ...messengerRef.current.activeThread, unread: messengerRef.current.activeThread.unread + 1 })
+        if (messengerRef.current.activeThreadId === message.from && messengerRef.current.isOpen) return io.emit('read', messengerRef.current.activeThreadId)
+        let messageThread = messengerRef.current.threads.find((thread) => thread._id === message.from)
+        if (messageThread) updateThread(message.from, { ...messageThread, unread: messageThread.unread + 1 })
     }
 
     // handler for notification event
     const notificationReceivedHandler = (newNotification) => {
-        console.log(newNotification)
         notification.setNotifications((notifications) => {
             return [newNotification, ...notifications]
         })
@@ -103,7 +103,7 @@ const Messenger = (props) => {
         io.connect()
         io.on('success', messenger.connect)
         io.on('message_sent', messageSentHandler)
-        io.on('message_received', messageReceivedHandler)
+        io.on('message_received', (message) => messageReceivedHandler(message, io))
         io.on('notification', notificationReceivedHandler)
         io.on('status', statusHandler)
         io.on('error', (response) => { console.log(response) })
@@ -131,6 +131,13 @@ const Messenger = (props) => {
     // reset scroll on new thread
     useEffect(() => {
         if (scrollPosition) messageList.current.scrollTop = messageList.current.scrollHeight
+        if (!messenger.activeThread && messenger.activeThreadId) {
+            api.getUserById(messenger.activeThreadId).then((response) => {
+                messenger.setActiveThread({ user: response.data, loaded: false, unread: 0 })
+            }).catch((error) => {
+                console.log(error)
+            })
+        }
     }, [messenger.activeThreadId])
 
     // load messages for active thread
@@ -138,8 +145,7 @@ const Messenger = (props) => {
         if (!messenger.activeThread || !messenger.isOpen || messenger.activeThread.loaded || loading) return
         setLoading(true)
         api.getMessagesFromThread(messenger.activeThreadId).then((response) => {
-            socket.emit('read', messenger.activeThreadId)
-            updateThread(messenger.activeThreadId, { ...messenger.activeThread, unread: 0, loaded: true })
+            updateThread(messenger.activeThreadId, { ...messenger.activeThread, loaded: true })
             addMessages(messenger.activeThreadId, response.data)
             setLoading(false)
         }).catch((error) => {
@@ -181,6 +187,13 @@ const Messenger = (props) => {
         setMessengerWasOpen(messenger.isOpen)
     }, [messenger.isOpen])
 
+    // messenger read receipts for changes of activethread and open status of messenger
+    useEffect(() => {
+        if (!messenger.isOpen || !messenger.activeThread || !messenger.activeThread.unread) return
+        socket.emit('read', messenger.activeThreadId)
+        updateThread(messenger.activeThreadId, { ...messenger.activeThread, unread: 0, loaded: true })
+    }, [messenger.activeThread, messenger.isOpen])
+
     /* Client Actions */
 
     const message = () => {
@@ -191,7 +204,8 @@ const Messenger = (props) => {
         let threads = messengerRef.current.threads
         let old_thread_index = threads.findIndex((thread) => thread.user._id === thread_id)
         threads[old_thread_index] = { ...new_thread }
-        if (thread_id === messengerRef.current.activeThreadId) messenger.setActiveThread(new_thread)
+        messengerRef.current.setThreads([...threads])
+        if (thread_id === messengerRef.current.activeThreadId) messengerRef.current.setActiveThread(new_thread)
     }
 
     const addMessages = (thread_id, new_messages) => {
@@ -292,7 +306,10 @@ const Messenger = (props) => {
                                                             <div key={i} style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '5px' }}>
                                                                 <div>
                                                                     <p style={{ maxWidth: '200px', backgroundColor: '#68B2A0', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 5px 25px', wordWrap: 'break-word' }}> {parseMessage(message.content).components} </p>
-                                                                    { i === messenger.messages[messenger.activeThreadId].length - 1 && message.read ? <p style={{ maxWidth: '300px', color: 'white', margin: '3px', fontSize: '12px', borderRadius: '25px 25px 5px 25px', textAlign: 'end' }}> Read </p> : null}
+                                                                    { i === messenger.messages[messenger.activeThreadId].length - 1 && message.read ? 
+                                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                                                        <p style={{ maxWidth: '300px', color: 'white', margin: '3px', fontSize: '12px', borderRadius: '25px 25px 5px 25px', textAlign: 'end' }}> Read </p>
+                                                                    </div> : null}
                                                                 </div>
                                                             </div>
                                                         ) 

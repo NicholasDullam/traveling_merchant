@@ -18,6 +18,25 @@ const getNotifications = async (req, res) => {
     })
 }
 
+const clearNotifications = async (req, res) => {
+    Notification.deleteMany({ user_id: req.user.id }).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
+const deleteNotificationById = async (req, res) => {
+    let { _id } = req.params
+    Notification.findByIdAndDelete(_id).then((response) => {
+        return res.status(200).json(response)
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
+    })
+}
+
 module.exports = {
-    getNotifications
+    clearNotifications,
+    getNotifications,
+    deleteNotificationById
 }
