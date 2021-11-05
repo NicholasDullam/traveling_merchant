@@ -5,8 +5,9 @@ const express = require('express');
 const cookieParser = require('cookie-parser')
 const sslRedirect = require('heroku-ssl-redirect');
 const { handlePastDueConfirmations } = require('./controllers/orderController')
-const http = require("http");
+const http = require('http');
 const db = require('./db')
+const path = require('path')
 var cors = require('cors');
 
 // create an express app
