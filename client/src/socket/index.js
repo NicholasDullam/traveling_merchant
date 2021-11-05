@@ -3,7 +3,7 @@ import { io } from "socket.io-client";
 class Socket {
     constructor(token) {
         this.token = token
-        this.url = 'http://localhost:8000'
+        this.url = process.env.NODE_ENV === 'production' ? `${process.env.PUBLIC_URL}` : 'http://localhost:8000'
         this.socket = io(this.url, { autoConnect: false, auth: { token } })
     }
 
