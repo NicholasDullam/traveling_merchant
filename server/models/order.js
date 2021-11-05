@@ -16,7 +16,8 @@ const Order = new mongoose.Schema({
     confirmed_at: Date,
     unit_price: Number,
     quantity: Number,
-    earnings: Number,
+    total_cost: Number,
+    commission_fees: Number,
     requirements: Object,
     metadata: Object
 }, { 

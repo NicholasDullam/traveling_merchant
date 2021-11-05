@@ -35,6 +35,7 @@ const createOrder = async (req, res) => {
     if (!product) return res.status(400).json({ error: 'Product not found'})
     //if (quantity > product.stock) return res.status({ error: 'Quantity exceeds stock'})
     if (quantity < product.min_quantity) return res.status(400).json({ error: 'Quantity less than minimum'})
+    let total_cost = product.unit_price * quantity, commission_fees = total_cost * .15
 
     let order = new Order({
         buyer: req.user.id,
@@ -44,6 +45,8 @@ const createOrder = async (req, res) => {
         requirements,
         quantity,
         unit_price: product.unit_price,
+        total_cost,
+        commission_fees
     })
 
     order = await order.save()
@@ -62,7 +65,7 @@ const deliverOrder = async (req, res) => {
     if (req.user.id !== order.seller.toString()) return res.status(402).json({ error: 'Invalid permissions' })
     let date = new Date()
     date.setDate(date.getDate() + 3)
-    Order.findOneAndUpdate({ _id }, { status: 'confirmation_pending', delivered_at: Date.now(), auto_confirm_at: date.getTime() }, { new: true }).then((response) => {
+    Order.findOneAndUpdate({ _id }, { status: 'confirmation_pending', last_delivered_at: Date.now(), auto_confirm_at: date.getTime() }, { new: true }).then((response) => {
         // initialize cronjob to handle auto-confirmations
         addJob(response._id, response.auto_confirm_at, () => {
             let order = Order.findById(response._id)
@@ -122,7 +125,7 @@ const verifyPurchase = async (req, res) => {
     let verified = await verifyPaymentIntent(order.pi_id)
     if (!verified) return res.status(400).json({ error: 'Payment not verified' })
     await Product.findByIdAndUpdate(order.product_id, { $inc: { stock: `-${order.quantity}`}})
-    Order.findByIdAndUpdate(_id, { status: 'delivery_pending' }).then((response) => {
+    Order.findByIdAndUpdate(_id, { status: 'delivery_pending' }, { new: true }).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
