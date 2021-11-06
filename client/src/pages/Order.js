@@ -188,11 +188,14 @@ const Order = (props) => {
                                 </div>
                                 <div style={{ marginLeft: '30px' }}>
                                     <h5> { isBuyer() ? 'Seller' : 'Buyer' } </h5>
-                                    { affiliate ? <div style={{ display: 'flex', alignItems: 'center' }} onClick={() => history.push(`/users/${affiliate._id}`)}>
+                                    { affiliate ? <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => history.push(`/users/${affiliate._id}`)}>
                                         <img src={affiliate.profile_img} style={{ width: '50px', height: '50px', borderRadius: '50%' }}/>
                                         <div style={{ marginLeft: '10px' }}>
                                             <p style={{ marginBottom: '0px' }}> {affiliate.first} {affiliate.last} </p>
-                                            <p style={{ marginBottom: '0px', color: 'blue', fontSize: '14px', marginTop: '0px', cursor: 'pointer' }} onClick={() => messenger.open(affiliate._id)}> Message </p>
+                                            <p style={{ marginBottom: '0px', color: 'blue', fontSize: '14px', marginTop: '0px', cursor: 'pointer' }} onClick={(e) => {
+                                                e.stopPropagation()
+                                                messenger.open(affiliate._id)
+                                            }}> Message </p>
                                         </div>
                                     </div> : null }
                                 </div>
