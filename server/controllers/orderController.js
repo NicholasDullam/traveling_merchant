@@ -7,8 +7,7 @@ const { addJob, removeJob } = require('../cron')
 const handlePastDueConfirmations = () => {
     // Orders requiring immediate transfer
     Order.find({ auto_confirm_at: { $lte: Date.now() }}).populate('seller').then((response) => {
-        response.forEach( async (order) => {
-            if (!order.pi_id) return
+        response.forEach(async (order) => {
             await transferToSellerFromOrder(order)
         })
     }).catch((error) => {
@@ -18,11 +17,10 @@ const handlePastDueConfirmations = () => {
     // Order requiring auto_confirm cron
     Order.find({ auto_confirm_at: { $gt: Date.now() }}).populate('seller').then((response) => {
         response.forEach((order) => {
-            if (!order.pi_id) return
-            addJob(order._id, order.auto_confirm_at, () => {
-                if (order.status !== 'confirmation_pending') return
-                transferToSellerFromOrder(order)
-            })
+            addJob(order._id, order.auto_confirm_at, async function(response) {
+                if (response.status !== 'confirmation_pending') return
+                transferToSellerFromOrder(response)
+            }.bind(null, order))
         })
     })
 }
@@ -64,14 +62,14 @@ const deliverOrder = async (req, res) => {
     let order = await Order.findById(_id)
     if (req.user.id !== order.seller.toString()) return res.status(402).json({ error: 'Invalid permissions' })
     let date = new Date()
-    date.setDate(date.getDate() + 3)
+    //date.setDate(date.getDate() + 3)
+    date.setMinutes(date.getMinutes() + 1)
     Order.findOneAndUpdate({ _id }, { status: 'confirmation_pending', last_delivered_at: Date.now(), auto_confirm_at: date.getTime() }, { new: true }).then((response) => {
-        // initialize cronjob to handle auto-confirmations
-        addJob(response._id, response.auto_confirm_at, () => {
-            let order = Order.findById(response._id)
+        addJob(response._id, response.auto_confirm_at, async function(response) {
+            let order = await Order.findById(response._id).populate('seller')
             if (order.status !== 'confirmation_pending') return
             transferToSellerFromOrder(order)
-        })
+        }.bind(null, response))
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
@@ -144,7 +142,7 @@ const getOrderById = async (req, res) => {
 const getOrders = async (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
     reserved.forEach((el) => delete query[el])
-    let queryPromise = Order.find({ ...query, status: { $ne: 'payment_pending' }})
+    let queryPromise = Order.find({ ...query })
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
     if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))

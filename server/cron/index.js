@@ -2,8 +2,8 @@ const schedule = require('node-schedule')
 const jobs = {} // jobs are to be added with a key of their associated id
 
 const addJob = (id, time, task) => {
-    let date = new Date(time)
-    jobs[id] = schedule.scheduleJob(`${date.getHours()} ${date.getDate()} ${date.getMonth() + 1} ${date.getDay()}`, task)
+    jobs[id] = schedule.scheduleJob(new Date(time), task)
+    return jobs[id]
 }
 
 const removeJob = (id) => {

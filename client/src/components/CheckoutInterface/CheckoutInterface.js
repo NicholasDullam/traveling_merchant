@@ -32,8 +32,8 @@ const CheckoutInterface = (props) => {
 
     useEffect(() => {
         api.getPaymentMethods(auth.user.cust_id).then((response) => {
-            if (!response.data.data.length) setPaymentMethods('new')
-            else setPaymentMethods(response.data.data)
+            console.log(response.data)
+            setPaymentMethods(response.data)
         }).catch((error) => {
             console.log(error)
         })
