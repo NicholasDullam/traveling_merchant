@@ -71,14 +71,27 @@ setBtnText("follow")
    var followButton =  <button className="btn btn-primary" onClick={handleFollow}> {btnText} </button>
 
 
+   var [users, setUsers] = useState([])
 
 
    function displayFollowers() {
-       console.log(user_id)
-       api.getFollowerById(user_id)
+    //    console.log(user_id)
+       api.getFollowers()
        .then((res) => {
+           setUsers(res.data)
            console.log(res.data)
        })
+    
+
+    //    users.forEach((user)=> {
+    //     //    console.log(user)
+    //    api.getUserById(user.id)
+    //    .then ((res) => {
+    //        console.log(res.data)
+    //    }
+    //    )
+    //    }
+    //    )
             return <h1>Folloers</h1>
 
     }

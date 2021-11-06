@@ -51,7 +51,9 @@ const getAccountOnboarding = (acct_id) => connection.get(`/stripe/accounts/${acc
 const createAccount = () => connection.post('/stripe/accounts')
 const getNotifications = (req) => connection.get('/notifications', req)
 const getFollowerById = (user_id) => connection.get(`/followers/${user_id}`)
+const getFollowers = () => connection.get('/followers')
 let api = {
+    getFollowers,
     login,
     logout,
     verifyToken,
