@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useHistory, useParams } from 'react-router'
 import api from '../api'
 import { Layout, ProductCard } from '../components'
 import { AiOutlineClockCircle, AiFillCheckCircle } from 'react-icons/ai'
@@ -13,6 +13,7 @@ const Order = (props) => {
 
     const auth = useContext(AuthContext)
     const messenger = useContext(MessengerContext)
+    const history = useHistory()
 
     const { order_id } = useParams()
 
@@ -187,7 +188,7 @@ const Order = (props) => {
                                 </div>
                                 <div style={{ marginLeft: '30px' }}>
                                     <h5> { isBuyer() ? 'Seller' : 'Buyer' } </h5>
-                                    { affiliate ? <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    { affiliate ? <div style={{ display: 'flex', alignItems: 'center' }} onClick={() => history.push(`/users/${affiliate._id}`)}>
                                         <img src={affiliate.profile_img} style={{ width: '50px', height: '50px', borderRadius: '50%' }}/>
                                         <div style={{ marginLeft: '10px' }}>
                                             <p style={{ marginBottom: '0px' }}> {affiliate.first} {affiliate.last} </p>

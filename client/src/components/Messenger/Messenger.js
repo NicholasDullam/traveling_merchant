@@ -285,7 +285,7 @@ const Messenger = (props) => {
                         </div>
                         <div style={{ height: '100%', width: '100%', borderLeft: '1px solid rgba(255,255,255,.3)', position: 'relative', display: 'flex', flexDirection: 'column' }}>
                             <div style={{ borderBottom: '1px solid rgba(255,255,255,.3)', overflow: 'hidden' }}>
-                                { messenger.activeThread ? <div style={{ display: 'flex', alignItems: 'center', padding: '15px 10px 10px 10px', marginBottom: '10px' }}>
+                                { messenger.activeThread ? <div style={{ display: 'flex', alignItems: 'center', padding: '15px 10px 10px 10px', marginBottom: '10px', cursor: 'pointer' }} onClick={() => history.push(`/users/${messenger.activeThread.user._id}`)}>
                                     <img src={messenger.activeThread.user.profile_img} style={{ height: '40px', width: '40px', borderRadius: '50%' }} />
                                     <div style={{ marginLeft: '10px' }}>
                                         <h5 style={{ color: 'white', marginBottom: '0px' }}> {messenger.activeThread.user.first} {messenger.activeThread.user.last} </h5>

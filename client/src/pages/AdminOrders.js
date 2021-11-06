@@ -42,6 +42,7 @@ const AdminOrders = (props) => {
                     <option value={'delivery_pending'}> delivery_pending </option>
                     <option value={'confirmation_pending'}> confirmation_pending </option>
                     <option value={'confirmed'}> confirmed </option>
+                    <option value={'canceled'}> canceled </option>
                 </select>
             </div>
             {
