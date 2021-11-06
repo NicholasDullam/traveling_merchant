@@ -1,6 +1,7 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
 const User = require('../models/user')
 const Order = require('../models/order')
+const jwt = require('jsonwebtoken')
 
 const createCustomer = (name, email) => {
     return stripe.customers.create({ name, email })
@@ -14,8 +15,10 @@ const createAccount = async (req, res) => {
     })
 
     User.findOneAndUpdate({ _id: req.user.id }, { acct_id: account.id }, { new: true }).then((response) => {
-        return res.status(200).json(response)
+        const token = jwt.sign({ id: response._id, cust_id: response.cust_id, acct_id: response.acct_id, admin: response.admin, banned: response.banned }, process.env.TOKEN_SECRET)
+        return res.cookie('access_token', token, { httpOnly: true, secure:process.env.NODE_ENV === 'production' }).status(200).json(response)
     }).catch((error) => {
+        console.log(error)
         return res.status(400).json({ error: error.message })
     })
 }
@@ -25,8 +28,8 @@ const getAccountOnboarding = (req, res) => {
     if (!req.user.admin && req.user.acct_id !== acct_id) return res.status(402).json({ message: 'Invalid Permissions' })
     stripe.accountLinks.create({
         account: acct_id,
-        refresh_url: 'http://localhost:8000/api/game',
-        return_url: 'http://localhost:8000/api/game',
+        refresh_url: 'http://localhost:3000/profile/info',
+        return_url: 'http://localhost:3000/profile/info',
         type: 'account_onboarding'
     }).then((response) => {
         return res.status(200).json(response)
@@ -93,9 +96,8 @@ const getPaymentMethods = async (req, res) => {
         customer: customer_id,
         type: 'card'
     }).then((response) => {
-        return res.status(200).json(response)
+        return res.status(200).json(response.data)
     }).catch((error) => {
-        console.log(error)
         return res.status(400).json({ error: error.message })
     })
 }

@@ -7,10 +7,10 @@ const Notification = new mongoose.Schema({
     sender: { type: mongoose.Types.ObjectId, ref: 'User' },
     receiver: { type: mongoose.Types.ObjectId, ref: 'User' },
     type: String,
-    link: String,
     content: String,
     seen: Boolean,
     seen_at: Date,
+    metadata: Object
 }, {
     timestamps: {
         createdAt: 'created_at',
@@ -31,7 +31,7 @@ Notification.post('save', async (doc, next) => {
     let mailer = {
         to : receiver.email,
         from : process.env.EMAIL,
-        subject: 'New Notification',
+        subject: doc.content,
         html : '<h1>You have a new notification :D</h1>'
     }
 

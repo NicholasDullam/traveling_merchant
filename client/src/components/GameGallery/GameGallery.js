@@ -16,9 +16,9 @@ const GameGallery = (props) => {
     return (
         <div class="row">
             {
-                games.map((game) => {
+                games.map((game, i) => {
                     return (
-                        <div class="col-md-2 col-sm-12">
+                        <div key={i} class="col-md-2 col-sm-12">
                             <GameCard name={game.name} img={game.img} game_id={game._id}/>
                         </div>
                     )

@@ -14,7 +14,7 @@ const Billing = (props) => {
 
     useEffect(() => {
         api.getPaymentMethods(auth.user.cust_id).then((response) => {
-            setPaymentMethods(response.data.data)
+            setPaymentMethods(response.data)
         }).catch((error) => {
             console.log(error)
         })

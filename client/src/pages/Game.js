@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useHistory, useParams } from 'react-router'
 import api from '../api'
 import { Pagination, ProductCard } from '../components'
 import Layout from '../components/Layout/Layout'
 
 const Game = (props) => {
+    const search = new URLSearchParams(window.location.search)
+    const { game_id } = useParams()
+
     const [game, setGame] = useState(null)
     const [products, setProducts] = useState([])
-    const [name, setName] = useState('')
+    const [name, setName] = useState(search.get('q') || '')
     const [productType, setProductType] = useState('')
     const [deliveryType, setDeliveryType] = useState('')
     const [server, setServer] = useState('')
     const [platform, setPlatform] = useState('')
+    const [sort, setSort] = useState(search.get('sort') || '-unit_price')
     
-    const [limit, setLimit] = useState(1)
-    const [page, setPage] = useState(1)
+    const [limit, setLimit] = useState(Number(search.get('limit')) || 1)
+    const [page, setPage] = useState(Number(search.get('page')) || 1)
     const [hasMore, setHasMore] = useState(false)
 
-    const { game_id } = useParams()
+    const history = useHistory()
 
     useEffect(() => {
         api.getGameById(game_id).then((response) => {
@@ -29,7 +33,7 @@ const Game = (props) => {
 
     useEffect(() => {
         if (game) handleSearch()
-    }, [game, page, limit])
+    }, [game, page, limit, sort])
 
     const getProducts = (req) => {
         api.getProducts({ params: req }).then((response) => {
@@ -42,13 +46,27 @@ const Game = (props) => {
     }
 
     const handleSearch = () => {
-        let params = { game_id, limit, skip: (page - 1) ? (page - 1) * limit : 0 }
+        let params = { game_id, limit, skip: (page - 1) ? (page - 1) * limit : 0 }, queryString = generateQueryString()
+
         if (name.length) params.q = name 
         if (deliveryType.length) params.delivery_type = deliveryType
         if (productType.length) params.type = productType
         if (server.length) params.server = server
         if (platform.length) params.platform = platform
+        if (sort) params.sort = sort
+
+        history.push(`?${queryString}`)
+        
         getProducts(params)
+    }
+
+    const generateQueryString = () => {
+        let queryString = ''
+        if (name.length) queryString = queryString.length ? queryString + `&q=${name}` : `q=${name}`
+        if (sort) queryString = queryString.length ? queryString + `&sort=${sort}` : `sort=${sort}`
+        if (page) queryString = queryString.length ? queryString + `&page=${page}` : `page=${page}`
+        if (limit) queryString = queryString.length ? queryString + `&limit=${limit}` : `limit=${limit}`
+        return queryString
     }
 
     const handleName = (e) => {
@@ -75,27 +93,10 @@ const Game = (props) => {
         if (e.key === 'Enter') handleSearch()
     }
 
-var [b, setB] = useState(1);
-var sortString = ""
     const handleSort = () => {
-if( b == 1) {
-    console.log("sorting one way")
-    sortString = '-unit_price'
-    setB(0);
-}  
-else {
-    console.log("sorting the other way")
-    sortString ='unit_price'
-setB(1)
-}
-api.getProducts({ params: {sort: sortString}}).then((response) => {
-            let { data, has_more } = response.data
-            setProducts(data)
-            setHasMore(has_more)
-        }).catch((error) => {
-            console.log(error)
-        })
-    } 
+        if (sort === '-unit_price') return setSort('unit_price')
+        setSort('-unit_price')
+    }
 
     return (
         <Layout navbar>

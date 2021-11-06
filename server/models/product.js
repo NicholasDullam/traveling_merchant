@@ -38,13 +38,16 @@ const Product = new mongoose.Schema({
 
 // create notification for followers 
 Product.post('save', async (doc, next) => {
-    let followers = await Follower.find({ following: doc.seller })
+    let followers = await Follower.find({ following: doc.user_id })
     followers.forEach(async (follower) => {
         let notification = new Notification({
-            sender: doc.seller, 
+            sender: doc.user_id, 
             receiver: follower.follower,
-            link: process.env.NODE_ENV === 'production' ? `${process.env.ORIGIN}/products/${doc._id}` : `localhost:3000/orders/${doc._id}`, 
-            type: 'product'
+            type: 'product',
+            content: 'New product listing',
+            metadata: {
+                product_id: doc._id
+            }
         })
 
         await notification.save()
