@@ -24,12 +24,11 @@ const Order = (props) => {
     useEffect(() => {
         if (!order_id) return
         api.getOrderById(order_id).then((response) => {
-            console.log(response.data)
             setOrder(response.data)
         }).catch((error) => {
             console.log(error)
         }) 
-    }, [])
+    }, [order_id])
 
     // get buyer or seller on order mount
     useEffect(() => {
