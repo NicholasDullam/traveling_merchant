@@ -72,30 +72,32 @@ const User = (props) => {
    var followButton =  <button className="btn btn-primary" onClick={() => isFollowing ? handleUnfollow() : handleFollow()}> { isFollowing ? 'Unfollow' : 'Follow' } </button>
 
 
-   var [users, setUsers] = useState([])
+   var [followers, setFollowers] = useState([])
 
+   var [following, setFollowing] = useState([])
 
    function displayFollowers() {
     //    console.log(user_id)
-       api.getFollowers()
+       api.getFollowers({params: {expand: ["follower"]}})
        .then((res) => {
-           setUsers(res.data)
-           console.log(res.data)
+           setFollowers(res.data)
+        //    console.log(res.data)
        })
-    
-
-    //    users.forEach((user)=> {
-    //     //    console.log(user)
-    //    api.getUserById(user.id)
-    //    .then ((res) => {
-    //        console.log(res.data)
-    //    }
-    //    )
-    //    }
-    //    )
-            return <h1>Folloers</h1>
+            return displayUsers(followers)
 
     }
+function displayUsers(users) {
+    users.forEach((user)=> {
+        var user_id = user._id
+        console.log(user._id)
+     api.getUserById(user_id)
+  .then ((res) => {
+  console.log(res)
+    }
+    )
+    }
+    )
+}
         
     //TODO: deactivate follow button if it's my profile
         const css=

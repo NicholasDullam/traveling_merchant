@@ -21,6 +21,7 @@ const getFollowers = (req, res) => {
     if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
     if (req.query.expand) {
+        console.log("expand")
         let expand = JSON.parse(req.query.expand)
         expand.forEach((instance) => queryPromise.populate(instance))
     }
