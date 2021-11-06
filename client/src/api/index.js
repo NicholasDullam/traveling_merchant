@@ -78,8 +78,8 @@ const getPaymentMethods = (customer_id) => connection.get(`/stripe/customers/${c
 const deletePaymentMethod = (pm_id) => connection.delete(`/stripe/payment-methods/${pm_id}`)
 const getAccountOnboarding = (acct_id) => connection.get(`/stripe/accounts/${acct_id}/onboarding`)
 const createAccount = () => connection.post('/stripe/accounts')
-// const getFollowerById = (user_id) => connection.get(`/followers/${user_id}`)
-const getFollowers = () => connection.get('/followers')
+const getFollowers = (req) => connection.get('/followers', req)
+const deleteFollowerById = (follower_id) => connection.delete(`/followers/${follower_id}`)
 
 let api = {
     getFollowers,
@@ -127,10 +127,11 @@ let api = {
     createAccount,
     getAccountOnboarding,
     deliverOrder,
-getNotifications,
+    getNotifications,
     getFollowerById,
     deleteNotificationById,
-    clearNotifications
+    clearNotifications,
+    deleteFollowerById
 }
 
 export default api
