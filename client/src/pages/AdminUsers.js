@@ -3,12 +3,14 @@ import { FaBan, FaTrashAlt } from 'react-icons/fa'
 import { AiFillCheckCircle } from 'react-icons/ai'
 import api from '../api'
 import { Ratings, Pagination } from '../components'
+import { useHistory } from 'react-router'
 
 const AdminUsers = (props) => {
     const [users, setUsers] = useState([])
     const [hasMore, setHasMore] = useState(false)
     const [limit, setLimit] = useState(5)
     const [page, setPage] = useState(1)
+    const history = useHistory()
 
     const getResults = () => {
         return api.getUsers({ params: { limit, skip: (page - 1) ? (page - 1) * limit : 0 }}).then((response) => {
@@ -58,7 +60,7 @@ const AdminUsers = (props) => {
             <h5 style={{ marginBottom: '20px' }}> Users </h5>
             {
                 users.map((user, i) => {
-                    return ( <div key={i} style={{ padding: '10px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px 0px 5px 0px', cursor: 'pointer' }}>
+                    return ( <div key={i} style={{ padding: '10px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px 0px 5px 0px', cursor: 'pointer' }} onClick={() => history.push(`/users/${user._id}`)}>
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <img src={user.profile_img} style={{ width: '25px', height: '25px', borderRadius: '50%' }}/>
                             <h6 style={{ marginLeft: '10px', marginBottom: '0px' }}> {user.first} {user.last} </h6>

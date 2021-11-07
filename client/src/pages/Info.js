@@ -32,7 +32,8 @@ const Info = (props) => {
     }
 
     const handleSeller = () => {
-        api.createAccount().then(async(response) => {
+        api.createAccount().then(async (response) => {
+            console.log(response)
             let onboarding = await api.getAccountOnboarding(response.data.acct_id)
             window.location.href = onboarding.data.url
         }).catch((error) => {

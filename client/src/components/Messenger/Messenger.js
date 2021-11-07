@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { AiOutlinePlus } from 'react-icons/ai'
-import { useLocation } from 'react-router'
+import { useHistory, useLocation } from 'react-router'
 import api from '../../api'
 import AuthContext from '../../context/auth-context'
 import MessengerContext from '../../context/messenger-context'
@@ -35,13 +35,15 @@ const Thread = (props) => {
             { props.thread.unread ? <div style={{  backgroundColor: 'red', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', position: 'absolute', top: '0px', right: '-10px', zIndex: '2' }}>
                 <p style={{ marginBottom: '0px', fontSize: '14px', color: 'white' }}>{props.thread.unread}</p>
             </div> : null }
-            <div style={{ backgroundColor: getStatusColor(props.thread.user), borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', position: 'absolute', bottom: '6px', right: '-6px', zIndex: '2', boxShadow: '0px 0px 0px 4px rgba(0, 0, 0, 1)' }}/>
+            <div style={{ backgroundColor: getStatusColor(props.thread.user), borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '12px', height: '12px', position: 'absolute', bottom: '9px', right: '-3px', zIndex: '2', boxShadow: '0px 0px 0px 4px rgba(0, 0, 0, 1)' }}/>
             <img src={props.thread.user.profile_img} style={{ height: '50px', width: '50px', borderRadius: '50%', boxShadow: props.active ? '0px 0px 0px 4px #68B2A0' : null, transition: 'box-shadow 300ms ease', cursor: 'pointer' }} onClick={() => props.onClick(props.thread)}/>
         </div>
     )
 }
 
 const Messenger = (props) => {
+    const [messengerWasOpen, setMessengerWasOpen] = useState(null)
+    const [pathname, setPathname] = useState(null)
     const [socket, setSocket] = useState(null)
     const [rendered, setRendered] = useState(false)
     const [backdrop, setBackdrop] = useState(false)
@@ -56,6 +58,9 @@ const Messenger = (props) => {
     const auth = useContext(AuthContext)
 
     const location = useLocation()
+    const history = useHistory()
+
+    /* Socket Handlers */
 
     // handler for message_sent event
     const messageSentHandler = (message) => {
@@ -66,17 +71,18 @@ const Messenger = (props) => {
     }
 
     // handler for message_received event
-    const messageReceivedHandler = (message) => {
+    const messageReceivedHandler = (message, io) => {
         messenger.setMessages((messages) => {
             return { ...messages, [message.from]: messages[message.from] ? [...messages[message.from], message] : [message] }
         })  
 
-        if (messengerRef.current.activeThreadId === message.from && messenger.isOpen) return socket.emit('read', messengerRef.current.activeThreadId)
-        updateThread(messengerRef.current.activeThreadId, { ...messengerRef.current.activeThread, unread: messengerRef.current.activeThread.unread + 1 })
+        if (messengerRef.current.activeThreadId === message.from && messengerRef.current.isOpen) return io.emit('read', messengerRef.current.activeThreadId)
+        let messageThread = messengerRef.current.threads.find((thread) => thread._id === message.from)
+        if (messageThread) updateThread(message.from, { ...messageThread, unread: messageThread.unread + 1 })
     }
 
+    // handler for notification event
     const notificationReceivedHandler = (newNotification) => {
-        console.log(newNotification)
         notification.setNotifications((notifications) => {
             return [newNotification, ...notifications]
         })
@@ -88,6 +94,8 @@ const Messenger = (props) => {
         if (thread) updateThread(event.thread_id, { ...thread, user: { ...thread.user, status: event.status }})
     }
 
+    /* useEffect hooks */
+
     // socket initialization
     useEffect(() => {
         let io = new Socket(auth.token)
@@ -95,16 +103,15 @@ const Messenger = (props) => {
         io.connect()
         io.on('success', messenger.connect)
         io.on('message_sent', messageSentHandler)
-        io.on('message_received', messageReceivedHandler)
+        io.on('message_received', (message) => messageReceivedHandler(message, io))
         io.on('notification', notificationReceivedHandler)
         io.on('status', statusHandler)
         io.on('error', (response) => { console.log(response) })
         setSocket(io)    
         
         api.getMessageThreads().then((response) => {
-            // remove threads without a user & not themselves
             let threads = response.data.filter((thread) => thread.user && thread.user._id !== auth.userId)
-            if (threads.length) messenger.setActiveThread(threads[0])
+            if (threads.length && !messenger.activeThread) messenger.setActiveThread(threads[0])
             messenger.setThreads(threads)
         }).catch((error) => {
             console.log(error)
@@ -121,27 +128,46 @@ const Messenger = (props) => {
         if (scrollPosition) messageList.current.scrollTop = messageList.current.scrollHeight
     }, [messenger.messages])
 
+    // reset scroll on new thread
+    useEffect(() => {
+        if (scrollPosition) messageList.current.scrollTop = messageList.current.scrollHeight
+        if (!messenger.activeThread && messenger.activeThreadId) {
+            api.getUserById(messenger.activeThreadId).then((response) => {
+                messenger.setActiveThread({ user: response.data, loaded: false, unread: 0 })
+            }).catch((error) => {
+                console.log(error)
+            })
+        }
+    }, [messenger.activeThreadId])
+
     // load messages for active thread
     useEffect(() => {
-        if (!messenger.activeThreadId || !messenger.isOpen || messenger.activeThread.loaded || loading) return
+        if (!messenger.activeThread || !messenger.isOpen || messenger.activeThread.loaded || loading) return
         setLoading(true)
         api.getMessagesFromThread(messenger.activeThreadId).then((response) => {
-            socket.emit('read', messenger.activeThreadId)
-            updateThread(messenger.activeThreadId, { ...messenger.activeThread, unread: 0, loaded: true })
+            updateThread(messenger.activeThreadId, { ...messenger.activeThread, loaded: true })
             addMessages(messenger.activeThreadId, response.data)
             setLoading(false)
         }).catch((error) => {
             console.log(error)
         })
-    }, [messenger.activeThreadId, messenger.isOpen, loading])
+    }, [messenger.activeThread, messenger.isOpen, loading])
 
     // updates messenger state on location change
     useEffect(() => {
-        messenger.close()
-    }, [location])
+        if (pathname && pathname !== location.pathname) handleClose()
+        setPathname(location.pathname)
+    }, [location.pathname])
+
+    // loads messenger when query string contains messenger thread
+    useEffect(() => {
+        const search = new URLSearchParams(window.location.search)
+        if (search.get('m')) return messenger.open(search.get('m'))
+    }, [location.search])
 
     // messenger unrender and re-render
     useEffect(() => {
+        if (messengerWasOpen === null) return setMessengerWasOpen(messenger.isOpen)
         if (messenger.isOpen) {
             document.body.style.overflow = 'hidden'
             setRendered(true)
@@ -157,9 +183,19 @@ const Messenger = (props) => {
                 setRendered(false)
             }, 400)
         }
+
+        setMessengerWasOpen(messenger.isOpen)
     }, [messenger.isOpen])
 
-    // actions
+    // messenger read receipts for changes of activethread and open status of messenger
+    useEffect(() => {
+        if (!messenger.isOpen || !messenger.activeThread || !messenger.activeThread.unread) return
+        socket.emit('read', messenger.activeThreadId)
+        updateThread(messenger.activeThreadId, { ...messenger.activeThread, unread: 0, loaded: true })
+    }, [messenger.activeThread, messenger.isOpen])
+
+    /* Client Actions */
+
     const message = () => {
         if (content !== '') socket.message(messenger.activeThreadId, auth.userId, 'test', content)
     }
@@ -168,7 +204,8 @@ const Messenger = (props) => {
         let threads = messengerRef.current.threads
         let old_thread_index = threads.findIndex((thread) => thread.user._id === thread_id)
         threads[old_thread_index] = { ...new_thread }
-        if (thread_id === messengerRef.current.activeThreadId) messenger.setActiveThread(new_thread)
+        messengerRef.current.setThreads([...threads])
+        if (thread_id === messengerRef.current.activeThreadId) messengerRef.current.setActiveThread(new_thread)
     }
 
     const addMessages = (thread_id, new_messages) => {
@@ -176,6 +213,13 @@ const Messenger = (props) => {
         let thread_messages = messages[thread_id]
         messages[thread_id] = thread_messages ? [...thread_messages, ...new_messages] : [...new_messages]
         messenger.setMessages(messages)
+    }
+
+    const handleClose = () => {
+        const search = new URLSearchParams(location.search)
+        search.delete('m')
+        history.replace({ search: search.toString() })
+        messenger.close()
     }
 
     const parseMessage = (message) => {
@@ -212,7 +256,7 @@ const Messenger = (props) => {
 
     return (
         <div>
-            { rendered ? <div style={{ position: 'fixed', height: '100%', width: '100%', backgroundColor: 'black', opacity: backdrop ? '.7' : '0', zIndex: '1', transition: 'opacity 400ms ease-out' }} onClick={() => messenger.close()}/> : null }
+            { rendered ? <div style={{ position: 'fixed', height: '100%', width: '100%', backgroundColor: 'black', opacity: backdrop ? '.7' : '0', zIndex: '1', transition: 'opacity 400ms ease-out' }} onClick={handleClose}/> : null }
             <div style={{ position: 'fixed', height: '100%', width: (window.innerWidth < 600 ? 'calc(100%)' : 'calc(50%)'), right: messenger.isOpen && rendered ? '0' : (window.innerWidth < 600 ? 'calc(-100%)' : 'calc(-50%)'), backgroundColor: 'black', transition: 'right 400ms ease', zIndex: '1' }}>
                 <div style={{ padding: '105px 40px 40px 40px', height: '100%', position: 'relative' }}>
                     <div style={{ position: 'absolute', display: 'flex', top: '64px', left: '40px', alignItems: 'center', backgroundColor: 'rgba(255,255,255,.1)', padding: '6px 9px 6px 9px', borderRadius: '25px' }}>
@@ -241,7 +285,7 @@ const Messenger = (props) => {
                         </div>
                         <div style={{ height: '100%', width: '100%', borderLeft: '1px solid rgba(255,255,255,.3)', position: 'relative', display: 'flex', flexDirection: 'column' }}>
                             <div style={{ borderBottom: '1px solid rgba(255,255,255,.3)', overflow: 'hidden' }}>
-                                { messenger.activeThread ? <div style={{ display: 'flex', alignItems: 'center', padding: '15px 10px 10px 10px', marginBottom: '10px' }}>
+                                { messenger.activeThread ? <div style={{ display: 'flex', alignItems: 'center', padding: '15px 10px 10px 10px', marginBottom: '10px', cursor: 'pointer' }} onClick={() => history.push(`/users/${messenger.activeThread.user._id}`)}>
                                     <img src={messenger.activeThread.user.profile_img} style={{ height: '40px', width: '40px', borderRadius: '50%' }} />
                                     <div style={{ marginLeft: '10px' }}>
                                         <h5 style={{ color: 'white', marginBottom: '0px' }}> {messenger.activeThread.user.first} {messenger.activeThread.user.last} </h5>
@@ -262,7 +306,10 @@ const Messenger = (props) => {
                                                             <div key={i} style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '5px' }}>
                                                                 <div>
                                                                     <p style={{ maxWidth: '200px', backgroundColor: '#68B2A0', color: 'white', marginBottom: '0px', padding: '8px 12px 8px 12px', borderRadius: '25px 25px 5px 25px', wordWrap: 'break-word' }}> {parseMessage(message.content).components} </p>
-                                                                    { i === messenger.messages[messenger.activeThreadId].length - 1 && message.read ? <p style={{ maxWidth: '300px', color: 'white', margin: '3px', fontSize: '12px', borderRadius: '25px 25px 5px 25px', textAlign: 'end' }}> Read </p> : null}
+                                                                    { i === messenger.messages[messenger.activeThreadId].length - 1 && message.read ? 
+                                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                                                                        <p style={{ maxWidth: '300px', color: 'white', margin: '3px', fontSize: '12px', borderRadius: '25px 25px 5px 25px', textAlign: 'end' }}> Read </p>
+                                                                    </div> : null}
                                                                 </div>
                                                             </div>
                                                         ) 

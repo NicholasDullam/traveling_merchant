@@ -13,14 +13,15 @@ const createFollower = async (req, res) => {
 }
 
 const getFollowers = (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'expand']
     reserved.forEach((el) => delete query[el])
     let queryPromise = Follower.find(query)
 
     if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
     if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
     if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit))
-
+    if (req.query.expand) req.query.expand.forEach((instance) => queryPromise.populate(instance))
+    
     queryPromise.then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
@@ -51,5 +52,4 @@ module.exports = {
     getFollowers,
     getFollowerById,
     deleteFollowerById
-    
 }

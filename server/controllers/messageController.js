@@ -51,12 +51,14 @@ const getThreads = (req, res) => {
     getThreadsHelper(req.user.id).then((response) => {
         res.status(200).json(response)
     }).catch((error) => {
-        res.status(200).json({ error: error.message })
+        console.log(error)
+        res.status(400).json({ error: error.message })
     })
 }
 
 const getThreadsHelper = async (user_id) => {
-    return Message.aggregate([
+    // find the threads from active conversations (i.e. not one-sided)
+    let active = await Message.aggregate([
         {
             $match: {
                 $or: [
@@ -113,6 +115,53 @@ const getThreadsHelper = async (user_id) => {
             }
         }
     ])
+
+    active = active.filter((thread) => thread._id && thread._id.toString() !== user_id)
+    let indices = active.map((thread) => thread._id)
+
+    // one-sided conversations
+    let inactive = await Message.aggregate([
+        {
+            $match: {
+                from: mongoose.Types.ObjectId(user_id),
+                to: {
+                    $nin: indices
+                }
+            }
+        },
+        { 
+            $group: {
+                _id: "$to",
+                last_active_at: { $max: "$created_at" }
+            } 
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "_id",
+                foreignField: "_id",
+                as: "user"
+            }
+        },
+        {
+            $sort: {
+                last_active_at: 1
+            }
+        },
+        { 
+            $project: {
+                _id: "$_id",
+                unread: { $literal: 0 },
+                last_active_at: "$last_active_at",
+                user: { $arrayElemAt: [ "$user", 0 ]}
+            }
+        }
+    ])
+
+    inactive = inactive.filter((thread) => thread._id && thread._id.toString() !== user_id)
+    let threads = [...active, ...inactive]
+    threads.sort((a,b) => (new Date(b.last_active_at)).getTime() - (new Date(a.last_active_at)).getTime())
+    return threads
 }
 
 module.exports = {

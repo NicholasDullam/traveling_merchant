@@ -1,12 +1,20 @@
 import React, { useContext, useState, useEffect } from 'react'
 import api from '../../api'
 import NotificationContext from '../../context/notification-context'
-import { FiPackage } from 'react-icons/fi'
+import { FiPackage, FiShoppingCart } from 'react-icons/fi'
+import { BiMessageSquareDots } from 'react-icons/bi'
+import { useHistory, useLocation } from 'react-router'
 
 const Notifications = (props) => {
     const [rendered, setRendered] = useState(false)
     const [backdrop, setBackdrop] = useState(false)
     const notifications = useContext(NotificationContext)
+    const history = useHistory()
+    const location = useLocation()
+
+    useEffect(() => {
+        notifications.close()
+    }, [location])
 
     useEffect(() => {
         if (notifications.isOpen) {
@@ -27,22 +35,48 @@ const Notifications = (props) => {
     }, [notifications.isOpen])
 
     useEffect(() => {
-        api.getNotifications({}).then((response) => {
-            notifications.setNotifications(response.data)
+        api.getNotifications({ params: { sort: '-created_at' }}).then((response) => {
+            notifications.setNotifications(response.data.data)
         }).catch((error) => {
             console.log(error)
         })
     }, [])
 
-    const renderNotification = (notification) => {
+    const renderNotification = (notification, i) => {
         switch(notification.type) {
             case ('order') : {
-                return ( <div style={{ height: '60px', padding: '20px', backgroundColor: 'rgba(255,255,255,.05)', borderRadius: '15px', width: '100%', margin: '0px 0px 20px 0px', display: 'flex', alignItems: 'center' }}>
+                return ( <div key={i} style={{ height: '60px', padding: '20px', backgroundColor: 'rgba(255,255,255,.05)', borderRadius: '15px', width: '100%', margin: '0px 0px 20px 0px', display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => history.push(`/orders/${notification.metadata.order_id}`)}>
                     <FiPackage style={{ fontSize: '20px', color: 'white', marginRight: '10px' }} />
                     <p style={{ marginBottom: '0px', color: 'white' }}> { notification.content } </p>
+                    <p style={{ marginLeft: 'auto', color: 'white', opacity: '.7', marginBottom: '0px' }}> { getTime(notification.created_at) } </p>
                 </div> )           
             }
+
+            case ('product') : {
+                return ( <div key={i} style={{ height: '60px', padding: '20px', backgroundColor: 'rgba(255,255,255,.05)', borderRadius: '15px', width: '100%', margin: '0px 0px 20px 0px', display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => history.push(`/products/${notification.metadata.product_id}`)}>
+                    <FiShoppingCart style={{ fontSize: '20px', color: 'white', marginRight: '10px' }} />
+                    <p style={{ marginBottom: '0px', color: 'white' }}> { notification.content } </p>
+                    <p style={{ marginLeft: 'auto', color: 'white', opacity: '.7', marginBottom: '0px' }}> { getTime(notification.created_at) } </p>
+                </div> )  
+            }
+
+            case ('message') : {
+                return ( <div key={i} style={{ height: '60px', padding: '20px', backgroundColor: 'rgba(255,255,255,.05)', borderRadius: '15px', width: '100%', margin: '0px 0px 20px 0px', display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => {
+                    let search = new URLSearchParams(location.search)
+                    search.set('m', notification.metadata.thread_id)
+                    history.replace({ search: search.toString() })
+                }}>
+                    <BiMessageSquareDots style={{ fontSize: '20px', color: 'white', marginRight: '10px' }} />
+                    <p style={{ marginBottom: '0px', color: 'white' }}> { notification.content } </p>
+                    <p style={{ marginLeft: 'auto', color: 'white', opacity: '.7', marginBottom: '0px' }}> { getTime(notification.created_at) } </p>
+                </div> )  
+            }
         }
+    }
+
+    const getTime = (time) => {
+        let date = new Date(time)
+        return `${date.getHours()}:${date.getMinutes()}, ${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
     }
 
     return (
@@ -53,20 +87,11 @@ const Notifications = (props) => {
                     <h1 style={{ color: 'white', marginBottom: '20px' }}> Notifications </h1>
                     <div style={{ height: 'calc(100% - 92px)', position: 'relative', overflowY: 'scroll' }}>
                         <div>
-                            <h5 style={{ color: 'white', position: 'sticky', padding: '10px 0px 20px 0px', top: '0px', backgroundColor: 'black' }}> Unread </h5>
                             { 
-                                notifications.notifications.filter((notification) => !notification.seen ).map((notification) => {
-                                    return renderNotification(notification)
+                                notifications.notifications.map((notification, i) => {
+                                    return renderNotification(notification, i)
                                 }) 
                             } 
-                        </div>
-                        <div>
-                            <h5 style={{ color: 'white' }}> Read </h5>
-                            {
-                                notifications.notifications.filter((notification) => notification.seen ).map((notification) => {
-                                    return renderNotification(notification)
-                                }) 
-                            }
                         </div>
                     </div>
                 </div>
