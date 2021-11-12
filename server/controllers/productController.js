@@ -3,11 +3,11 @@ const View = require('../models/view')
 const mongoose = require('mongoose')
 
 const createProduct = async (req, res) => {
-    let { name, type, delivery_type, delivery_speed, description, unit_price, min_quantity, stock, game_id } = req.body
-    if (!name || !type || !delivery_type || !delivery_speed || !description || !unit_price || !min_quantity || !stock || !game_id) return res.status(400).json({ error: "Invalid input"})
+    let { name, type, delivery_type, delivery_speed, description, unit_price, min_quantity, stock, game } = req.body
+    if (!name || !type || !delivery_type || !delivery_speed || !description || !unit_price || !min_quantity || !stock || !game) return res.status(400).json({ error: "Invalid input"})
     let product = new Product({
-        user_id: req.user.id,
-        game_id,
+        user: req.user.id,
+        game,
         name,
         type,
         delivery_type,
@@ -24,13 +24,15 @@ const createProduct = async (req, res) => {
         return res.status(400).json({ error: error.message })
     })
 }
+
 const getSort = (sortString) => {
     let direction = 1
     if (sortString.indexOf('-')) direction = -1
     return { [sortString.replace('-', '')]: direction }
 }
+
 const getProducts = (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q'], indices = ['game_id', 'user_id'], pipeline = []
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q'], indices = ['game', 'user'], pipeline = []
     indices.forEach((el) => {
         if (query[el]) query[el] = mongoose.Types.ObjectId(query[el])
     })
@@ -81,14 +83,14 @@ const deleteProductById = (req, res) => {
 }
 
 const getViewModes = async (user_id) => {
-    const filter = { user_id: mongoose.Types.ObjectId(user_id) };
+    const filter = { user: mongoose.Types.ObjectId(user_id) };
     
     let type = await View.aggregate([
         { $match: filter },
         { 
             $lookup: {
                 from: "products",
-                localField: "product_id",
+                localField: "product",
                 foreignField: "_id",
                 as: "product"
             }
@@ -119,7 +121,7 @@ const getViewModes = async (user_id) => {
         { 
             $lookup: {
                 from: "products",
-                localField: "product_id",
+                localField: "product",
                 foreignField: "_id",
                 as: "product"
             }
@@ -147,7 +149,7 @@ const getViewModes = async (user_id) => {
         { 
             $lookup: {
                 from: "products",
-                localField: "product_id",
+                localField: "product",
                 foreignField: "_id",
                 as: "product"
             }
@@ -177,7 +179,7 @@ const getRecommended = async (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q'], pipeline = []
     reserved.forEach((el) => delete query[el])
     let { platform, server, type } = await getViewModes(req.user.id)
-
+    
     pipeline.push({ $search: { index: `productSearch`, text: { query: `${platform || ''} ${server || ''} ${type || ''}`.trim(), path: { wildcard: `*` }}}})
     if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
     if (req.query.skip) pipeline.push({ $skip: Number(req.query.skip) })
@@ -193,7 +195,7 @@ const getRecommended = async (req, res) => {
 const getSimilar = async (req, res) => {
     let { _id } = req.params
     let product = await Product.findById(_id), pipeline = []
-    if (!product) return res.status(400).json({ error:'No product found' })
+    if (!product) return res.status(400).json({ error: 'No product found' })
     let { platform, server, type } = product
 
     pipeline.push({ $search: { index: `productSearch`, text: { query: `${platform || ''} ${server || ''} ${type || ''}`.trim(), path: { wildcard: `*` }}}})

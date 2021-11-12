@@ -43,7 +43,7 @@ const User = (props) => {
 
     useEffect(() => {
         if (!user) return
-        api.getProducts({ params: { user_id }}).then((response) => {
+        api.getProducts({ params: { user: user_id }}).then((response) => {
             setProducts(response.data.data)
         }).catch((error) => {
             console.log(error)

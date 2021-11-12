@@ -5,7 +5,7 @@ const Notification = require('./notification')
 const Order = new mongoose.Schema({
     buyer: { type: mongoose.Types.ObjectId, ref: 'User' },
     seller: { type: mongoose.Types.ObjectId, ref: 'User' },
-    product_id: { type: mongoose.Types.ObjectId, ref: 'Product' },
+    product: { type: mongoose.Types.ObjectId, ref: 'Product' },
     pi_id: String,
     tr_id: String,
     status: String,

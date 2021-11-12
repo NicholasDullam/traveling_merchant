@@ -3,8 +3,8 @@ var mongoose = require('mongoose');
 // Favorite Schema
 
 const Favorite = new mongoose.Schema({
-    user_id: { type: mongoose.Types.ObjectId, ref: 'User' },
-    product_id: { type: mongoose.Types.ObjectId, ref: 'Product' },
+    user: { type: mongoose.Types.ObjectId, ref: 'User' },
+    product: { type: mongoose.Types.ObjectId, ref: 'Product' },
 }, {
     timestamps: {
         createdAt: 'created_at',

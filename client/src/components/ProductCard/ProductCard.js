@@ -14,8 +14,7 @@ const ProductCard = (props) => {
     const handlePurchase = (e) => {
         e.stopPropagation()
         if (!auth.isLoggedIn) history.push(`/login?redirect_uri=${location.pathname}`)
-        api.createOrder({ quantity: props.product.min_quantity, product_id: props.product._id }).then((response) => {
-            console.log(response.data._id)
+        api.createOrder({ quantity: props.product.min_quantity, product: props.product._id }).then((response) => {
             history.push(`/orders/${response.data._id}/checkout`)
         }).catch((error) => {
             console.log(error)
@@ -28,9 +27,9 @@ const ProductCard = (props) => {
     }
 
     return (
-        props.product ? <div class="card" style={{ borderRadius: '10px', cursor: 'pointer', marginBottom: '10px' }} onClick={handleClick}>
+        props.product ? <div style={{ borderRadius: '25px', cursor: 'pointer', marginBottom: '10px', backgroundColor: 'rgba(0,0,0,.05)' }} onClick={handleClick}>
             <div style={{ padding: '25px', display: 'flex', alignItems: 'center' }}>
-                <img src={props.product.media.length ? props.product.media[0] : null} style={{ backgroundColor: 'grey', height: '60px', width: '60px', borderRadius: '10px' }} />
+                <img src={props.product.media.length ? props.product.media[0] : null} style={{ backgroundColor: 'grey', height: '70px', width: '70px', borderRadius: '15px' }} />
                 <div style={{ marginLeft: '20px' }}>
                     <h5 style={{ marginBottom: '0px' }}> {props.product.name} ({props.product.type}) </h5>
                     <h6 style={{ marginBottom: '0px'}}> ${props.product.unit_price / 100} per unit </h6>

@@ -27,12 +27,12 @@ const Home = (props) => {
             <div>
                 <div>
                     <h1 style={{ marginBottom: '0px' }}> Dashboard </h1>
-                    <h4 style={{ borderBottom: '1px solid rgba(0,0,0,.1)', paddingBottom: '10px', marginTop: '10px' }} onClick={() => history.push('/games')}> Games </h4>
+                    <h4 style={{ paddingBottom: '5px', marginTop: '10px' }} onClick={() => history.push('/games')}> Games </h4>
                     <GameGallery/>
                 </div>
                 { 
                     auth.isLoggedIn ? <div style={{ marginTop: '20px', marginBottom: '30px' }}>
-                        <h4 style={{ borderBottom: '1px solid rgba(0,0,0,.1)', paddingBottom: '10px', marginTop: '10px' }} onClick={() => history.push('/games')}> Recommended </h4>
+                        <h4 style={{ paddingBottom: '5px', marginTop: '10px' }} onClick={() => history.push('/games')}> Recommended </h4>
                         {
                             recommended.map((product, i) => {
                                 return <ProductCard key={i} product={product} />
@@ -41,7 +41,7 @@ const Home = (props) => {
                     </div> : null 
                 }
                 <div style={{ marginTop: '20px' }}>
-                    <h4 style={{ borderBottom: '1px solid rgba(0,0,0,.1)', paddingBottom: '10px', marginTop: '10px', marginBottom: '10px' }} onClick={() => history.push('/profile/views')}> Views </h4>
+                    <h4 style={{ paddingBottom: '5px', marginTop: '10px', marginBottom: '10px' }} onClick={() => history.push('/profile/views')}> Views </h4>
                     <ViewGallery/>
                 </div>
             </div>

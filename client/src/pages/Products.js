@@ -11,7 +11,7 @@ const Products = (props) => {
     const [retrievedFavorites, setRetrievedFavorites] = useState(false)
 
     useEffect(() => {
-        api.getProducts({ params: { user_id: auth.user._id }}).then((response) => {
+        api.getProducts({ params: { user: auth.user._id }}).then((response) => {
             setProducts(response.data.data)
         }).catch((error) => {
             console.log(error)
@@ -22,7 +22,7 @@ const Products = (props) => {
         if (!products.length || retrievedFavorites) return
         let updatedProducts = [...products]
         for (let i = 0; i < products.length; i++) { 
-            let favorites = await api.getFavorites({ params: { product_id: products[i]._id }})
+            let favorites = await api.getFavorites({ params: { product: products[i]._id }})
             updatedProducts[i].favorites = favorites.data.length
         }
 

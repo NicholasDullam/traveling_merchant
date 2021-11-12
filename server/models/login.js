@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 // Login model
 
 const Login = new mongoose.Schema({
-    id: { type: mongoose.Types.ObjectId, ref: 'User' },
+    user: { type: mongoose.Types.ObjectId, ref: 'User' },
     admin: Boolean,
     banned: Boolean,
     ip: String

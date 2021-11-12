@@ -46,7 +46,7 @@ const Game = (props) => {
     }
 
     const handleSearch = () => {
-        let params = { game_id, limit, skip: (page - 1) ? (page - 1) * limit : 0 }, queryString = generateQueryString()
+        let params = { game: game_id, limit, skip: (page - 1) ? (page - 1) * limit : 0 }, queryString = generateQueryString()
 
         if (name.length) params.q = name 
         if (deliveryType.length) params.delivery_type = deliveryType

@@ -53,7 +53,7 @@ const deleteNotificationById = (notification_id) => connection.delete(`/notifica
 const clearNotifications = () => connection.post('/notifications/clear')
 
 // product functions
-const getProductById = (product_id) => connection.get(`/products/${product_id}`)
+const getProductById = (product_id, req) => connection.get(`/products/${product_id}`, req)
 const getProducts = (req) => connection.get('/products', req)
 const getSimilarProducts = (product_id, req) => connection.get(`/products/${product_id}/similar`, req)
 const getRecommendedProducts = (req) => connection.get(`/products/recommended`, req)
@@ -65,7 +65,7 @@ const getGameById = (game_id) => connection.get(`/games/${game_id}`)
 // order functions
 const getOrders = (req) => connection.get('/orders', req)
 const createOrder = (payload) => connection.post('/orders', payload)
-const getOrderById = (order_id) => connection.get(`/orders/${order_id}`)
+const getOrderById = (order_id, req) => connection.get(`/orders/${order_id}`, req)
 const confirmOrder = (order_id) => connection.put(`/orders/${order_id}/confirm`)
 const denyOrder = (order_id) => connection.put(`/orders/${order_id}/deny`)
 const deliverOrder = (order_id) => connection.put(`/orders/${order_id}/deliver`)

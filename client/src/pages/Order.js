@@ -18,37 +18,20 @@ const Order = (props) => {
     const { order_id } = useParams()
 
     const isBuyer = () => {
-        return order.buyer === auth.userId
+        return order.buyer._id  === auth.userId
     }
 
     // get order on mount
     useEffect(() => {
         if (!order_id) return
-        api.getOrderById(order_id).then((response) => {
+        api.getOrderById(order_id, { params: { expand: ['buyer', 'seller', 'product'] }}).then((response) => {
             setOrder(response.data)
+            if (response.data.buyer._id === auth.userId) return setAffiliate(response.data.buyer)
+            setAffiliate(response.data.seller)
         }).catch((error) => {
             console.log(error)
         }) 
     }, [order_id])
-
-    // get buyer or seller on order mount
-    useEffect(() => {
-        if (!order) return
-        api.getUserById(isBuyer() ? order.seller : order.buyer).then((response) => {
-            setAffiliate(response.data)
-        }).catch((error) => {
-            console.log(error)
-        })
-    }, [order])
-
-    useEffect(() => {
-        if (!order) return
-        api.getProductById(order.product_id).then((response) => {
-            setProduct(response.data)
-        }).catch((error) => {
-            console.log(error)
-        })
-    }, [order])
 
     const confirmOrder = () => {
         api.confirmOrder(order._id).then((response) => {
@@ -209,7 +192,7 @@ const Order = (props) => {
                                     <h6 style={{ opacity: '.7' }}> Product ID: <span style={{ color: 'blue' }}> {order.product_id} </span> </h6>
                                 </div>
                             </div>
-                            { product ? <ProductCard product={product}/> : null }
+                            { order ? <ProductCard product={order.product}/> : null }
                         </div>
                     </div> : null
                 }
