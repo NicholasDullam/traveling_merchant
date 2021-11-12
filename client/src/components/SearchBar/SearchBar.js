@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useHistory } from 'react-router';
 
 const SearchBar = (props) => {
+    const [focused, setFocused] = useState(false)
     const [name, setName] = useState('')
     const history = useHistory()
 
@@ -14,13 +15,15 @@ const SearchBar = (props) => {
     }
 
     return (
-        <div className="search-bar col-md-6 col-lg-4" style={{ marginLeft: '10%' }}> 
+        <div className="col-md-6 col-lg-4" style={{ marginLeft: '10px' }}> 
             <div className="input-group">
-                <input style={{ border: 'none' }}
+                <input style={{ border: 'none', backgroundColor: focused ? 'white' : 'black', border: '1px solid rgba(255,255,255,.3)', borderRadius: '20px', transition: 'background-color 200ms ease' }}
                   className="form-control me-2"
                   type="search"
-                  placeholder="Search games"
+                  placeholder="Search games..."
                   aria-label="Search"
+                  onFocus={() => setFocused(true)}
+                  onBlur={() => setFocused(false)}
                   value={name}
                   onChange={handleName}
                   onKeyPress={handleEnter}/>

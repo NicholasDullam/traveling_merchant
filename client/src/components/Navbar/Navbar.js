@@ -1,4 +1,4 @@
-import React, {useContext} from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { Link, useHistory, useLocation } from "react-router-dom";
 
@@ -18,14 +18,32 @@ import "../Layout/Layout.css"; // reason for this is to get all global variables
 import SearchBar from "../SearchBar/SearchBar";
 import api from "../../api";
 import NotificationContext from "../../context/notification-context";
-import Badge from "../Badge/Badge";
+import { IoIosNotifications } from 'react-icons/io'
+import { RiMessage3Fill } from 'react-icons/ri'
+
+const NavElement = (props) => {
+    return (
+        <div onClick={props.onClick} style={{ margin: '10px', cursor: 'pointer', position: 'relative', display: 'flex', alignItems: 'center' }}>
+            { props.children }
+        </div>
+    )
+}
+
+const Divider = (props) => {
+    return (
+        <div style={{ width: '100%', borderBottom: '1px solid rgba(0,0,0,.1)', margin: '10px 0px 10px 0px' }}/>
+    )
+}
 
 const Navbar = (props) => {
+  const [profileExpanded, setProfileExpanded] = useState(false)
+
   const auth = useContext(AuthContext);
   const messenger = useContext(MessengerContext)
   const notifications = useContext(NotificationContext)
   const history = useHistory()
   const location = useLocation()
+  const profileRef = useRef()
 
   const handleLogout = () => {
     api.logout().then((response) => {
@@ -35,13 +53,31 @@ const Navbar = (props) => {
     })
   }
 
-  // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
-  return (
-    <nav className="navbar navbar-expand-md" style={{ position: 'fixed', top: '0px', width: '100%', zIndex: '2' }}>
-      <div className="container-fluid" style={{ alignItems: 'center' }}>
-        <h1 className="brand" style={{ marginBottom: '8px', marginTop: '-8px', marginLeft: '10px'}}>
-          <Link to="/" className="navbar-brand">TM</Link>
-        </h1>
+  const handleMessengerClick = () => {
+    if (messenger.isOpen) {
+      const search = new URLSearchParams(location.search)
+      search.delete('m')
+      history.replace({ search: search.toString() })
+      messenger.close()
+    }
+    if (!messenger.isOpen) messenger.open()
+  }
+
+  const handleNotificationsClick = () => {
+    if (notifications.isOpen) notifications.close()
+    if (!notifications.isOpen) notifications.open()
+  }
+
+  const handleProfileClick = () => {
+    setProfileExpanded((expanded) => !expanded)
+  }
+
+  const getClientBoundingRect = () => {
+    if (!profileRef.current) return {}
+    return profileRef.current.getBoundingClientRect()
+  }
+  /*
+
         <button
           className="navbar-toggler"
           type="button"
@@ -53,81 +89,75 @@ const Navbar = (props) => {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
+  */
 
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <SearchBar/>
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0  ">
-          {(auth.isLoggedIn && auth.user && 
-          <React.Fragment>
-            { auth.user.admin ? <li className="nav-item">
-              <Link className="nav-link" to="/admin/users">Admin</Link>
-            </li> : null }
-            <li className="nav-item" onClick={() => {
-              if (notifications.isOpen) notifications.close()
-              if (!notifications.isOpen) notifications.open()
-            }}>
-              <p style={{ marginBottom: '0px' }} className="nav-link" to="/messages">Notifications</p>
-            </li>
-            <li className="nav-item" onClick={() => {
-              if (messenger.isOpen) {
-                const search = new URLSearchParams(location.search)
-                search.delete('m')
-                history.replace({ search: search.toString() })
-                messenger.close()
-              }
-              if (!messenger.isOpen) messenger.open()
-            }}>
-              <p style={{ marginBottom: '0px' }} className="nav-link" to="/messages">Messages</p>
-            </li>
-            <li class="nav-item dropdown" style={{ marginLeft: '20px' }}>
-          <a class="nav-link" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src={auth.user.profile_img} style={{ height: '30px', width: '30px', borderRadius: '50%' }}/>
-          </a>
-          <ul style={{ transform: 'translateX(-115px) translateY(10px)' }} class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item">
-            <Link to="/profile/info">Account info</Link>
-              </a></li>
-              <li><a class="dropdown-item">
-            <Link  to="/profile/favorites">Favorites</Link>
-              </a></li>
-              <li><a class="dropdsown-item">
-            <Link  to="/profile/reviews">Review</Link>
-              </a></li>
-              <li><a class="dropdown-item">
-            <Link  to="/profile/views">Viewing History</Link>
-              </a></li>
-              <li><a class="dropdown-item">
-            <Link  to="/profile/orders">Orders</Link>
-              </a></li>
-              {auth.user.acct_id ? <li><a class="dropdown-item">
-            <Link  to="/profile/products">Products</Link>
-              </a></li> : null }
-              <li><a class="dropdown-item">
-            <Link  to="/profile/billing">Billing</Link>
-              </a></li>
-              <li><a class="dropdown-item">
-            <Link  to="/profile/preferences">Preferences</Link>
-              </a></li>
-              <li onClick={handleLogout}><a class="dropdown-item">
-            <Link  to="/">Sign out</Link>
-              </a></li>
-          </ul>
-        </li>
-        </React.Fragment>)}
-            
-           {(!auth.isLoggedIn &&
-           <React.Fragment>
-            <li className="nav-item">
-              <Link className="nav-link" to="/login">Log in</Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/signup">Sign up</Link>
-            </li>
-            </React.Fragment>)}
-
-          </ul>
+  // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
+  return (
+    <nav style={{ position: 'sticky', top: '0px', width: '100%', zIndex: '2', backgroundColor: 'black', padding: '7px', userSelect: 'none' }}>
+      <div style={{ display: 'flex', alignItems: 'center', userSelect: 'none' }}>
+        <Link to="/" style={{ textDecoration: 'none' }}>
+          <h1 style={{ marginLeft: '10px', marginBottom: '0px' }} className="navbar-brand">
+              TM
+          </h1>
+        </Link>
+        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+            <SearchBar/>
+            { auth.isLoggedIn && auth.user.admin ? <Link to='/admin/users' style={{ outline: 'none', color: 'white', textDecoration: 'none' }}>
+                <NavElement> <p style={{ marginBottom: '0px', fontWeight: 'bold' }}> Admin </p> </NavElement>
+            </Link> : null }
+            <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
+                { auth.user && auth.isLoggedIn ? <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <NavElement onClick={handleNotificationsClick}> <IoIosNotifications style={{ color: 'white', fontSize: '22px' }}/> </NavElement>
+                  <NavElement onClick={handleMessengerClick}> <RiMessage3Fill style={{ color: 'white', fontSize: '22px' }}/> </NavElement>
+                  <NavElement onClick={handleProfileClick}> 
+                      <img ref={profileRef} src={auth.user.profile_img} style={{ height: '30px', width: '30px', borderRadius: '50%' }}/> 
+                      <div style={{ backgroundColor: 'grey', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '10px', height: '10px', position: 'absolute', bottom: '-1px', right: '-1px', boxShadow: '0px 0px 0px 2px rgba(0, 0, 0, 1)' }}/>
+                  </NavElement>              
+                </div> : <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Link to='/login' style={{ outline: 'none', color: 'white', textDecoration: 'none' }}>
+                      <NavElement> <p style={{ marginBottom: '0px', fontWeight: 'bold' }}> Login </p> </NavElement>
+                    </Link>
+                    <Link to='/signup' style={{ outline: 'none', color: 'white', textDecoration: 'none' }}>
+                      <NavElement> <p style={{ marginBottom: '0px', fontWeight: 'bold' }}> Sign Up </p> </NavElement>
+                    </Link>
+                </div> }
+            </div>
         </div>
       </div>
+      { auth.isLoggedIn && profileExpanded ? <div style={{ position: 'absolute', top: getClientBoundingRect().bottom + 10, left: getClientBoundingRect().right + 5, backgroundColor: 'white', transform: 'translateX(-100%)', boxShadow: '0 0px 20px 10px rgba(0,0,0,.08)', padding: '15px', borderRadius: '10px', width: '200px', zIndex: '4' }} onClick={() => setProfileExpanded(false)}>
+          <div style={{ position: 'absolute', backgroundColor: 'white', transform: 'rotate(45deg)', width: '15px', height: '15px', top: '-3px', right: '12px', borderRadius: '2px' }} />
+          <Link to={`/users/${auth.user._id}`} style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
+            <h6 style={{ marginBottom: '0px' }}> Signed in as </h6>
+            <h6 style={{ fontWeight: 'bold', marginBottom: '0px' }}> {auth.user.first} {auth.user.last} </h6>
+          </Link>
+          <Divider/>
+          <Link to='/profile/info' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
+            <h6 style={{ marginBottom: '5px' }}> Profile </h6>
+          </Link>
+          <Link to='/profile/orders' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
+            <h6 style={{ marginBottom: '5px' }}> Orders </h6>
+          </Link>
+          <Link to='/profile/favorites' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
+            <h6 style={{ marginBottom: '5px' }}> Favorites </h6>
+          </Link>
+          <Link to='/profile/views' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
+            <h6 style={{ marginBottom: '5px' }}> History </h6>
+          </Link>
+          <Link to='/profile/reviews' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
+            <h6 style={{ marginBottom: '5px' }}> Reviews </h6>
+          </Link>
+          <Link to='/profile/products' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
+            <h6 style={{ marginBottom: '5px' }}> Products </h6>
+          </Link>
+          <Link to='/profile/preferences' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
+            <h6 style={{ marginBottom: '5px' }}> Billing </h6>
+          </Link>
+          <Link to='/profile/billing' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
+            <h6 style={{ marginBottom: '5px' }}> Preferences </h6>
+          </Link>
+          <h6 style={{ marginBottom: '5px', cursor: 'pointer' }} onClick={handleLogout}> Sign Out </h6>
+      </div> : null }
+      { auth.isLoggedIn && profileExpanded ? <div onClick={() => setProfileExpanded(false)} style={{ width: '100%', height: '100%', position: 'fixed', zIndex: '3' }}/> : null }
     </nav>
   );
 };
