@@ -10,6 +10,7 @@ import ProductCard from './ProductCard/ProductCard'
 import Messenger from './Messenger/Messenger'
 import Notifications from './Notifications/Notifications'
 import Pagination from './Pagination/Pagination'
+import ContextBar from './ContextBar/ContextBar'
 
 export {
     CheckoutInterface,
@@ -23,5 +24,6 @@ export {
     ProductCard,
     Messenger,
     Pagination,
-    Notifications
+    Notifications,
+    ContextBar
 }
