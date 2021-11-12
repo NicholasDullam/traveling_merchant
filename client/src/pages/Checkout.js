@@ -11,10 +11,9 @@ const stripePromise = loadStripe('pk_test_51JgZaNI1DlY4C11AjLqdA60NeGBqOpb4g1lJI
 const Checkout = (props) => {
     const [order, setOrder] = useState(null)
     const { order_id } = useParams()
-    const history = useHistory()
 
     useEffect(() => {
-        api.getOrderById(order_id).then((response) => {
+        api.getOrderById(order_id, { params: { expand: ['seller', 'product', 'product.game'] }}).then((response) => {
             setOrder(response.data)
         }).catch((error) => {
             console.log(error)

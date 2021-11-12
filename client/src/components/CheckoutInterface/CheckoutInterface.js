@@ -17,9 +17,6 @@ const CheckoutInterface = (props) => {
     const elements = useElements()
     const history = useHistory()
 
-    const [product, setProduct] = useState(null)
-    const [game, setGame] = useState(null)
-    const [seller, setSeller] = useState(null)
     const [clientSecret, setClientSecret] = useState(null)
 
     const [first, setFirst] = useState('')
@@ -32,7 +29,6 @@ const CheckoutInterface = (props) => {
 
     useEffect(() => {
         api.getPaymentMethods(auth.user.cust_id).then((response) => {
-            console.log(response.data)
             setPaymentMethods(response.data)
         }).catch((error) => {
             console.log(error)
@@ -49,15 +45,7 @@ const CheckoutInterface = (props) => {
     }, [])
 
     useEffect(() => {
-        if (!props.order) return null
-        api.getProductById(props.order.product_id).then((response) => {
-            setProduct(response.data)
-        }).catch((error) => {
-            console.log(error)
-        })
-    }, [props.order])
-
-    useEffect(() => {
+        console.log(props.order)
         if (!props.order) return null
         api.getClientSecret(props.order.pi_id).then((response) => {
             setClientSecret(response.data.client_secret)
@@ -65,24 +53,6 @@ const CheckoutInterface = (props) => {
             console.log(error)
         })
     }, [props.order])
-
-    useEffect(() => {
-        if (!product) return null
-        api.getGameById(product.game_id).then((response) => {
-            setGame(response.data)
-        }).catch((error) => {
-            console.log(error)
-        })
-    }, [product])
-
-    useEffect(() => {
-        if (!product) return null
-        api.getUserById(product.user_id).then((response) => {
-            setSeller(response.data)
-        }).catch((error) => {
-            console.log(error)
-        })
-    }, [product])
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -141,14 +111,14 @@ const CheckoutInterface = (props) => {
         <div>
             <div style={{ backgroundColor: 'black', height: '100%', width: '50%', position: 'absolute', overflow: 'hidden' }}>
                 <Link to="/" className="navbar-brand navbar-brand-black" style={{ position: 'absolute', top: '20px', left: '20px', color: 'white' }}>TM</Link>
-                { seller ? <div style={{ padding: '50px', top: '50%', transform: 'translateY(-50%)', position: 'absolute' }}>
+                { props.order ? <div style={{ padding: '50px', top: '50%', transform: 'translateY(-50%)', position: 'absolute' }}>
                     <h1 style={{ color: 'white' }}> Pay ${(props.order.unit_price / 100)* props.order.quantity} </h1>
-                    <h4 style={{ color: 'white', opacity: '.7', marginBottom: '30px' }}> To <span> {seller.first} {seller.last} </span></h4>
+                    <h4 style={{ color: 'white', opacity: '.7', marginBottom: '30px' }}> To <span> {props.order.seller.first} {props.order.seller.last} </span></h4>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <img src={seller.profile_img} style={{ height: '100px', width: '100px', borderRadius: '50%' }}/>
+                        <img src={props.order.seller.profile_img} style={{ height: '100px', width: '100px', borderRadius: '50%' }}/>
                         <div style={{ marginLeft: '25px', color: 'white' }}>
-                            <h3 style={{ marginBottom: '0px' }}> {seller.first} {seller.last} </h3>
-                            <Ratings user_id={seller._id}/>
+                            <h3 style={{ marginBottom: '0px' }}> {props.order.seller.first} {props.order.seller.last} </h3>
+                            <Ratings user_id={props.order.seller._id}/>
                         </div>
                     </div>
                 </div> : null }
@@ -156,11 +126,11 @@ const CheckoutInterface = (props) => {
             <div style={{ position: 'absolute', left: '50%', width: '50%', minHeight: '100%', padding: '50px'}}>
                 <h3> Order Summary </h3>
                 <div style={{ borderTop: '1px solid rgba(0,0,0,.1)' }}/>
-                { product && game ? <div style={{ padding: '30px 0px 30px 0px', display: 'flex', alignItems: 'center', margin: '5px' }}>
-                    <img src={product.media.length ? product.media[0] : null} style={{ backgroundColor: 'grey', borderRadius: '5px', width: '60px', height: '60px' }}/>
+                { props.order ? <div style={{ padding: '30px 0px 30px 0px', display: 'flex', alignItems: 'center', margin: '5px' }}>
+                    <img src={props.order.product.media.length ? props.order.product.media[0] : null} style={{ backgroundColor: 'grey', borderRadius: '5px', width: '60px', height: '60px' }}/>
                     <div style={{ marginLeft: '15px' }}>
-                        <p style={{ marginBottom: '0px' }}> { product.name } </p>
-                        <p style={{ opacity: '.7', marginBottom: '0px', fontSize: '12px' }}> { game.name }</p>
+                        <p style={{ marginBottom: '0px' }}> { props.order.product.name } </p>
+                        <p style={{ opacity: '.7', marginBottom: '0px', fontSize: '12px' }}> { props.order.product.game.name }</p>
                     </div>
                     <div style={{ marginLeft: '40px' }}>
                         <p style={{ marginBottom: '0px' }}> ${props.order.unit_price / 100} x { props.order.quantity } </p>

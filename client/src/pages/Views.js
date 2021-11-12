@@ -6,28 +6,14 @@ import AuthContext from "../context/auth-context";
 const Views = (props) => {
     const auth = useContext(AuthContext)
     const [views, setViews] = useState([])
-    const [productsLoaded, setProductsLoaded] = useState(false)
 
     useEffect(() => {
-        api.getViews({ params: { user_id: auth.user._id, limit: 5 }}).then((response) => {
+        api.getViews({ params: { user: auth.user._id, limit: 5, expand: ['product'] }}).then((response) => {
             setViews(response.data)
         }).catch((error) => {
             console.log(error)
         })
     }, [])
-
-    useEffect(async () => {
-        if (!views.length || productsLoaded) return
-        let updatedViews = [...views]
-
-        for (let i = 0; i < views.length; i++) {
-            let product = await api.getProductById(views[i].product_id)
-            updatedViews[i].product = product.data
-        }
-
-        setViews(updatedViews)
-        setProductsLoaded(true)
-    }, [views])
 
     return (
         <div>

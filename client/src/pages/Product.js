@@ -24,7 +24,7 @@ const Product = (props) => {
     const handlePurchase = (e) => {
         e.stopPropagation()
         if (!auth.isLoggedIn) history.push(`/login?redirect_uri=${props.location.pathname}`)
-        api.createOrder({ quantity: Number(quantity) || product.min_quantity, product_id: product._id }).then((response) => {
+        api.createOrder({ quantity: Number(quantity) || product.min_quantity, product: product._id }).then((response) => {
             history.push(`/orders/${response.data._id}/checkout`)
         }).catch((error) => {
             console.log(error)
@@ -44,7 +44,7 @@ const Product = (props) => {
     }, [product_id])
 
     useEffect(() => {
-        api.getFavorites({ params: { product_id }}).then((response) => {
+        api.getFavorites({ params: { product: product_id }}).then((response) => {
             setFavorited(response.data.length ? response.data[0]._id : null )
         }).catch((error) => {
             console.log(error)
@@ -52,7 +52,7 @@ const Product = (props) => {
     }, [product_id])
 
     useEffect(() => {
-        api.createView({ product_id }).then((response) => {
+        api.createView({ product: product_id }).then((response) => {
             console.log(response.data)
         }).catch((error) => {
             console.log(error)
@@ -61,7 +61,7 @@ const Product = (props) => {
 
     useEffect(() => {
         if (!product) return
-        api.getUserById(product.user_id).then((response) => {
+        api.getUserById(product.user).then((response) => {
             setUser(response.data)
         }).catch((error) => {
             console.log(error)
@@ -87,7 +87,7 @@ const Product = (props) => {
     }, [product])
 
     const handleFavorite = () => {
-        api.createFavorite({ product_id }).then((response) => {
+        api.createFavorite({ product: product_id }).then((response) => {
             setFavorited(response.data._id)
         }).catch((error) => {
             console.log(error)
@@ -100,10 +100,7 @@ const Product = (props) => {
         }).catch((error) => {
             console.log(error)
         })
-    }
-    var icon ="";
-    
-
+    }    
 
     return (
         <Layout navbar>

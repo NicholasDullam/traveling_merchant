@@ -26,20 +26,20 @@ const handlePastDueConfirmations = () => {
 }
 
 const createOrder = async (req, res) => {
-    let { product_id, quantity, requirements } = req.body
+    let { product, quantity, requirements } = req.body
     
-    if (!product_id) return res.status(400).json({ error: 'No products in order'})
-    let product = await Product.findById(product_id)
+    if (!product) return res.status(400).json({ error: 'No products in order'})
+    product = await Product.findById(product)
     if (!product) return res.status(400).json({ error: 'Product not found'})
-    //if (quantity > product.stock) return res.status({ error: 'Quantity exceeds stock'})
+    if (quantity > product.stock) return res.status({ error: 'Quantity exceeds stock'})
     if (quantity < product.min_quantity) return res.status(400).json({ error: 'Quantity less than minimum'})
     let total_cost = product.unit_price * quantity, commission_fees = total_cost * .15
 
     let order = new Order({
         buyer: req.user.id,
-        seller: product.user_id,
+        seller: product.user,
         status: 'payment_pending',
-        product_id,
+        product: product._id,
         requirements,
         quantity,
         unit_price: product.unit_price,
@@ -52,6 +52,7 @@ const createOrder = async (req, res) => {
     createPaymentIntentFromOrder(order._id, req.user.cust_id).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
+        console.log(error)
         return res.status(400).json({ error: error.message })
     })
 }
@@ -61,9 +62,9 @@ const deliverOrder = async (req, res) => {
     if (!_id) return res.status(400).json({ error: 'Missing order_id' })
     let order = await Order.findById(_id)
     if (req.user.id !== order.seller.toString()) return res.status(402).json({ error: 'Invalid permissions' })
+    
     let date = new Date()
-    //date.setDate(date.getDate() + 3)
-    date.setMinutes(date.getMinutes() + 1)
+    date.setDate(date.getDate() + 3)
     Order.findOneAndUpdate({ _id }, { status: 'confirmation_pending', last_delivered_at: Date.now(), auto_confirm_at: date.getTime() }, { new: true }).then((response) => {
         addJob(response._id, response.auto_confirm_at, async function(response) {
             let order = await Order.findById(response._id).populate('seller')
@@ -132,7 +133,15 @@ const verifyPurchase = async (req, res) => {
 
 const getOrderById = async (req, res) => {
     let { _id } = req.params
-    Order.findById(_id).then((response) => {
+    let queryPromise = Order.findById(_id)
+
+    if (req.query.expand) req.query.expand.forEach((instance) => {
+        instance = instance.split('.')
+        if (instance.length > 1) return queryPromise.populate({ path: instance[0], populate: { path: instance[1] }})
+        return queryPromise.populate(instance)
+    })
+    
+    queryPromise.then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })

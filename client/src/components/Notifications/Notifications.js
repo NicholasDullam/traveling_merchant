@@ -3,6 +3,7 @@ import api from '../../api'
 import NotificationContext from '../../context/notification-context'
 import { FiPackage, FiShoppingCart } from 'react-icons/fi'
 import { BiMessageSquareDots } from 'react-icons/bi'
+import { RiUserFollowLine } from 'react-icons/ri'
 import { useHistory, useLocation } from 'react-router'
 
 const Notifications = (props) => {
@@ -67,6 +68,14 @@ const Notifications = (props) => {
                     history.replace({ search: search.toString() })
                 }}>
                     <BiMessageSquareDots style={{ fontSize: '20px', color: 'white', marginRight: '10px' }} />
+                    <p style={{ marginBottom: '0px', color: 'white' }}> { notification.content } </p>
+                    <p style={{ marginLeft: 'auto', color: 'white', opacity: '.7', marginBottom: '0px' }}> { getTime(notification.created_at) } </p>
+                </div> )  
+            }
+
+            case ('follower') : {
+                return ( <div key={i} style={{ height: '60px', padding: '20px', backgroundColor: 'rgba(255,255,255,.05)', borderRadius: '15px', width: '100%', margin: '0px 0px 20px 0px', display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={() => history.push(`/users/${notification.metadata.user_id}`)}>
+                    <RiUserFollowLine style={{ fontSize: '20px', color: 'white', marginRight: '10px' }} />
                     <p style={{ marginBottom: '0px', color: 'white' }}> { notification.content } </p>
                     <p style={{ marginLeft: 'auto', color: 'white', opacity: '.7', marginBottom: '0px' }}> { getTime(notification.created_at) } </p>
                 </div> )  

@@ -6,7 +6,7 @@ const token_secret = process.env.TOKEN_SECRET;
 
 //assume req has email and password
 const login = async (req, res) => {
-    Login.findOne({ip:req.ip,banned:true}).then((doc) => {
+    Login.findOne({ ip: req.ip, banned: true }).then((doc) => {
         if (doc != null) {
             return res.status(400).json({ error: 'IP is banned'})
         }
@@ -24,7 +24,7 @@ const login = async (req, res) => {
         return res.status(400).json({ error: 'Password incorrect'})
     }
     
-    var login = new Login({ id: user._id, admin: user.admin, banned: user.banned, ip: req.ip });
+    var login = new Login({ user: user._id, admin: user.admin, banned: user.banned, ip: req.ip });
 
     login.save().then().catch((error) => {
         return res.status(400).json({ error: error.message })

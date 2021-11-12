@@ -5,8 +5,8 @@ const Notification = require('./notification')
 // Product Schema
 
 const Product = new mongoose.Schema({
-    user_id: { type: mongoose.Types.ObjectId, ref:'User' },
-    game_id: { type: mongoose.Types.ObjectId, ref:'Game' },
+    user: { type: mongoose.Types.ObjectId, ref: 'User' },
+    game: { type: mongoose.Types.ObjectId, ref: 'Game' },
     media: [ String ],
     name: String,
     type: String,
