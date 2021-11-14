@@ -33,19 +33,18 @@ const getSort = (sortString) => {
 }
 
 const getProducts = (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q'], indices = ['game', 'user'], pipeline = []
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q', 'online'], indices = ['game', 'user'], pipeline = []
     indices.forEach((el) => {
         if (query[el]) query[el] = mongoose.Types.ObjectId(query[el])
     })
     reserved.forEach((el) => delete query[el])
 
     if (req.query.q) pipeline.push({ $search: { index: 'productSearch', text: { query: req.query.q, path: { wildcard: '*' }}}})
+    //if (req.query.online) pipeline.push({ }) 
     pipeline.push({ $match: query })
     if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
     if (req.query.skip) pipeline.push({ $skip: Number(req.query.skip) })
     if (req.query.limit) pipeline.push({ $limit: Number(req.query.limit) + 1 })
-
-    console.log(pipeline)
 
     Product.aggregate(pipeline).then((response) => {
         let results = { has_more: false, data: response }
@@ -180,7 +179,7 @@ const getRecommended = async (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q'], pipeline = []
     reserved.forEach((el) => delete query[el])
     let { platform, server, type } = await getViewModes(req.user.id)
-    
+
     pipeline.push({ $search: { index: `productSearch`, text: { query: `${platform || ''} ${server || ''} ${type || ''}`.trim(), path: { wildcard: `*` }}}})
     if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
     if (req.query.skip) pipeline.push({ $skip: Number(req.query.skip) })
