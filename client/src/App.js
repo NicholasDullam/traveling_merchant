@@ -9,6 +9,7 @@ import AuthContext from "./context/auth-context";
 import Profile from './pages/Profile';
 import MessengerContext from "./context/messenger-context";
 import NotificationContext from "./context/notification-context";
+import NotFoundPage from "./pages/404";
 
 function App() {
   // Auth attributes
@@ -130,7 +131,8 @@ function App() {
                     {/* Contain sub-routes */}
                     <Route path="/profile" component={Profile}/>
                     <Route path="/admin" component={Admin}/>
-                    <Route path="/" component={Home}/>
+                    <Route exact path="/" component={Home}/>
+                    <Route component={NotFoundPage} />
                   </Switch> : null }
               </Switch>
             </Router>
