@@ -23,7 +23,7 @@ import { RiMessage3Fill } from 'react-icons/ri'
 
 const NavElement = (props) => {
     return (
-        <div onClick={props.onClick} style={{ margin: '10px', cursor: 'pointer', position: 'relative', display: 'flex', alignItems: 'center' }}>
+        <div onClick={props.onClick} style={{ margin: '10px', cursor: 'pointer', position: 'relative', display: 'flex', alignItems: 'center', userSelect: 'none' }}>
             { props.children }
         </div>
     )
@@ -76,22 +76,7 @@ const Navbar = (props) => {
     if (!profileRef.current) return {}
     return profileRef.current.getBoundingClientRect()
   }
-  /*
-
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"y
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-  */
-
-  // Note: Navbar responsive functionality does not work. (i.e when sizing down the width of the screen, a hamburger button appears, but clicking on it does nothing)
+  
   return (
     <nav style={{ position: 'sticky', top: '0px', width: '100%', zIndex: '2', backgroundColor: 'black', padding: '7px', userSelect: 'none' }}>
       <div style={{ display: 'flex', alignItems: 'center', userSelect: 'none' }}>
