@@ -167,7 +167,7 @@ const getOrders = async (req, res) => {
 }
 
 const getPricing = async (req, res) => {
-    let { product_id } = req.body;
+    let { product_id } = req.params;
     var current_price;
     var last_updated;
     var returnJSON = { "points": []};

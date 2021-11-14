@@ -9,7 +9,7 @@ const router = express.Router()
 // GET requests
 router.get('/orders', auth, OrderController.getOrders) // get orders
 router.get('/orders/:_id', auth, OrderController.getOrderById) // get order by id
-router.get('/getPricing', OrderController.getPricing) // get product price history
+router.get('/getPricing/:_id', OrderController.getPricing) // get product price history
 
 // POST requests
 router.post('/orders', auth, OrderController.createOrder) // create order
