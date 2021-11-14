@@ -1,8 +1,70 @@
-import React, { useEffect, useState } from 'react'
+import React, { createRef, useEffect, useRef, useState } from 'react'
 import { useHistory, useParams } from 'react-router'
 import api from '../api'
 import { Pagination, ProductCard } from '../components'
 import Layout from '../components/Layout/Layout'
+import { BiCoinStack } from 'react-icons/bi'
+import { GiLockedChest } from 'react-icons/gi'
+import { BsFillArrowUpCircleFill } from 'react-icons/bs'
+
+const TypeSelector = (props) => {
+    const [refs, setRefs] = useState({})
+    const containerRef = useRef()
+
+    useEffect(() => {
+        let newRefs = {}
+        props.types.forEach((type) => {
+            newRefs[type] = createRef()
+        })
+        setRefs(newRefs)
+    }, [props.types])
+
+    const getTypeIcon = (type) => {
+        switch(type) {
+            case ('currency'): {
+                return <BiCoinStack/>
+            }
+
+            case ('items'): {
+                return <GiLockedChest/>
+            }
+            
+            case ('boosting'): {
+                return <BsFillArrowUpCircleFill/>
+            }
+        }
+    }
+
+    const toTitleCase = (string) => {
+        if (!string.length) return null
+        return string[0].toUpperCase() + string.slice(1, string.length)
+    }
+
+    const getSelectedRect = () => {
+        let ref = refs[props.selected]
+        console.log(refs[props.selected])
+        if (!ref || !ref.current) return {}
+        let dimensions = ref.current.getBoundingClientRect()
+        if (!containerRef || !containerRef.current) return {}
+        let containerDimensions = containerRef.current.getBoundingClientRect()
+        return { bottom: containerDimensions.bottom - dimensions.bottom, top: containerDimensions.top - dimensions.top, right: containerDimensions.right - dimensions.right, width: dimensions.width, height: dimensions.height }
+    }
+
+    return (
+        <div ref={containerRef} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: '-15px', position: 'relative', zIndex: '0' }}>
+            <div style={{ position: 'absolute', opacity: props.selected ? '1' : '0', top: getSelectedRect().bottom, right: getSelectedRect().right, width: getSelectedRect().width, height: getSelectedRect().height, backgroundColor: 'white', transform: 'translateY(0)', zIndex: '1', transition: 'right 300ms ease, width 300ms ease, opacity 300ms ease', borderRadius: '25px' }}/>
+
+            {
+                props.types.map((type, i) => {
+                    return <div ref={refs[type]} style={{ display: 'flex', alignItems: 'center', padding: '6px 9px 6px 9px', borderRadius: '25px', margin: '5px', userSelect: 'none', color: props.selected === type ? 'black' : 'white', zIndex: '2', transition: 'color 300ms ease', cursor: 'pointer', userSelect: 'none' }} onClick={() => props.handleChange(type)}>
+                        { getTypeIcon(type) }
+                        <p style={{ marginBottom: '0px', marginLeft: '5px' }}> {toTitleCase(type)} </p>
+                    </div>
+                })
+            }
+        </div>
+    )
+}
 
 const Game = (props) => {
     const search = new URLSearchParams(window.location.search)
@@ -11,8 +73,7 @@ const Game = (props) => {
     const [game, setGame] = useState(null)
     const [products, setProducts] = useState([])
     const [name, setName] = useState(search.get('q') || '')
-    const [productType, setProductType] = useState('')
-    const [deliveryType, setDeliveryType] = useState('')
+    const [productType, setProductType] = useState(search.get('type') || '')
     const [server, setServer] = useState('')
     const [platform, setPlatform] = useState('')
     const [sort, setSort] = useState(search.get('sort') || '-unit_price')
@@ -33,7 +94,7 @@ const Game = (props) => {
 
     useEffect(() => {
         if (game) handleSearch()
-    }, [game, page, limit, sort])
+    }, [game, page, limit, sort, productType])
 
     const getProducts = (req) => {
         api.getProducts({ params: req }).then((response) => {
@@ -49,7 +110,6 @@ const Game = (props) => {
         let params = { game: game_id, limit, skip: (page - 1) ? (page - 1) * limit : 0 }, queryString = generateQueryString()
 
         if (name.length) params.q = name 
-        if (deliveryType.length) params.delivery_type = deliveryType
         if (productType.length) params.type = productType
         if (server.length) params.server = server
         if (platform.length) params.platform = platform
@@ -63,6 +123,7 @@ const Game = (props) => {
     const generateQueryString = () => {
         let queryString = ''
         if (name.length) queryString = queryString.length ? queryString + `&q=${name}` : `q=${name}`
+        if (productType.length) queryString = queryString.length ? queryString + `&type=${productType}` : `type=${productType}`
         if (sort) queryString = queryString.length ? queryString + `&sort=${sort}` : `sort=${sort}`
         if (page) queryString = queryString.length ? queryString + `&page=${page}` : `page=${page}`
         if (limit) queryString = queryString.length ? queryString + `&limit=${limit}` : `limit=${limit}`
@@ -71,14 +132,6 @@ const Game = (props) => {
 
     const handleName = (e) => {
         setName(e.target.value)
-    }
-
-    const handleProductType = (e) => {
-        setProductType(e.target.value)
-    }
-
-    const handleDeliveryType = (e) => {
-        setDeliveryType(e.target.value)
     }
 
     const handlePlatform = (e) => {
@@ -101,48 +154,24 @@ const Game = (props) => {
     return (
         <Layout navbar>
             { game ? <div>
-                <div style={{ height: '250px', width: '100%', position: 'absolute', top: '0px', left: '0px', zIndex: '-1'}}>
+                <div style={{ height: '300px', width: '100%', position: 'absolute', top: '0px', left: '0px', zIndex: '-1'}}>
                     <div style={{ height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,.5)', position: 'absolute' }}/>
                     <img src={game.banner_img} style={{ objectFit: 'cover', width: '100%', height: '100%'}}/>
                 </div>
-                <div style={{ display: 'flex', marginTop: '75px' }}>
-                    <img src={game.img} style={{ borderRadius: '10px',  height: '192px', width: '144px'  }}/>
+                <div style={{ display: 'flex', marginTop: '0px', alignItems: 'center' }}>
+                    <img src={game.img} style={{ borderRadius: '10px',  height: '160px', width: '120px'  }}/>
                     <div style={{ marginLeft: '20px' }}>
-                        <h1 style={{ color: 'white', marginBottom: '25px', fontSize: '50px' }}> {game.name} </h1>
-                        <h6> <b>Product Types:</b> {game.product_types.map((platform, i) => {
-                            if (i < game.product_types.length - 1) return platform + ', '
-                            return platform
-                        })} </h6>
-                        <h6> <b>Platforms:</b> {game.platforms.map((platform, i) => {
-                            if (i < game.platforms.length - 1) return platform + ', '
-                            return platform
-                        })} </h6>
+                        <h1 style={{ color: 'white', marginBottom: '0px', fontSize: '30px' }}> {game.name} </h1>
+                        <h5 style={{ color: 'white', marginBottom: '0px', opacity: '.7' }}> {game.developer} </h5>
                     </div>
                 </div>
-                <div style={{ marginTop: '20px', marginBottom: '40px', display: 'flex' }}>
-                    <div style={{  marginRight: '10px', width: '30%' }}>
+                <TypeSelector types={game.product_types} selected={productType} handleChange={setProductType}/>
+                <div style={{ marginTop: '50px', marginBottom: '40px', display: 'flex' }}>
+                    <div style={{  marginRight: '10px', width: '20%' }}>
                         <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Search</label>
                         <input className="form-control" value={name} placeholder={'Cheap Gold'} onKeyPress={handleKeyPress} onChange={handleName}/>
                     </div>
-                    <div style={{ width: '70%', display: 'flex' }}>
-                        <div style={{ marginRight: '10px', width: '100%' }}>
-                            <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Type</label>
-                            <select className="form-control" type='select' value={productType} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handleProductType}>
-                                <option value={''} disabled hidden> Select </option>
-                                { game.product_types.map((type) => {
-                                    return <option value={type}> {type} </option>
-                                })}
-                            </select>
-                        </div>
-                        <div style={{ marginRight: '10px', width: '100%' }}>
-                            <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Delivery</label>
-                            <select className="form-control" type='select' value={deliveryType} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handleDeliveryType}>
-                                <option value={''} disabled hidden> Select </option>
-                                <option value={'face-to-face'}> face-to-face </option>
-                                <option value={'automatic'}> automatic </option>
-                                <option value={'remote'}> remote </option>                     
-                            </select>
-                        </div>
+                    <div style={{ width: '30%', display: 'flex' }}>
                         <div style={{ marginRight: '10px', width: '100%' }}>
                             <label for="emailInput" className="form-label" style={{ marginTop: '10px' }}>Platform</label>
                             <select className="form-control" type='select' value={platform} placeholder={'Search'} onKeyPress={handleKeyPress} onChange={handlePlatform}>

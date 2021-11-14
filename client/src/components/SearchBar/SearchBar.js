@@ -15,11 +15,11 @@ const SearchBar = (props) => {
     }
 
     return (
-        <div className="col-md-6 col-lg-4" style={{ marginLeft: '10px' }}> 
+        <div className="col-md-6 col-lg-4" style={{ marginLeft: '10px', ...props.style }}> 
             <div className="input-group">
                 <input style={{ border: 'none', backgroundColor: focused ? 'white' : 'black', border: '1px solid rgba(255,255,255,.3)', borderRadius: '20px', transition: 'background-color 200ms ease' }}
                   className="form-control me-2"
-                  type="search"
+                  type="text"
                   placeholder="Search games..."
                   aria-label="Search"
                   onFocus={() => setFocused(true)}
