@@ -11,6 +11,7 @@ router.get('/products/recommended', auth, ProductController.getRecommended)
 router.get('/products', ProductController.getProducts)
 router.get('/products/:_id', ProductController.getProductById)
 router.get('/products/:_id/similar', ProductController.getSimilar)
+router.get('/products/:_id/other', ProductController.getOthersPurchase)
 
 // POST requests
 router.post('/products', auth, ProductController.createProduct)
