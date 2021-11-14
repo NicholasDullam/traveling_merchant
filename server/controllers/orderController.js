@@ -173,21 +173,21 @@ const getPricing = async (req, res) => {
     var returnJSON = { "points": []};
     Product.findById(product_id).then((doc) => {
         current_price = doc.unit_price;
-        last_updated = doc.updatedAt;
-    })
-    let queryPromise = Order.find({product:product_id});
-
-    queryPromise = queryPromise.sort('-createdAt');
-    queryPromise = queryPromise.select('unit_price createdAt');
-
-    queryPromise.then((response) => {
-        if (response[0].createdAt < last_updated) {
-            returnJSON.points.push({"price":current_price,"time":last_updated});
-        }
-        response.forEach((el) => {
-            returnJSON.points.push({"price":el.unit_price,"time":el.createdAt});
+        last_updated = doc.updated_at;
+        let queryPromise = Order.find({product:product_id});
+    
+        queryPromise = queryPromise.sort('-created_at');
+        queryPromise = queryPromise.select('unit_price created_at');
+    
+        queryPromise.then((response) => {
+            if (response[0].createdAt < last_updated) {
+                returnJSON.points.push({"price":current_price,"time":last_updated});
+            }
+            response.forEach((el) => {
+                returnJSON.points.push({"price":el.unit_price,"time":el.created_at});
+            })
+            res.status(200).json(returnJSON)
         })
-        res.status(200).json(returnJSON)
     })
 }
 
