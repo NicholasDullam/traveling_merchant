@@ -1,40 +1,53 @@
 import React from 'react'
 import { Layout } from '../components'
-import { useHistory, Switch, Route } from "react-router-dom";
+import { useHistory, Switch, Route, useLocation } from "react-router-dom";
 import { Favorites, Info, Orders, Reviews, Views, Products, Billing, Preferences } from '.';
+import { TabSelector } from '../components';
 
-const Tab = (props) => {
-    let active = props.location.pathname === props.path
-
-    return (
-        <div style={{ padding: '15px', borderRadius: '40px', backgroundColor: active ? '#68B2A0' : '', color: active ? 'white' : '', display: 'flex', marginBottom: '5px', cursor: 'pointer', transition: 'background-color 300ms ease, color 300ms ease', }} onClick={() => props.handleRouter(props.path)}>
-            <h5 style={{ marginBottom: '0px' }}> {props.name} </h5>
-        </div>
-    )
-}
 
 const Profile = (props) => {
+    const location = useLocation()
     const history = useHistory()
-
-    const handleRouter = (pathname) => {
-        history.push(pathname)
-    }
 
     return (
         <Layout navbar>
             <div>
                 <h1> Profile </h1>
-                <div style={{ display: 'flex', marginTop: '30px' }}>
-                    <div style={{ position: 'sticky', top: '30px', marginRight: '50px', display: 'inline-flex', flexDirection: 'column' }}>
-                        <Tab name='Info' handleRouter={handleRouter} location={props.location} path='/profile/info'/>
-                        <Tab name='Favorites' handleRouter={handleRouter} location={props.location} path='/profile/favorites'/>
-                        <Tab name='Reviews' handleRouter={handleRouter} location={props.location} path='/profile/reviews'/>
-                        <Tab name='Views' handleRouter={handleRouter} location={props.location} path='/profile/views'/>
-                        <Tab name='Orders' handleRouter={handleRouter} location={props.location} path='/profile/orders'/>
-                        <Tab name='Products' handleRouter={handleRouter} location={props.location} path='/profile/products'/>
-                        <Tab name='Billing' handleRouter={handleRouter} location={props.location} path='/profile/billing'/>
-                        <Tab name='Preferences' handleRouter={handleRouter} location={props.location} path='/profile/preferences'/>
-                    </div>
+                <div style={{ display: 'flex', marginTop: '20px' }}>
+                    <TabSelector selected={location.pathname} handleRouter={(pathname) => history.push(pathname)} tabs={[
+                        {
+                            name: 'Info',
+                            pathname: '/profile/info'
+                        },
+                        {
+                            name: 'Favorites',
+                            pathname: '/profile/favorites'
+                        },
+                        {
+                            name: 'Reviews',
+                            pathname: '/profile/reviews'
+                        },
+                        {
+                            name: 'Views',
+                            pathname: '/profile/views'
+                        },
+                        {
+                            name: 'Orders',
+                            pathname: '/profile/orders'
+                        },
+                        {
+                            name: 'Products',
+                            pathname: '/profile/products'
+                        },
+                        {
+                            name: 'Billing',
+                            pathname: '/profile/billing'
+                        },
+                        {
+                            name: 'Preferences',
+                            pathname: '/profile/preferences'
+                        }
+                    ]}/>
                     <div style={{ width: '100%' }}>
                         <Switch>
                             <Route path={props.match.url + '/info'} component={Info}/>
