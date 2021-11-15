@@ -61,7 +61,7 @@ const Product = (props) => {
 
     useEffect(() => {
         api.getPricing(product_id).then((response) => {
-            setPricing(response.data)
+            setPricing(JSON.parse(response).points)
             console.log(pricing) // TODO : Does this work? Does it display anything in the console (i.e, if you open localhost:3000 on your browser and right click and go to inspect > console ?  
         }).catch((error) => {
             console.log(error)
