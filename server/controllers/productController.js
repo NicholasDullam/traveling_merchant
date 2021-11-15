@@ -1,6 +1,7 @@
 const Product = require('../models/product')
 const View = require('../models/view')
 const mongoose = require('mongoose')
+const order = require('../models/order')
 
 const createProduct = async (req, res) => {
     let { name, type, delivery_type, delivery_speed, description, unit_price, min_quantity, stock, game } = req.body
@@ -209,6 +210,27 @@ const getSimilar = async (req, res) => {
     })
 }
 
+const getOthersPurchase = async (req, res) => {
+    let { _id } = req.params
+    const filter = { product: _id };
+    let users = await order.find(filter).select('buyer');
+    if (!users) return res.status(400).json({ error: 'no other users found'});
+
+    let products = await order.aggregate([
+        {$match: {'buyer': { $in: users}}},
+        { 
+            $lookup: {
+                from: "products",
+                localField: "product",
+                foreignField: "_id",
+                as: "product"
+            }
+        }
+
+    ]);
+    return res.status(200).json(products)
+}
+
 module.exports = {
     createProduct,
     getSimilar,
@@ -216,5 +238,6 @@ module.exports = {
     getProductById,
     updateProductById,
     deleteProductById,
-    getRecommended
+    getRecommended,
+    getOthersPurchase
 }

@@ -166,6 +166,33 @@ const getOrders = async (req, res) => {
     })
 }
 
+const getPricing = async (req, res) => {
+    let { _id } = req.params;
+    if (!_id) return res.status(400).json({error:"No product"})
+    var current_price;
+    var last_updated;
+    var returnJSON = { "points": []};
+    Product.findById(_id).then((doc) => {
+        if (!doc) return res.status(400).json({error:"No product found"})
+        current_price = doc.unit_price;
+        last_updated = doc.updated_at;
+        let queryPromise = Order.find({product:_id});
+    
+        queryPromise = queryPromise.sort('-created_at');
+        queryPromise = queryPromise.select('unit_price created_at');
+    
+        queryPromise.then((response) => {
+            if (response[0].createdAt < last_updated) {
+                returnJSON.points.push({"price":current_price,"time":last_updated});
+            }
+            response.forEach((el) => {
+                returnJSON.points.push({"price":el.unit_price,"time":el.created_at});
+            })
+            res.status(200).json(returnJSON)
+        })
+    })
+}
+
 module.exports = { 
     createOrder,
     deliverOrder,
@@ -175,5 +202,6 @@ module.exports = {
     verifyPurchase,
     getOrderById,
     getOrders,
-    handlePastDueConfirmations
+    handlePastDueConfirmations,
+    getPricing
 }

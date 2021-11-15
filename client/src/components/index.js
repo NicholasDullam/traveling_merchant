@@ -11,6 +11,7 @@ import Messenger from './Messenger/Messenger'
 import Notifications from './Notifications/Notifications'
 import Pagination from './Pagination/Pagination'
 import ContextBar from './ContextBar/ContextBar'
+import TabSelector from './TabSelector/TabSelector'
 
 export {
     CheckoutInterface,
@@ -25,5 +26,6 @@ export {
     Messenger,
     Pagination,
     Notifications,
-    ContextBar
+    ContextBar,
+    TabSelector
 }
