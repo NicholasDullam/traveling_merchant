@@ -167,14 +167,16 @@ const getOrders = async (req, res) => {
 }
 
 const getPricing = async (req, res) => {
-    let { product_id } = req.body;
+    let { _id } = req.params;
+    if (!_id) return res.status(400).json({error:"No product"})
     var current_price;
     var last_updated;
     var returnJSON = { "points": []};
-    Product.findById(product_id).then((doc) => {
+    Product.findById(_id).then((doc) => {
+        if (!doc) return res.status(400).json({error:"No product found"})
         current_price = doc.unit_price;
         last_updated = doc.updated_at;
-        let queryPromise = Order.find({product:product_id});
+        let queryPromise = Order.find({product:_id});
     
         queryPromise = queryPromise.sort('-created_at');
         queryPromise = queryPromise.select('unit_price created_at');
