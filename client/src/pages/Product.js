@@ -5,11 +5,38 @@ import Layout from '../components/Layout/Layout'
 import Ratings from '../components/Ratings/Ratings'
 import AuthContext from '../context/auth-context'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
 
 import MessengerContext from '../context/messenger-context'
 import { ProductCard } from '../components'
+import Chart from '../components/Chart/Chart'
 
 const Product = (props) => {
+    const data = [
+        {
+          name: 'Page A',
+          uv: 4000,
+          pv: 2400,
+          amt: 2400,
+        },
+        {
+          name: 'Page B',
+          uv: 3000,
+          pv: 1398,
+          amt: 2210,
+        },]
+
+    const options={
+        title: {
+            text: 'My stock chart'
+          },
+          series: [{
+            data: [1, 2, 3]
+          }]
+      }
+    
+
     const [user, setUser] = useState(null)
     const [product, setProduct] = useState(null)
     const [similarProducts, setSimilarProducts] = useState([])
@@ -165,6 +192,24 @@ const Product = (props) => {
                                 return <ProductCard product={similarProduct}/>
                             })
                         }
+                    </div>
+
+                    <div class="price-history" style={{ borderBottom: '1px solid rgba(0,0,0,.1)'}}>
+                            <h4>Price History</h4>
+
+                            <LineChart
+  width={400}
+  height={400}
+  data={data}
+  margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
+>
+  <XAxis dataKey="name" />
+  <Tooltip />
+  <CartesianGrid stroke="#f5f5f5" />
+  <Line type="monotone" dataKey="uv" stroke="#ff7300" yAxisId={0} />
+  <Line type="monotone" dataKey="pv" stroke="#387908" yAxisId={1} />
+</LineChart>
+                            {/* <Chart ></Chart> */}
                     </div>
                 </div>
             </div> : null }
