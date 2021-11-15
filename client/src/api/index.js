@@ -57,7 +57,6 @@ const getProductById = (product_id, req) => connection.get(`/products/${product_
 const getProducts = (req) => connection.get('/products', req)
 const getSimilarProducts = (product_id, req) => connection.get(`/products/${product_id}/similar`, req)
 const getRecommendedProducts = (req) => connection.get(`/products/recommended`, req)
-
 // game functions 
 const getGames = (req) => connection.get('/games', req)
 const getGameById = (game_id) => connection.get(`/games/${game_id}`)
@@ -66,6 +65,8 @@ const getGameById = (game_id) => connection.get(`/games/${game_id}`)
 const getOrders = (req) => connection.get('/orders', req)
 const createOrder = (payload) => connection.post('/orders', payload)
 const getOrderById = (order_id, req) => connection.get(`/orders/${order_id}`, req)
+const getPricing = (product_id, req) => connection.get(`/getPricing/${product_id}`, req)
+
 const confirmOrder = (order_id) => connection.put(`/orders/${order_id}/confirm`)
 const denyOrder = (order_id) => connection.put(`/orders/${order_id}/deny`)
 const deliverOrder = (order_id) => connection.put(`/orders/${order_id}/deliver`)
@@ -82,6 +83,7 @@ const getFollowers = (req) => connection.get('/followers', req)
 const deleteFollowerById = (follower_id) => connection.delete(`/followers/${follower_id}`)
 
 let api = {
+    getPricing,
     getFollowers,
     login,
     logout,
