@@ -13,30 +13,8 @@ import { ProductCard } from '../components'
 import Chart from '../components/Chart/Chart'
 
 const Product = (props) => {
-    const data = [
-        {
-          name: 'Page A',
-          uv: 4000,
-          pv: 2400,
-          amt: 2400,
-        },
-        {
-          name: 'Page B',
-          uv: 3000,
-          pv: 1398,
-          amt: 2210,
-        },]
-
-    const options={
-        title: {
-            text: 'My stock chart'
-          },
-          series: [{
-            data: [1, 2, 3]
-          }]
-      }
-    
-
+   
+    const [pricing, setPricing] = useState([])
     const [user, setUser] = useState(null)
     const [product, setProduct] = useState(null)
     const [similarProducts, setSimilarProducts] = useState([])
@@ -47,6 +25,24 @@ const Product = (props) => {
     const { product_id } = useParams()
 
     const history = useHistory()
+
+    const data = [
+        {
+          name: 'Dec 12',//date
+          price: 100
+  
+        },
+        {
+          name: 'Dec 13', //date
+          price:200
+   
+        },
+        {
+            name: 'Dec 15', //date
+            price:80
+     
+          },]
+
 
     const handlePurchase = (e) => {
         e.stopPropagation()
@@ -61,6 +57,16 @@ const Product = (props) => {
     const handleQuantity = (e) => {
         setQuantity(e.target.value)
     }
+
+
+    useEffect(() => {
+        api.getPricing(product_id).then((response) => {
+            setPricing(response.data)
+            console.log(pricing) // TODO : Does this work? Does it display anything in the console (i.e, if you open localhost:3000 on your browser and right click and go to inspect > console ?  
+        }).catch((error) => {
+            console.log(error)
+        })
+    }, [product_id])
 
     useEffect(() => {
         api.getProductById(product_id).then((response) => {
@@ -197,17 +203,18 @@ const Product = (props) => {
                     <div class="price-history" style={{ borderBottom: '1px solid rgba(0,0,0,.1)'}}>
                             <h4>Price History</h4>
 
-                            <LineChart
+<LineChart
   width={400}
   height={400}
   data={data}
-  margin={{ top: 5, right: 20, left: 10, bottom: 5 }}
 >
-  <XAxis dataKey="name" />
+
   <Tooltip />
-  <CartesianGrid stroke="#f5f5f5" />
-  <Line type="monotone" dataKey="uv" stroke="#ff7300" yAxisId={0} />
-  <Line type="monotone" dataKey="pv" stroke="#387908" yAxisId={1} />
+  <Line type="monotone" dataKey="price" stroke="#ff7300" isAnimationActive={false} />
+  <XAxis dataKey="name" />
+  <YAxis/>
+  
+
 </LineChart>
                             {/* <Chart ></Chart> */}
                     </div>
