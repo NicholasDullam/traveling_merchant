@@ -56,7 +56,7 @@ const TypeSelector = (props) => {
 
             {
                 props.types.map((type, i) => {
-                    return <div ref={refs[type]} style={{ display: 'flex', alignItems: 'center', padding: '6px 9px 6px 9px', borderRadius: '25px', margin: '5px', userSelect: 'none', color: props.selected === type ? 'black' : 'white', zIndex: '2', transition: 'color 300ms ease', cursor: 'pointer', userSelect: 'none' }} onClick={() => props.handleChange(type)}>
+                    return <div key={i} ref={refs[type]} style={{ display: 'flex', alignItems: 'center', padding: '6px 9px 6px 9px', borderRadius: '25px', margin: '5px', userSelect: 'none', color: props.selected === type ? 'black' : 'white', zIndex: '2', transition: 'color 300ms ease', cursor: 'pointer', userSelect: 'none' }} onClick={() => props.handleChange(type)}>
                         { getTypeIcon(type) }
                         <p style={{ marginBottom: '0px', marginLeft: '5px' }}> {toTitleCase(type)} </p>
                     </div>
