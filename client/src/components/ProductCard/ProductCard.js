@@ -29,13 +29,13 @@ const ProductCard = (props) => {
     return (
         props.product ? <div style={{ borderRadius: '25px', cursor: 'pointer', marginBottom: '10px', backgroundColor: 'rgba(0,0,0,.05)' }} onClick={handleClick}>
             <div style={{ padding: '25px', display: 'flex', alignItems: 'center' }}>
-                <img src={props.product.media.length ? props.product.media[0] : null} style={{ backgroundColor: 'grey', height: '70px', width: '70px', borderRadius: '15px' }} />
+                <img alt='product thumbnail' src={props.product.media.length ? props.product.media[0] : null} style={{ backgroundColor: 'grey', height: '70px', width: '70px', borderRadius: '15px' }} />
                 <div style={{ marginLeft: '20px' }}>
                     <h5 style={{ marginBottom: '0px' }}> {props.product.name} ({props.product.type}) </h5>
                     <h6 style={{ marginBottom: '0px'}}> ${props.product.unit_price / 100} per unit </h6>
                 </div>
                 {/*<p> {props.product.seller.first} {props.product.seller.last} </p> <Ratings count={5}/>*/}
-                <button style={{ marginLeft: 'auto' }} class="btn btn-primary" onClick={handlePurchase}> Buy Now </button>
+                <button style={{ marginLeft: 'auto' }} className="btn btn-primary" onClick={handlePurchase}> Buy Now </button>
             </div>
         </div> : null 
     )

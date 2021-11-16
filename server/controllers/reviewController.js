@@ -1,8 +1,6 @@
 const Review = require("../models/review");
-const User = require("../models/user");
 const Order = require("../models/order");
 const mongoose = require("mongoose");
-const { response } = require("express");
 
 // Assume request has user's email, the sellers email, the rating, and the content
 const addReview = async (req, res) => {

@@ -3,7 +3,6 @@ import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import { CheckoutInterface } from '../components'
 import { useParams } from "react-router-dom"
-import { useHistory } from "react-router-dom";
 import api from '../api'
 
 const stripePromise = loadStripe('pk_test_51JgZaNI1DlY4C11AjLqdA60NeGBqOpb4g1lJIfGuxCKPqX7PKbaNRKuk5WhaW1PYb6G2F5cWuHbvDsmDkZ5xPPUh004SfLzcZL')

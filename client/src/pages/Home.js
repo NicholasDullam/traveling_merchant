@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import GameCard from '../components/GameCard/GameCard'
 import GameGallery from '../components/GameGallery/GameGallery'
 import Layout from '../components/Layout/Layout'
 import { ProductCard, ViewGallery } from '../components'

@@ -156,10 +156,10 @@ const Game = (props) => {
             { game ? <div>
                 <div style={{ height: '300px', width: '100%', position: 'absolute', top: '0px', left: '0px', zIndex: '-1'}}>
                     <div style={{ height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,.5)', position: 'absolute' }}/>
-                    <img src={game.banner_img} style={{ objectFit: 'cover', width: '100%', height: '100%'}}/>
+                    <img alt='game banner image' src={game.banner_img} style={{ objectFit: 'cover', width: '100%', height: '100%'}}/>
                 </div>
                 <div style={{ display: 'flex', marginTop: '0px', alignItems: 'center' }}>
-                    <img src={game.img} style={{ borderRadius: '10px',  height: '160px', width: '120px'  }}/>
+                    <img alt='game cover image' src={game.img} style={{ borderRadius: '10px',  height: '160px', width: '120px'  }}/>
                     <div style={{ marginLeft: '20px' }}>
                         <h1 style={{ color: 'white', marginBottom: '0px', fontSize: '30px' }}> {game.name} </h1>
                         <h5 style={{ color: 'white', marginBottom: '0px', opacity: '.7' }}> {game.developer} </h5>

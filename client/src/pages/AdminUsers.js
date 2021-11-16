@@ -21,8 +21,8 @@ const AdminUsers = (props) => {
         })
     }
 
-    useEffect(async () => {
-        await getResults()
+    useEffect(() => {
+        getResults()
     }, [page, limit])
 
     const banUser = (user_id) => {

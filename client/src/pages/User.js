@@ -112,7 +112,7 @@ const User = (props) => {
                 { user ? <div>
                     <div style={{ display: 'flex', alignItems: 'center' }}>
                         <div style={{ position: 'relative' }}> 
-                            <img src={user.profile_img} style={{ borderRadius: '50%', height: '150px', width: '150px' }}/>
+                            <img alt='user profile picture' src={user.profile_img} style={{ borderRadius: '50%', height: '150px', width: '150px' }}/>
                             <div style={{ backgroundColor: getStatusColor(user), borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '24px', height: '24px', position: 'absolute', bottom: '8px', right: '2px', boxShadow: '0px 0px 0px 4px rgba(255, 255, 255, 1)' }}/>
                         </div>
                         <div style={{ marginLeft: '30px' }}>
@@ -158,7 +158,7 @@ const User = (props) => {
                                     following.map((follower, i) => {
                                         return <div key={i} style={{ padding: '15px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px 0px 5px 0px', cursor: 'pointer' }} onClick={() => history.push(`/users/${follower.following._id}`)}>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <img src={follower.following.profile_img} style={{ width: '25px', height: '25px', borderRadius: '50%' }}/>
+                                                <img alt='following user profile picture' src={follower.following.profile_img} style={{ width: '25px', height: '25px', borderRadius: '50%' }}/>
                                                 <h6 style={{ marginLeft: '10px', marginBottom: '0px' }}> {follower.following.first} {follower.following.last} </h6>                  
                                             </div>
                                         </div>
@@ -172,7 +172,7 @@ const User = (props) => {
                                     followers.map((follower, i) => {
                                         return <div key={i} style={{ padding: '15px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px 0px 5px 0px', cursor: 'pointer' }} onClick={() => history.push(`/users/${follower.follower._id}`)}>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                                <img src={follower.follower.profile_img} style={{ width: '25px', height: '25px', borderRadius: '50%' }}/>
+                                                <img alt='follower user profile picture' src={follower.follower.profile_img} style={{ width: '25px', height: '25px', borderRadius: '50%' }}/>
                                                 <h6 style={{ marginLeft: '10px', marginBottom: '0px' }}> {follower.follower.first} {follower.follower.last} </h6>                  
                                             </div>
                                         </div>

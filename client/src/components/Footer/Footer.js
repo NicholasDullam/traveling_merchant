@@ -8,15 +8,15 @@ const Footer = (props) => {
 
     return (
         <div className="footer" style={{ padding: '40px' }}>   
-            <div clas="row">
-                <div class="col">
+            <div className="row">
+                <div>
                     <h1>
                         <Link to="/">
                             <Logo style={{ width: '65px', marginBottom: '15px' }}/>
                         </Link>
                     </h1>
                 </div>
-                <div class="col">
+                <div>
                     <p><b>Games</b></p>
                     <p>League of Legends</p>
                     <p>World of Warcraft</p>

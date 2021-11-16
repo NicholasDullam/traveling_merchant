@@ -10,15 +10,7 @@ const Products = (props) => {
     const [products, setProducts] = useState([])
     const [retrievedFavorites, setRetrievedFavorites] = useState(false)
 
-    useEffect(() => {
-        api.getProducts({ params: { user: auth.user._id }}).then((response) => {
-            setProducts(response.data.data)
-        }).catch((error) => {
-            console.log(error)
-        })
-    }, [])
-
-    useEffect(async () => {
+    const retrieveFavorites = async (product_id) => {
         if (!products.length || retrievedFavorites) return
         let updatedProducts = [...products]
         for (let i = 0; i < products.length; i++) { 
@@ -28,6 +20,18 @@ const Products = (props) => {
 
         setProducts(updatedProducts)
         setRetrievedFavorites(true)
+    }
+
+    useEffect(() => {
+        api.getProducts({ params: { user: auth.user._id }}).then((response) => {
+            setProducts(response.data.data)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }, [])
+
+    useEffect(() => {
+        retrieveFavorites()
     }, [products])
 
     return (

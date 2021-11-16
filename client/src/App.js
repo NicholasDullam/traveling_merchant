@@ -50,10 +50,10 @@ function App() {
   }, []);
 
   const logout = useCallback(() => {
+      setIsLoggedIn(false)
       setToken(null)
       setUser(null)
       setUserId(null)
-      setIsLoggedIn(false)
   }, []);
 
   const setActiveThreadId = (thread_id) => {
