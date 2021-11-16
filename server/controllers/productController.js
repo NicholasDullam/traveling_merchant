@@ -40,16 +40,32 @@ const getProducts = (req, res) => {
     reserved.forEach((el) => delete query[el])
 
     if (req.query.q) pipeline.push({ $search: { index: 'productSearch', text: { query: req.query.q, path: { wildcard: '*' }}}})
-    //if (req.query.online) pipeline.push({ }) 
     pipeline.push({ $match: query })
     if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
-    if (req.query.skip) pipeline.push({ $skip: Number(req.query.skip) })
-    if (req.query.limit) pipeline.push({ $limit: Number(req.query.limit) + 1 })
+    
+    // paginate pipeline facet
+    pipeline.push({
+        $facet: {
+            data: function paginate () {
+                let data = []
+                if (req.query.skip) data.push({ $skip: Number(req.query.skip) })
+                if (req.query.limit) data.push({ $limit: Number(req.query.limit) })
+                return data
+            } (),
+            results: [{ $count: 'count' }]
+        }
+    })
+
+    //paginate pipeline count removal
+    pipeline.push({
+        $project: {
+            data: '$data',
+            results: { $arrayElemAt: [ "$results", 0 ]}
+        }
+    })
 
     Product.aggregate(pipeline).then((response) => {
-        let results = { has_more: false, data: response }
-        if (req.query.limit && response.length > Number(req.query.limit)) results = { has_more: true, data: response.slice(0, response.length - 1) }
-        return res.status(200).json(results)    
+        return res.status(200).json({ ...response[0], results: { ...response[0].results, has_more: (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < response[0].results.count }})    
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })

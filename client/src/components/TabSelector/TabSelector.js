@@ -26,7 +26,7 @@ const TabSelector = (props) => {
     }
 
     return (
-        <div ref={containerRef} style={{ position: 'relative', zIndex: '0', marginRight: '50px' }}>
+        <div ref={containerRef} style={{ position: 'relative', zIndex: '0', ...props.style }}>
             { getSelectedRect() ? <div style={{ position: 'absolute', top: `${getSelectedRect().top}px`, right: `${getSelectedRect().right}px`, width: `${getSelectedRect().width}px`, height: `${getSelectedRect().height}px`, backgroundColor: 'black', zIndex: '0', transition: 'top 300ms ease, width 300ms ease, opacity 300ms ease', borderRadius: '25px' }}/> : null }
             {
                 props.tabs.map((tab, i) => {

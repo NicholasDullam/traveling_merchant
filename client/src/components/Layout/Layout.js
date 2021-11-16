@@ -9,11 +9,13 @@ import Footer from "../Footer/Footer";
 const Layout = (props) => {
     return (
         <div>
-            <div>
+            <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
                 { props.navbar ? <Navbar/> : null }
-                <div className="container" style={{ paddingTop: '40px', paddingBottom: '40px', minHeight: 'calc(100vh - 100px)'}}>{props.children}</div>
+                <div className="container" style={{ paddingTop: '40px', marginBottom: '40px', height: '100%', display: 'flex', flexDirection: 'column', flexGrow: '1' }}>
+                    {props.children}
+                </div>
+                <Footer/>
             </div>
-            <Footer/>
         </div>
     )
 }

@@ -81,6 +81,7 @@ const Game = (props) => {
     const [limit, setLimit] = useState(Number(search.get('limit')) || 1)
     const [page, setPage] = useState(Number(search.get('page')) || 1)
     const [hasMore, setHasMore] = useState(false)
+    const [count, setCount] = useState(0)
 
     const history = useHistory()
 
@@ -98,9 +99,10 @@ const Game = (props) => {
 
     const getProducts = (req) => {
         api.getProducts({ params: req }).then((response) => {
-            let { data, has_more } = response.data
+            let { data, results } = response.data
             setProducts(data)
-            setHasMore(has_more)
+            setHasMore(results.has_more)
+            setCount(results.count)
         }).catch((error) => {
             console.log(error)
         })
