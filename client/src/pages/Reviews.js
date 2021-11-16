@@ -1,19 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
 import api from '../api'
-import ProductCard from './../components/ProductCard/ProductCard';
 import AuthContext from "../context/auth-context";
 import { Ratings } from "../components";
 
 const Reviews = (props) => {
     const auth = useContext(AuthContext)
     const [reviews, setReviews] = useState([])
-    const [hasMore, setHasMore] = useState(false)
 
     useEffect(() => {
         api.getReviews({ params: { reviewer: auth.user._id }}).then((response) => {
             let { data, has_more } = response.data
             setReviews(data)
-            setHasMore(has_more)
         }).catch((error) => {
             console.log(error)
         })
