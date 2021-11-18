@@ -9,7 +9,6 @@ const Orders = (props) => {
     const history = useHistory()
     const [buyOrders, setBuyOrders] = useState([])
     const [sellOrders, setSellOrders] = useState([])
-    const [hasMore, setHasMore] = useState(false)
 
     useEffect(() => {
         api.getOrders({ params: { buyer: auth.user._id, sort: '-created_at', limit: 5 }}).then((response) => {

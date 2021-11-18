@@ -19,8 +19,8 @@ const AdminFilters = (props) => {
         })
     }
 
-    useEffect(async () => {
-        await getResults()
+    useEffect(() => {
+        getResults()
     }, [page, limit])
 
     const create = (event) => {

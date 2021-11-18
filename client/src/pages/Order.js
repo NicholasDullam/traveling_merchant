@@ -9,7 +9,6 @@ import MessengerContext from '../context/messenger-context'
 const Order = (props) => {
     const [order, setOrder] = useState(null)
     const [affiliate, setAffiliate] = useState(null)
-    const [product, setProduct] = useState(null)
 
     const auth = useContext(AuthContext)
     const messenger = useContext(MessengerContext)

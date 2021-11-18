@@ -81,6 +81,7 @@ const Game = (props) => {
     const [limit, setLimit] = useState(Number(search.get('limit')) || 1)
     const [page, setPage] = useState(Number(search.get('page')) || 1)
     const [hasMore, setHasMore] = useState(false)
+    const [count, setCount] = useState(0)
 
     const history = useHistory()
 
@@ -98,9 +99,10 @@ const Game = (props) => {
 
     const getProducts = (req) => {
         api.getProducts({ params: req }).then((response) => {
-            let { data, has_more } = response.data
+            let { data, results } = response.data
             setProducts(data)
-            setHasMore(has_more)
+            setHasMore(results.has_more)
+            setCount(results.count)
         }).catch((error) => {
             console.log(error)
         })
@@ -156,10 +158,10 @@ const Game = (props) => {
             { game ? <div>
                 <div style={{ height: '300px', width: '100%', position: 'absolute', top: '0px', left: '0px', zIndex: '-1'}}>
                     <div style={{ height: '100%', width: '100%', backgroundColor: 'rgba(0,0,0,.5)', position: 'absolute' }}/>
-                    <img src={game.banner_img} style={{ objectFit: 'cover', width: '100%', height: '100%'}}/>
+                    <img alt='game banner image' src={game.banner_img} style={{ objectFit: 'cover', width: '100%', height: '100%'}}/>
                 </div>
                 <div style={{ display: 'flex', marginTop: '0px', alignItems: 'center' }}>
-                    <img src={game.img} style={{ borderRadius: '10px',  height: '160px', width: '120px'  }}/>
+                    <img alt='game cover image' src={game.img} style={{ borderRadius: '10px',  height: '160px', width: '120px'  }}/>
                     <div style={{ marginLeft: '20px' }}>
                         <h1 style={{ color: 'white', marginBottom: '0px', fontSize: '30px' }}> {game.name} </h1>
                         <h5 style={{ color: 'white', marginBottom: '0px', opacity: '.7' }}> {game.developer} </h5>

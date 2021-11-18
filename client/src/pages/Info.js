@@ -55,18 +55,18 @@ const Info = (props) => {
                 <h5 style={{ marginBottom: '20px' }}> Account Info </h5>
                 <div style={{ display: 'flex'}}>
                     <div style={{ marginRight: '10px', width: '100%' }}>
-                        <label for="usernameInput" className="form-label">First Name</label>
+                        <label className="form-label">First Name</label>
                         <input value={first} type="text" className="form-control" id="usernameInput" placeholder="John"
                         onChange={handleFirst}/>
                     </div>
                     <div style={{ width: '100%' }}>
-                        <label for="usernameInput" className="form-label">Last Name</label>
+                        <label className="form-label">Last Name</label>
                         <input value={last} type="text" className="form-control" id="usernameInput" placeholder="Doe"
                         onChange={handleLast}/>
                     </div>
                 </div>
 
-                <label style={{ marginTop: '10px' }} for="emailInput" className="form-label">E-mail</label>
+                <label style={{ marginTop: '10px' }} className="form-label">E-mail</label>
                 <input type="email" value={email} className="form-control" id="emailInput" placeholder="name@domain.com"
                 onChange={handleEmail}></input>
             </div>

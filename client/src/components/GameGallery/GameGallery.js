@@ -14,11 +14,11 @@ const GameGallery = (props) => {
     }, [])
 
     return (
-        <div class="row">
+        <div className="row">
             {
                 games.map((game, i) => {
                     return (
-                        <div key={i} class="col-md-2 col-sm-12">
+                        <div key={i} className="col-md-2 col-sm-12">
                             <GameCard name={game.name} img={game.img} game_id={game._id}/>
                         </div>
                     )

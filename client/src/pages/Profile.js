@@ -14,7 +14,7 @@ const Profile = (props) => {
             <div>
                 <h1> Profile </h1>
                 <div style={{ display: 'flex', marginTop: '20px' }}>
-                    <TabSelector selected={location.pathname} handleRouter={(pathname) => history.push(pathname)} tabs={[
+                    <TabSelector style={{ marginRight: '50px' }} selected={location.pathname} handleRouter={(pathname) => history.push(pathname)} tabs={[
                         {
                             name: 'Info',
                             pathname: '/profile/info'

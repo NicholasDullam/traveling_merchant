@@ -50,23 +50,27 @@ const AdminReviews = (props) => {
     }
 
     return (
-        <div>
-            <h5 style={{ marginBottom: '20px' }}> Reviews </h5>
-            {
-                reviews.map((review, i) => {
-                    return ( <div key={i} style={{ padding: '10px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px 0px 5px 0px', cursor: 'pointer' }}>
-                        <div style={{ display: 'flex', alignItems: 'center' }}>
-                            <Ratings count={review.rating}/>
-                            <h6 style={{ marginBottom: '-3px' , marginLeft: '10px'}}> {review.content} </h6>
-                            <div style={{ display: 'flex', marginLeft: 'auto' }}>
-                                <GoVerified style={{ opacity: review.verified ? '1' : '.5' }} onClick={() => review.verified ? unverify(review._id) : verify(review._id)}/>
-                                <FaTrashAlt style={{ marginLeft: '10px', marginRight: '10px'}} onClick={() => deleteReview(review._id)}/>
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <h5 style={{ marginBottom: '10px' }}> Reviews </h5>
+            <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                {
+                    reviews.map((review, i) => {
+                        return ( <div key={i} style={{ padding: '10px', backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: '10px', margin: '5px 0px 5px 0px', cursor: 'pointer' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Ratings count={review.rating}/>
+                                <h6 style={{ marginBottom: '-3px' , marginLeft: '10px'}}> {review.content} </h6>
+                                <div style={{ display: 'flex', marginLeft: 'auto' }}>
+                                    <GoVerified style={{ opacity: review.verified ? '1' : '.5' }} onClick={() => review.verified ? unverify(review._id) : verify(review._id)}/>
+                                    <FaTrashAlt style={{ marginLeft: '10px', marginRight: '10px'}} onClick={() => deleteReview(review._id)}/>
+                                </div>
                             </div>
-                        </div>
-                    </div> )
-                })
-            }
-            <Pagination page={page} limit={limit} hasMore={hasMore} handlePageChange={setPage} handleLimitChange={setLimit}/>
+                        </div> )
+                    })
+                }
+                <div style={{ marginTop: 'auto' }}>
+                    <Pagination page={page} limit={limit} hasMore={hasMore} handlePageChange={setPage} handleLimitChange={setLimit}/>
+                </div>
+            </div>
         </div>
     )
 }
