@@ -38,6 +38,18 @@ const getViews = (req, res) => {
     })
 
     queryPromise.then((response) => {
+        var items = [];
+        if (response) {
+            items.push(response[0]._id);
+            for (var i = 1; i < response.length; i++) {
+                if (items.includes(response[i]._id)) {
+                    response.splice(i, 1);
+                    i--;
+                } else {
+                    items.push(response[i]._id);
+                }
+            }
+        }
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })

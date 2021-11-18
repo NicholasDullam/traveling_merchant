@@ -220,6 +220,15 @@ const getSimilar = async (req, res) => {
     if (req.query.limit) pipeline.push({ $limit: Number(req.query.limit) })
 
     Product.aggregate(pipeline).then((response) => {
+        for (var i = 0; i < response.length; i++) {
+            if (response[i]._id == _id) {
+                response.splice(i, 1);
+                i--;
+            }
+        }
+        if (index != -1) {
+            response.splice(index, 1);
+        }
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
