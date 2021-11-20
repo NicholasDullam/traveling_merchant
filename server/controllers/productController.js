@@ -240,8 +240,10 @@ const getOthersPurchase = async (req, res) => {
     const filter = { product: _id };
     let users = await order.find(filter).select('buyer');
     if (!users) return res.status(400).json({ error: 'no other users found'});
+    users = users.map(function(el) { return mongoose.Types.ObjectId(el.buyer)});
+    console.log(users);
 
-    let products = await order.aggregate([
+    let orders = await order.aggregate([
         {$match: {'buyer': { $in: users}}},
         { 
             $lookup: {
@@ -253,6 +255,10 @@ const getOthersPurchase = async (req, res) => {
         }
 
     ]);
+    var products = []
+    for (var i = 0; i < orders.length; i++) {
+        products.push(orders[i].product)
+    }
     return res.status(200).json(products)
 }
 
