@@ -18,6 +18,7 @@ const Product = (props) => {
     const [user, setUser] = useState(null)
     const [product, setProduct] = useState(null)
     const [similarProducts, setSimilarProducts] = useState([])
+    const [otherProducts, setOtherProducts] = useState([])
     const [favorited, setFavorited] = useState(null)
     const [reviews, setReviews] = useState([])
     const [quantity, setQuantity] = useState('')
@@ -119,6 +120,15 @@ const Product = (props) => {
         })
     }, [product])
 
+    useEffect(() => {
+        if (!product) return
+        api.getOtherProducts(product._id, { params: { limit: 3 }}).then((response) => {
+            setOtherProducts(response.data)
+        }).catch((error) => {
+            console.log(error)
+        })
+    }, [product])
+
     const handleFavorite = () => {
         api.createFavorite({ product: product_id }).then((response) => {
             setFavorited(response.data._id)
@@ -196,6 +206,14 @@ const Product = (props) => {
                         {
                             similarProducts.map((similarProduct) => {
                                 return <ProductCard product={similarProduct}/>
+                            })
+                        }
+                    </div>
+                    <h4 style={{ borderBottom: '1px solid rgba(0,0,0,.1)', paddingBottom: '10px', marginTop: '40px', marginBottom: '10px' }}> Other Products </h4>
+                    <div style={{ marginTop: '10px' }}>
+                        {
+                            otherProducts.map((otherProduct) => {
+                                return <ProductCard product={otherProduct}/>
                             })
                         }
                     </div>

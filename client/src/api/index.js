@@ -56,6 +56,7 @@ const clearNotifications = () => connection.post('/notifications/clear')
 const getProductById = (product_id, req) => connection.get(`/products/${product_id}`, req)
 const getProducts = (req) => connection.get('/products', req)
 const getSimilarProducts = (product_id, req) => connection.get(`/products/${product_id}/similar`, req)
+const getOtherProducts = (product_id, req) => connection.get(`/products/${product_id}/other`, req)
 const getRecommendedProducts = (req) => connection.get(`/products/recommended`, req)
 // game functions 
 const getGames = (req) => connection.get('/games', req)
@@ -118,6 +119,7 @@ let api = {
     getMessagesFromThread,
     getReviewRating,
     getSimilarProducts,
+    getOtherProducts,
     getRecommendedProducts,
     getFilters,
     createFilter,
