@@ -226,9 +226,6 @@ const getSimilar = async (req, res) => {
                 i--;
             }
         }
-        if (index != -1) {
-            response.splice(index, 1);
-        }
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
@@ -241,7 +238,6 @@ const getOthersPurchase = async (req, res) => {
     let users = await order.find(filter).select('buyer');
     if (!users) return res.status(400).json({ error: 'no other users found'});
     users = users.map(function(el) { return mongoose.Types.ObjectId(el.buyer)});
-    console.log(users);
 
     let orders = await order.aggregate([
         {$match: {'buyer': { $in: users}}},
@@ -257,7 +253,12 @@ const getOthersPurchase = async (req, res) => {
     ]);
     var products = []
     for (var i = 0; i < orders.length; i++) {
-        products.push(orders[i].product)
+        for (var j = 0; j < orders[i].product.length; j++) {
+            products.push(orders[i].product[j]);
+            if (orders[i].product[j]._id != _id) {
+                products.push(orders[i].product[j])
+            }
+        }
     }
     return res.status(200).json(products)
 }
