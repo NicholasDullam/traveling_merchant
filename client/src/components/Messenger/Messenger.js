@@ -257,7 +257,7 @@ const Messenger = (props) => {
     return (
         <div>
             { rendered ? <div style={{ position: 'fixed', height: '100%', width: '100%', backgroundColor: 'black', opacity: backdrop ? '.7' : '0', zIndex: '1', transition: 'opacity 400ms ease-out' }} onClick={handleClose}/> : null }
-            <div style={{ position: 'fixed', height: '100%', width: (window.innerWidth < 600 ? 'calc(100%)' : 'calc(50%)'), right: messenger.isOpen && rendered ? '0' : (window.innerWidth < 600 ? 'calc(-100%)' : 'calc(-50%)'), backgroundColor: 'black', transition: 'right 400ms ease', zIndex: '1' }}>
+            <div style={{ position: 'fixed', height: '100%', width: (window.innerWidth < 600 ? 'calc(100%)' : 'calc(50%)'), right: messenger.isOpen && rendered ? '0' : (window.innerWidth < 600 ? 'calc(-100%)' : 'calc(-50%)'), backgroundColor: 'black', transition: 'right 400ms ease, width 400ms ease', zIndex: '1' }}>
                 <div style={{ padding: '105px 40px 40px 40px', height: '100%', position: 'relative' }}>
                     <div style={{ position: 'absolute', display: 'flex', top: '64px', left: '40px', alignItems: 'center', backgroundColor: 'rgba(255,255,255,.1)', padding: '6px 9px 6px 9px', borderRadius: '25px' }}>
                         <div style={{ backgroundColor: messenger.isConnected ? 'green' : 'orange', height: '10px', width: '10px', borderRadius: '50%' }}/>
@@ -269,11 +269,11 @@ const Messenger = (props) => {
                             <div style={{ position: 'absolute', backgroundImage: 'linear-gradient(rgba(0,0,0,1), rgba(0,0,0,0))', top: '-1px', left: 'auto', height: '5px', width: '100%'}}/>
                             <div style={{ position: 'absolute', backgroundImage: 'linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0))', bottom: '-1px', left: 'auto', height: '15px', width: '100%'}}/>
                             <div style={{ display: 'flex', flexDirection: 'column', overflowY: 'scroll', padding: '5px 20px 5px 5px', height: '100%', scrollbarColor: 'black' }}>
-                                <div style={{ padding: '1px 1px 6px 3px' }}>
+                                {/*<div style={{ padding: '1px 1px 6px 3px' }}>
                                     <div style={{ minHeight: '54px', minWidth: '54px', borderRadius: '50%', backgroundColor: 'white', transition: 'box-shadow 300ms ease', cursor: 'pointer', color: 'black', fontSize: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                         <AiOutlinePlus/>
                                     </div>
-                                </div>
+                                </div>*/}
                                 {
                                     messenger.threads.map((thread, i) => {
                                         return (

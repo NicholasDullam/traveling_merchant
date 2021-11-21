@@ -23,9 +23,12 @@ const getSort = (sortString) => {
 }
 
 const getReviews = (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit'], pipeline = []
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit'], indices=['seller', 'reviewer'], pipeline = []
+    indices.forEach((el) => {
+        if (query[el]) query[el] = mongoose.Types.ObjectId(query[el])
+    })
     reserved.forEach((el) => delete query[el])
-
+    
     pipeline.push({ $match: query })
     if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
     
@@ -51,7 +54,7 @@ const getReviews = (req, res) => {
     })
 
     Review.aggregate(pipeline).then((response) => {
-        return res.status(200).json({ ...response[0], results: { ...response[0].results, has_more: (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < response[0].results.count }})    
+        return res.status(200).json({ ...response[0], results: { ...response[0].results, has_more: response[0].results && (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < response[0].results.count }})    
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })

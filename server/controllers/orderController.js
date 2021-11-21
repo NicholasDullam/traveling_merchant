@@ -26,7 +26,7 @@ const handlePastDueConfirmations = () => {
 }
 
 const createOrder = async (req, res) => {
-    let { product, quantity, requirements } = req.body
+    let { product, quantity, requirements, delivery_type } = req.body
     
     if (!product) return res.status(400).json({ error: 'No products in order'})
     product = await Product.findById(product)
@@ -40,6 +40,7 @@ const createOrder = async (req, res) => {
         seller: product.user,
         status: 'payment_pending',
         product: product._id,
+        delivery_type,
         requirements,
         quantity,
         unit_price: product.unit_price,
