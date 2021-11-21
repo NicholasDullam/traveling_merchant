@@ -15,9 +15,7 @@ const User = new mongoose.Schema({
     admin: Boolean,
     banned: Boolean,
     status: String,
-    settings: {
-        /* ... */
-    }
+    cookies: Boolean
 }, { 
     timestamps: {
         createdAt: 'created_at',

@@ -30,7 +30,7 @@ const login = async (req, res) => {
         return res.status(400).json({ error: error.message })
     })
     
-    const token = jwt.sign({ id: user._id, cust_id: user.cust_id, acct_id: user.acct_id, admin: user.admin, banned: user.banned }, token_secret)
+    const token = jwt.sign({ id: user._id, cust_id: user.cust_id, acct_id: user.acct_id, admin: user.admin, banned: user.banned, cookies: user.cookies }, token_secret)
     return res.cookie("access_token", token, { httpOnly: true, secure:process.env.NODE_ENV === "production" }).status(200).json({
         token,
         user
