@@ -38,19 +38,42 @@ const createUser = async (req, res) => {
     })
 }
 
+const getSort = (sortString) => {
+    let direction = 1
+    if (sortString.indexOf('-')) direction = -1
+    return { [sortString.replace('-', '')]: direction }
+}
+
 const getUsers = async (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit'], pipeline = []
     reserved.forEach((el) => delete query[el])
-    let queryPromise = User.find(query)
 
-    if (req.query.sort) queryPromise = queryPromise.sort(req.query.sort)
-    if (req.query.skip) queryPromise = queryPromise.skip(Number(req.query.skip))
-    if (req.query.limit) queryPromise = queryPromise.limit(Number(req.query.limit) + 1)
+    pipeline.push({ $match: query })
+    if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
+    
+    // paginate pipeline facet
+    pipeline.push({
+        $facet: {
+            data: function paginate () {
+                let data = []
+                if (req.query.skip) data.push({ $skip: Number(req.query.skip) })
+                if (req.query.limit) data.push({ $limit: Number(req.query.limit) })
+                return data
+            } (),
+            results: [{ $count: 'count' }]
+        }
+    })
 
-    queryPromise.then((response) => {
-        let results = { has_more: false, data: response }
-        if (req.query.limit && response.length > Number(req.query.limit)) results = { has_more: true, data: response.slice(0, response.length - 1) }
-        return res.status(200).json(results)    
+    //paginate pipeline count removal
+    pipeline.push({
+        $project: {
+            data: '$data',
+            results: { $arrayElemAt: [ "$results", 0 ]}
+        }
+    })
+
+    User.aggregate(pipeline).then((response) => {
+        return res.status(200).json({ ...response[0], results: { ...response[0].results, has_more: (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < response[0].results.count }})    
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })

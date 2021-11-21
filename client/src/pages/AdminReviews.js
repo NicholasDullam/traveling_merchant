@@ -9,11 +9,14 @@ const AdminReviews = (props) => {
     const [hasMore, setHasMore] = useState(false)
     const [limit, setLimit] = useState(5)
     const [page, setPage] = useState(1)
+    const [count, setCount] = useState(0)
 
     useEffect(() => {
         api.getReviews({ params: { limit, skip: (page - 1) ? (page - 1) * limit : 0 }}).then((response) => {
-            setHasMore(response.data.has_more)
-            setReviews(response.data.data)
+            let { data, results } = response.data
+            setReviews(data)
+            setHasMore(results.has_more)
+            setCount(results.count)
         }).catch((error) => {
             console.log(error)
         })
@@ -51,7 +54,8 @@ const AdminReviews = (props) => {
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <h5 style={{ marginBottom: '10px' }}> Reviews </h5>
+            <h5 style={{ marginBottom: '0px' }}> Reviews </h5>
+            <p style={{ opacity: '.7' }}> About {count} results </p>
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 {
                     reviews.map((review, i) => {

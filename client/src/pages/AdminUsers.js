@@ -8,14 +8,17 @@ import { useHistory } from 'react-router'
 const AdminUsers = (props) => {
     const [users, setUsers] = useState([])
     const [hasMore, setHasMore] = useState(false)
+    const [count, setCount] = useState(0)
     const [limit, setLimit] = useState(5)
     const [page, setPage] = useState(1)
     const history = useHistory()
 
     const getResults = () => {
         return api.getUsers({ params: { limit, skip: (page - 1) ? (page - 1) * limit : 0 }}).then((response) => {
-            setHasMore(response.data.has_more)
-            setUsers(response.data.data)
+            let { data, results } = response.data
+            setUsers(data)
+            setHasMore(results.has_more)
+            setCount(results.count)
         }).catch((error) => {
             console.log(error)
         })
@@ -57,7 +60,8 @@ const AdminUsers = (props) => {
 
     return (
         <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <h5 style={{ marginBottom: '10px' }}> Users </h5>
+            <h5 style={{ marginBottom: '0px' }}> Users </h5>
+            <p style={{ opacity: '.7' }}> About {count} results </p>
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
                 {
                     users.map((user, i) => {
