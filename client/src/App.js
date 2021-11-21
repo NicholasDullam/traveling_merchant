@@ -31,6 +31,10 @@ function App() {
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [notifications, setNotifications] = useState([])
 
+  // Client attributes
+  const [clientWidth, setClientWidth] = useState(0)
+  const [clientHeight, setClientHeight] = useState(0)
+
   useEffect(() => {
     setIsLogging(true)
     api.verifyToken().then((response) => {
@@ -42,6 +46,18 @@ function App() {
     })
   }, [])
 
+  useEffect(() => {
+    const handleResize = () => {
+        setClientWidth(window.innerWidth)
+        setClientHeight(window.innerHeight)
+    }
+
+    window.addEventListener('resize', handleResize)
+    return () => document.removeEventListener('resize', handleResize)
+  }, [])
+
+
+  // auth provider functions
   const login = useCallback((token, user) => {
       setToken(token)
       setUser(user)
@@ -56,6 +72,8 @@ function App() {
       setUserId(null)
   }, []);
 
+
+  // messenger provider functions
   const setActiveThreadId = (thread_id) => {
     let active = messengerThreads.find((thread) => thread.user._id === thread_id)
     setMessengerThread(active || null)
@@ -68,26 +86,8 @@ function App() {
   }
 
   return (
-      <AuthContext.Provider
-      value={{
-        token,
-        user,
-        userId,
-        isLoggedIn,
-        login,
-        logout
-      }}>
-        <NotificationContext.Provider value={{
-          isOpen: notificationsOpen,
-          notifications: notifications,
-          open: () => {
-            setNotificationsOpen(true)
-          },
-          close: () => {
-            setNotificationsOpen(false)
-          },
-          setNotifications
-        }}>
+      <AuthContext.Provider value={{ token, user, userId, isLoggedIn, login, logout }}>
+        <NotificationContext.Provider value={{ isOpen: notificationsOpen, notifications: notifications, open: () => setNotificationsOpen(true), close: () => setNotificationsOpen(false), setNotifications }}>
           <MessengerContext.Provider value={{
             isOpen: messengerOpen,
             isConnected,
