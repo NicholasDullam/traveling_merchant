@@ -9,7 +9,7 @@ import Footer from "../Footer/Footer";
 const Layout = (props) => {
     return (
         <div>
-            <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', width: '100%' }}>
                 { props.navbar ? <Navbar/> : null }
                 <div className="container" style={{ paddingTop: '40px', marginBottom: '40px', height: '100%', display: 'flex', flexDirection: 'column', flexGrow: '1' }}>
                     {props.children}

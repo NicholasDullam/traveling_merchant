@@ -18,6 +18,7 @@ const Order = new mongoose.Schema({
     quantity: Number,
     total_cost: Number,
     commission_fees: Number,
+    delivery_type: String,
     requirements: Object,
     metadata: Object
 }, { 

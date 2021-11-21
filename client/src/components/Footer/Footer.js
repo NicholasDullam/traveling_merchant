@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import '../Footer/Footer.css'
 import { ReactComponent as Logo } from '../../images/logo.svg'
-import { AiOutlineArrowUp } from 'react-icons/ai'
+import { AiOutlineArrowUp, AiOutlineInstagram, AiOutlineTwitter } from 'react-icons/ai'
 
 const Footer = (props) => {
     const [scroll, setScroll] = useState(0)
@@ -50,8 +50,12 @@ const Footer = (props) => {
                 <p style={{ margin: '0px 20px 0px 20px' }}> Privacy Policy </p>
                 <p style={{ margin: '0px 20px 0px 20px' }}> Return Policy </p>
             </div>
-            <div style={{ padding: '20px', display: 'flex', backgroundColor: 'rgba(0,0,0,.05)' }}>
+            <div style={{ padding: '20px', display: 'flex', alignItems: 'center', backgroundColor: 'rgba(0,0,0,.05)' }}>
                 <p style={{ margin: '0px 20px 0px 20px', fontSize: '14px', opacity: '.7' }}> © 2021 Traveling Merchant </p>
+                <div style={{ marginLeft: 'auto', opacity: '.7', fontSize: '24px', display: 'flex', alignItems: 'center' }}>
+                    <AiOutlineInstagram style={{ margin: '5px' }} />
+                    <AiOutlineTwitter style={{ margin: '5px' }} />
+                </div>
             </div>
         </div>
     )

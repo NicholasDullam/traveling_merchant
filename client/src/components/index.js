@@ -11,6 +11,7 @@ import Notifications from './Notifications/Notifications'
 import Pagination from './Pagination/Pagination'
 import ContextBar from './ContextBar/ContextBar'
 import TabSelector from './TabSelector/TabSelector'
+import Collapsable from './Collapsable/Collapsable'
 
 export {
     CheckoutInterface,
@@ -25,5 +26,6 @@ export {
     Pagination,
     Notifications,
     ContextBar,
-    TabSelector
+    TabSelector,
+    Collapsable
 }
