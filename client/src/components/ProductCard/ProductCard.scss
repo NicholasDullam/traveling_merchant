@@ -8,8 +8,24 @@ $color: #8baf83;
     border-color:  var(--color-green);
     border-radius: 2em;
   }
-.btn-primary:hover {
+.btn-primary:hover{
     background-color: #44524E;
     border-color:  44524E;
     border-radius: 2em;
+    border:none;
+    box-shadow:none;
+}
+.btn-primary:focus{
+    background-color: #44524E;
+    border-color:  44524E;
+    border-radius: 2em;
+    border:none;
+    box-shadow:none;
+}
+.btn-primary:active{
+    background-color: #44524E;
+    border-color:  44524E;
+    border-radius: 2em;
+    border:none;
+    box-shadow:none;
 }
