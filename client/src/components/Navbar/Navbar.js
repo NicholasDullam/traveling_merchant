@@ -126,7 +126,7 @@ const Navbar = (props) => {
             <h6 style={{ marginBottom: '5px' }}> Favorites </h6>
           </Link>
           <Link to='/profile/views' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
-            <h6 style={{ marginBottom: '5px' }}> History </h6>
+            <h6 style={{ marginBottom: '5px' }}> Views </h6>
           </Link>
           <Link to='/profile/reviews' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
             <h6 style={{ marginBottom: '5px' }}> Reviews </h6>
@@ -134,10 +134,10 @@ const Navbar = (props) => {
           <Link to='/profile/products' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
             <h6 style={{ marginBottom: '5px' }}> Products </h6>
           </Link>
-          <Link to='/profile/preferences' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
+          <Link to='/profile/billing' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
             <h6 style={{ marginBottom: '5px' }}> Billing </h6>
           </Link>
-          <Link to='/profile/billing' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
+          <Link to='/profile/preferences' style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
             <h6 style={{ marginBottom: '5px' }}> Preferences </h6>
           </Link>
           <h6 style={{ marginBottom: '5px', cursor: 'pointer' }} onClick={handleLogout}> Sign Out </h6>
