@@ -91,7 +91,7 @@ const Notifications = (props) => {
     return (
         <div>
             { rendered ? <div style={{ position: 'fixed', height: '100%', width: '100%', backgroundColor: 'black', opacity: backdrop ? '.7' : '0', zIndex: '1', transition: 'opacity 400ms ease-out' }} onClick={notifications.close}/> : null }
-            <div style={{ position: 'fixed', height: '100%', width: (window.innerWidth < 600 ? 'calc(100%)' : 'calc(30%)'), right: notifications.isOpen && rendered ? '0' : (window.innerWidth < 600 ? 'calc(-100%)' : 'calc(-30%)'), backgroundColor: 'black', transition: 'right 400ms ease, width 400ms ease', zIndex: '1' }}>
+            <div style={{ position: 'fixed', height: '100%', width: (window.innerWidth < 800 ? 'calc(100%)' : 'calc(30%)'), right: notifications.isOpen && rendered ? '0' : (window.innerWidth < 800 ? 'calc(-100%)' : 'calc(-30%)'), backgroundColor: 'black', transition: 'right 400ms ease, width 400ms ease', zIndex: '1' }}>
                 <div style={{ padding: '105px 40px 40px 40px', height: '100%', position: 'relative' }}>
                     <h1 style={{ color: 'white', marginBottom: '20px' }}> Notifications </h1>
                     <div style={{ height: 'calc(100% - 92px)', position: 'relative', overflowY: 'scroll' }}>

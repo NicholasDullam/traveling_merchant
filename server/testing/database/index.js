@@ -9,6 +9,8 @@ const Order = require('../../models/order')
 const Game = require('../../models/game')
 const User = require('../../models/user')
 
+// connects to the product, order, game, and user collections
+// all requests are limited to a response size of 1; ensuring consistent results
 const verify = async () => {
     let products = [], orders = [], games = [], users = []
 
@@ -16,7 +18,7 @@ const verify = async () => {
 
     for (i = 0; i < 125; i++) {
         let start = Date.now()
-        await Product.find({})
+        await Product.find({}, { limit: 1 })
         products.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
@@ -27,7 +29,7 @@ const verify = async () => {
 
     for (i = 0; i < 125; i++) {
         let start = Date.now()
-        await Order.find({})
+        await Order.find({}, { limit: 1 })
         orders.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
@@ -38,7 +40,7 @@ const verify = async () => {
 
     for (i = 0; i < 125; i++) {
         let start = Date.now()
-        await Game.find({})
+        await Game.find({}, { limit: 1 })
         games.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
@@ -49,7 +51,7 @@ const verify = async () => {
 
     for (i = 0; i < 125; i++) {
         let start = Date.now()
-        await User.find({})
+        await User.find({}, { limit: 1 })
         users.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
@@ -85,4 +87,9 @@ const verify = async () => {
     console.log('\x1b[36m%s\x1b[0m', `Overall average runtime: ${average}ms`)
 }
 
-verify()
+verify().then((response) => {
+    db.close()
+}).catch((error) => {
+    console.log(error)
+    db.close()
+})

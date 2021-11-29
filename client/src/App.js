@@ -124,7 +124,7 @@ function App() {
                     <Route path="/games/:game_id" exact component={Game}/>
                     <Route path="/orders/:order_id" exact component={Order}/>
                     <Route path="/orders/:order_id/checkout" exact component={Checkout}/>
-                    <Route path="/users/:user_id" exact component={User}/>
+                    <Route path="/users/:user_id" component={User}/>
                     <Route path="/products/:product_id" exact component={Product}/>
                     <Route path="/games" exact component={Games}/>
 
