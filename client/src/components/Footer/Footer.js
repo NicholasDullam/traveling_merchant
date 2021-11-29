@@ -27,8 +27,8 @@ const Footer = (props) => {
                 <AiOutlineArrowUp/>
                 <p style={{ margin: '0px 0px 0px 5px' }}> Back to Top </p>
             </div>   
-            <div style={{ padding: '20px', display: 'flex', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,.1)' }}>
-
+            <div style={{ padding: '20px', display: 'flex', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,.1)', position: 'relative' }}>
+                <Logo style={{ position: 'absolute', top: '30px', left: '30px', height: '40px' }}/>
                 <div style={{ margin: '10px 40px 10px 40px' }}>
                     <p style={{ marginBottom: '10px' }}><b>About Us</b></p>
                     <p style={{ marginBottom: '5px' }}>League of Legends</p>

@@ -35,7 +35,7 @@ Notification.post('save', async (doc, next) => {
         html : '<h1>You have a new notification :D</h1>'
     }
 
-    await transport.sendMail(mailer)
+    transport.sendMail(mailer)
     next()
 })
 
