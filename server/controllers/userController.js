@@ -73,7 +73,7 @@ const getUsers = async (req, res) => {
     })
 
     User.aggregate(pipeline).then((response) => {
-        return res.status(200).json({ ...response[0], results: { ...response[0].results, has_more: (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < response[0].results.count }})    
+        return res.status(200).json({ ...response[0], results: { count: response[0].results ? response[0].results.count : 0, has_more: (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < (response[0].results ? response[0].results.count : 0) }})    
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })
