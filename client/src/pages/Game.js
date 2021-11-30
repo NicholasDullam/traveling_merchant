@@ -77,7 +77,7 @@ const Game = (props) => {
     const [platform, setPlatform] = useState(search.get('platform') || '')
     const [sort, setSort] = useState(search.get('sort') || '-unit_price')
     
-    const [limit, setLimit] = useState(Number(search.get('limit')) || 1)
+    const [limit, setLimit] = useState(Number(search.get('limit')) || 5)
     const [page, setPage] = useState(Number(search.get('page')) || 1)
     const [hasMore, setHasMore] = useState(false)
     const [count, setCount] = useState(0)

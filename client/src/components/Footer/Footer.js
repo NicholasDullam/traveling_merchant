@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import '../Footer/Footer.css'
+import '../Footer/Footer.scss'
 import { ReactComponent as Logo } from '../../images/logo.svg'
 import { AiOutlineArrowUp, AiOutlineInstagram, AiOutlineTwitter } from 'react-icons/ai'
 import { Collapsable } from "..";
@@ -23,7 +23,7 @@ const Footer = (props) => {
     }, [])
 
     return (
-        <div style={{ backgroundColor: 'white', color: 'black', borderTop: '1px solid rgba(0,0,0,.1)' }}>
+        <div className="footer" style={{ borderTop: '1px solid rgba(0,0,0,.1)' }}>
             <div style={{ position: 'fixed', transform: `translateY(${ scroll > 40 ? '0%' : 'calc(100% + 10px)'}) translateX(-50%)`, bottom: '10px', left: '50%', backgroundColor: 'black', color: 'white', transition: 'transform 300ms ease', padding: '6px 9px 6px 9px', borderRadius: '25px', display: 'flex', alignItems: 'center', cursor: 'pointer' }} onClick={handleScrollToTop}>
                 <AiOutlineArrowUp/>
                 <p style={{ margin: '0px 0px 0px 5px' }}> Back to Top </p>

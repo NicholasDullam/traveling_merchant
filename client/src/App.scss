@@ -3,6 +3,13 @@
   &.dark {
   background-color: rgb(41, 41, 41);
   color:white;
+  .footer{
+    background-color: black;
+    color:white;
+  }
+  .profile-toggle{
+    background-color: rgb(49, 49, 49);
+  }
   }
 }
 .App {

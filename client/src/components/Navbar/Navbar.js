@@ -109,8 +109,8 @@ const Navbar = (props) => {
             </div>
         </div>
       </div>
-      { auth.isLoggedIn && profileExpanded ? <div style={{ position: 'absolute', top: getClientBoundingRect().bottom + 10, left: getClientBoundingRect().right + 5, backgroundColor: 'white', transform: 'translateX(-100%)', boxShadow: '0 0px 20px 10px rgba(0,0,0,.08)', padding: '15px', borderRadius: '10px', width: '200px', zIndex: '4' }} onClick={() => setProfileExpanded(false)}>
-          <div style={{ position: 'absolute', backgroundColor: 'white', transform: 'rotate(45deg)', width: '15px', height: '15px', top: '-3px', right: '12px', borderRadius: '2px' }} />
+      { auth.isLoggedIn && profileExpanded ? <div class="profile-toggle"  style={{ position: 'absolute', top: getClientBoundingRect().bottom + 10, left: getClientBoundingRect().right + 5,  transform: 'translateX(-100%)', boxShadow: '0 0px 20px 10px rgba(0,0,0,.08)', padding: '15px', borderRadius: '10px', width: '200px', zIndex: '4' }} onClick={() => setProfileExpanded(false)}>
+          <div style={{ position: 'absolute', transform: 'rotate(45deg)', width: '15px', height: '15px', top: '-3px', right: '12px', borderRadius: '2px' }} />
           <Link to={`/users/${auth.user._id}`} style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
             <h6 style={{ marginBottom: '0px' }}> Signed in as </h6>
             <h6 style={{ fontWeight: 'bold', marginBottom: '0px' }}> {auth.user.first} {auth.user.last} </h6>

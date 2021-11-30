@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import React, { useState, useCallback, useEffect } from 'react';
+import { BrowserRouter as Router, Switch, Route, useLocation  } from "react-router-dom";
+import React, { useState, useCallback, useEffect} from 'react';
+import { AnimatePresence } from 'framer-motion';
 import api from './api'
 import "./App.scss";
 
@@ -10,6 +11,7 @@ import Profile from './pages/Profile';
 import MessengerContext from "./context/messenger-context";
 import NotificationContext from "./context/notification-context";
 import NotFoundPage from "./pages/404";
+import MyRouter from './components/MyRouter/MyRouter';
 
 function App() {
   // Auth attributes
@@ -34,7 +36,7 @@ function App() {
   // Client attributes
   const [clientWidth, setClientWidth] = useState(0)
   const [clientHeight, setClientHeight] = useState(0)
-
+  // const location = useLocation();
   useEffect(() => {
     setIsLogging(true)
     api.verifyToken().then((response) => {
@@ -113,12 +115,15 @@ function App() {
             setMessages: setMessengerMessages
           }}>
             <Router>
+              <MyRouter isLogging={isLogging} isLoggedIn={isLoggedIn}></MyRouter>
+            {/* <AnimatePresence exitBeforeEnter>
               { isLoggedIn ? <Messenger/> : null }
               { isLoggedIn ? <Notifications/> : null }
-              <Switch>
+              <Switch location={location} key={location.pathname}>
                 { !isLogging ? <Switch>
-                    {/* Do not contain sub-routes */}
-                    <Route path="/login" exact component={Login}/>
+                  
+                {/* Do not contain sub-routes */}
+                {/*    <Route path="/login" exact component={Login}/>
                     <Route path="/signup" exact component={Signup}/>
                     <Route path="/messages" exact component={Messages}/>
                     <Route path="/games/:game_id" exact component={Game}/>
@@ -127,14 +132,15 @@ function App() {
                     <Route path="/users/:user_id" component={User}/>
                     <Route path="/products/:product_id" exact component={Product}/>
                     <Route path="/games" exact component={Games}/>
-
+                  */}
                     {/* Contain sub-routes */}
-                    <Route path="/profile" component={Profile}/>
+                    {/* <Route path="/profile" component={Profile}/>
                     <Route path="/admin" component={Admin}/>
                     <Route exact path="/" component={Home}/>
                     <Route component={NotFoundPage} />
                   </Switch> : null }
               </Switch>
+              </AnimatePresence> */} 
             </Router>
           </MessengerContext.Provider>
         </NotificationContext.Provider>
