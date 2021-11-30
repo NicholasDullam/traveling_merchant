@@ -1,6 +1,4 @@
-var mongoose = require('mongoose');
-
-// view history schema
+const mongoose = require('mongoose');
 
 const View = new mongoose.Schema({
     user: { type: mongoose.Types.ObjectId, ref: 'User' },

@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useLocation } from 'react';
+import { AnimatePresence } from 'framer-motion';
 import api from './api'
 import "./App.scss";
 
@@ -34,7 +35,6 @@ function App() {
   // Client attributes
   const [clientWidth, setClientWidth] = useState(0)
   const [clientHeight, setClientHeight] = useState(0)
-
   useEffect(() => {
     setIsLogging(true)
     api.verifyToken().then((response) => {
@@ -84,7 +84,7 @@ function App() {
     setMessengerThread(thread)
     setMessengerThreadId(thread.user._id)
   }
-
+  const location = useLocation();
   return (
       <AuthContext.Provider value={{ token, user, userId, isLoggedIn, login, logout }}>
         <NotificationContext.Provider value={{ isOpen: notificationsOpen, notifications: notifications, open: () => setNotificationsOpen(true), close: () => setNotificationsOpen(false), setNotifications }}>
@@ -113,9 +113,10 @@ function App() {
             setMessages: setMessengerMessages
           }}>
             <Router>
+            <AnimatePresence exitBeforeEnter initial={false}>
               { isLoggedIn ? <Messenger/> : null }
               { isLoggedIn ? <Notifications/> : null }
-              <Switch>
+              <Switch location={location} key={location.pathname}>
                 { !isLogging ? <Switch>
                     {/* Do not contain sub-routes */}
                     <Route path="/login" exact component={Login}/>
@@ -135,6 +136,7 @@ function App() {
                     <Route component={NotFoundPage} />
                   </Switch> : null }
               </Switch>
+              </AnimatePresence>
             </Router>
           </MessengerContext.Provider>
         </NotificationContext.Provider>

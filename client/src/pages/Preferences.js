@@ -21,8 +21,6 @@ const Preferences = (props) => {
     return (
         <div>
             <h5 style={{ marginBottom: '20px' }}> Preferences </h5>
-           
-
 <p> Dark mode </p>
             <button className="btn" onClick={changeDarkness}>{isDark? moon: sun}</button>
         <p> Cookies </p>

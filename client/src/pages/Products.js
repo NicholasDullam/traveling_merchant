@@ -9,7 +9,7 @@ const Products = (props) => {
     const history = useHistory()
     const [products, setProducts] = useState([])
     const [retrievedFavorites, setRetrievedFavorites] = useState(false)
-
+    const [loading, setLoading] =
     const retrieveFavorites = async (product_id) => {
         if (!products.length || retrievedFavorites) return
         let updatedProducts = [...products]

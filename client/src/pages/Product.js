@@ -7,7 +7,7 @@ import AuthContext from '../context/auth-context'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ProductCard, Collapsable } from '../components'
-import { VscRemote } from 'react-icons/vsc'
+import { VscRemote, VscGraphLine } from 'react-icons/vsc'
 import { MdOutlineMarkEmailUnread } from 'react-icons/md'
 import MessengerContext from '../context/messenger-context'
 
@@ -262,7 +262,7 @@ const Product = (props) => {
 
                         <h2> {product.name} </h2>
                         <h3 style={{ marginTop: '10px', marginBottom: '0px' }}> <b>${product.unit_price / 100 * quantity}</b> </h3>
-                        <p style={{ marginTop: '0px', marginBottom: '10px' }}>${product.unit_price / 100} <span style={{ fontSize: '14px', opacity: '.7' }}>/unit</span> </p>
+                        <p style={{ marginTop: '0px', marginBottom: '10px' }}>${product.unit_price / 100} <span style={{ fontSize: '14px', opacity: '.7' }}>/unit</span> <VscGraphLine style={{ marginLeft: '8px', fontSize: '22px', color: 'white', padding: '5px 5px 4px 4px', borderRadius: '5px', backgroundColor: '#8baf83' }} /> </p>
                         <div>
                             <label className="form-label" style={{ marginTop: '10px' }}>Quantity</label>
                             <input type="number" style={{ maxWidth: '200px', marginBottom: '20px' }} value={quantity} className="form-control" id="emailInput" placeholder={`${product.min_quantity}`} onChange={handleQuantity}></input>

@@ -12,9 +12,9 @@ const Profile = (props) => {
     return (
         <Layout navbar>
             <div>
-                <h1> Profile </h1>
-                <div style={{ display: 'flex', marginTop: '20px' }}>
-                    <TabSelector style={{ marginRight: '50px' }} selected={location.pathname} handleRouter={(pathname) => history.push(pathname)} tabs={[
+                <h1 style={{ marginBottom: '20px' }}> Profile </h1>
+                <div style={{ display: 'flex', flexDirection: window.innerWidth < 600 ? 'column' : 'row' }}>
+                    <TabSelector horizontal={window.innerWidth < 600} style={{ marginRight: '50px', overflowX: 'scroll' }} selected={location.pathname} handleRouter={(pathname) => history.push(pathname)} tabs={[
                         {
                             name: 'Info',
                             pathname: '/profile/info'
