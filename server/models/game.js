@@ -1,6 +1,4 @@
-var mongoose = require('mongoose');
-
-// Game Schema
+const mongoose = require('mongoose');
 
 const Game = new mongoose.Schema({
     name: String,

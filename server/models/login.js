@@ -1,6 +1,4 @@
-var mongoose = require('mongoose');
-
-// Login model
+const mongoose = require('mongoose');
 
 const Login = new mongoose.Schema({
     user: { type: mongoose.Types.ObjectId, ref: 'User' },
