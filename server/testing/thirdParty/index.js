@@ -1,4 +1,5 @@
-var dotenv = require('dotenv').config()
+const path = require('path')
+const dotenv = require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
 
@@ -77,7 +78,7 @@ const verify = async () => {
     console.log(`Transfer average runtime: ${transferAverage}ms`)
     console.log(`Account average runtime: ${accountAverage}ms`)
     console.log('-----------------------------')
-    console.log('\x1b[36m%s\x1b[0m', `Overall average runtime: ${average}ms`)
+    console.log('\x1b[36m%s\x1b[0m', `Overall average runtime: ${average}ms\n`)
 }
 
 verify()

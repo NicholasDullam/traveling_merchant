@@ -1,7 +1,4 @@
-var mongoose = require('mongoose');
-var Order = require('./order')
-
-// Review Schema
+const mongoose = require('mongoose');
 
 const Review = new mongoose.Schema({
     reviewer: { type: mongoose.Types.ObjectId, ref: 'User' },

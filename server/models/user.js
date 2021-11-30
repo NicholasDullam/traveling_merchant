@@ -1,7 +1,4 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt')
-
-// User Schema
 
 const User = new mongoose.Schema({
     acct_id: String,
@@ -15,6 +12,8 @@ const User = new mongoose.Schema({
     admin: Boolean,
     banned: Boolean,
     status: String,
+    exp: Number,
+    lvl: Number,
     settings: {
         /* ... */
     }

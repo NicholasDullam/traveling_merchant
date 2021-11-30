@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { BsChevronDown } from 'react-icons/bs'
 
 const Collapsable = (props) => {
-    const [collapsed, setCollapsed] = useState(false)
+    const [collapsed, setCollapsed] = useState(props.initial || false)
     let contentRef = useRef()
 
     const getContentHeight = () => {

@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const User = require('./user');
 const nodeMailer = require('nodemailer')
 
-// Notification Schema
 const Notification = new mongoose.Schema({
     sender: { type: mongoose.Types.ObjectId, ref: 'User' },
     receiver: { type: mongoose.Types.ObjectId, ref: 'User' },

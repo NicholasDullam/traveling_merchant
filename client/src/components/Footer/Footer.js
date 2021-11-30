@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import '../Footer/Footer.css'
 import { ReactComponent as Logo } from '../../images/logo.svg'
 import { AiOutlineArrowUp, AiOutlineInstagram, AiOutlineTwitter } from 'react-icons/ai'
+import { Collapsable } from "..";
 
 const Footer = (props) => {
     const [scroll, setScroll] = useState(0)
@@ -27,24 +28,38 @@ const Footer = (props) => {
                 <AiOutlineArrowUp/>
                 <p style={{ margin: '0px 0px 0px 5px' }}> Back to Top </p>
             </div>   
-            <div style={{ padding: '20px', display: 'flex', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,.1)', position: 'relative' }}>
-                <Logo style={{ position: 'absolute', top: '30px', left: '30px', height: '40px' }}/>
-                <div style={{ margin: '10px 40px 10px 40px' }}>
-                    <p style={{ marginBottom: '10px' }}><b>About Us</b></p>
+            { window.innerWidth >= 700 ? <div style={{ padding: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,.1)', position: 'relative' }}>
+                    <Logo style={{ position: 'absolute', top: '30px', left: '30px', height: '40px' }}/>
+                    <div style={{ margin: '10px 40px 10px 40px' }}>
+                        <p style={{ marginBottom: '10px' }}><b>About Us</b></p>
+                        <p style={{ marginBottom: '5px' }}>League of Legends</p>
+                        <p>World of Warcraft</p>
+                    </div>
+                    <div style={{ margin: '10px 40px 10px 40px'  }}>
+                        <p style={{ marginBottom: '10px' }}><b>Products</b></p>
+                        <p style={{ marginBottom: '5px' }}>League of Legends</p>
+                        <p>World of Warcraft</p>
+                    </div>                
+                    <div style={{ margin: '10px 40px 10px 40px'  }}>
+                        <p style={{ marginBottom: '10px' }}><b>Support</b></p>
+                        <p style={{ marginBottom: '5px' }}>League of Legends</p>
+                        <p>World of Warcraft</p>
+                    </div>
+                </div> : <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', borderBottom: '1px solid rgba(0,0,0,.1)', position: 'relative' }}>
+                <Collapsable head={<b>About us</b>} initial={true}>
                     <p style={{ marginBottom: '5px' }}>League of Legends</p>
                     <p>World of Warcraft</p>
-                </div>
-                <div style={{ margin: '10px 40px 10px 40px'  }}>
-                    <p style={{ marginBottom: '10px' }}><b>Products</b></p>
+                </Collapsable>
+                <Collapsable head={<b>Products</b>} initial={true}>
                     <p style={{ marginBottom: '5px' }}>League of Legends</p>
                     <p>World of Warcraft</p>
-                </div>                
-                <div style={{ margin: '10px 40px 10px 40px'  }}>
-                    <p style={{ marginBottom: '10px' }}><b>Support</b></p>
+                </Collapsable>
+                <Collapsable head={<b>Support</b>} initial={true}>
                     <p style={{ marginBottom: '5px' }}>League of Legends</p>
                     <p>World of Warcraft</p>
-                </div>
-            </div>
+                </Collapsable>
+            </div> 
+            }
             <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
                 <p style={{ margin: '0px 20px 0px 20px' }}> Terms of Service </p>
                 <p style={{ margin: '0px 20px 0px 20px' }}> Privacy Policy </p>
