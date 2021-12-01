@@ -1,5 +1,5 @@
 const path = require('path')
-const dotenv = require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
+const dotenv = require('dotenv').config({ path: path.resolve(__dirname, '../../../.env') })
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
 
@@ -16,7 +16,7 @@ const verify = async () => {
         customers.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
-        process.stdout.write(`Verifying customer runtime: ${Math.round((i + 1)/125 * 100)}%`)
+        process.stdout.write(`Verifying customer runtime: ${i + 1}/${125} | ${Math.round((i + 1)/125 * 100)}%`)
     }
     
     process.stdout.write('\n')
@@ -27,7 +27,7 @@ const verify = async () => {
         paymentIntents.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
-        process.stdout.write(`Verifying payment intent runtime: ${Math.round((i + 1)/125 * 100)}%`)
+        process.stdout.write(`Verifying payment intent runtime: ${i + 1}/${125} | ${Math.round((i + 1)/125 * 100)}%`)
     }
 
     process.stdout.write('\n')
@@ -38,7 +38,7 @@ const verify = async () => {
         transfers.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
-        process.stdout.write(`Verifying transfer runtime: ${Math.round((i + 1)/125 * 100)}%`)
+        process.stdout.write(`Verifying transfer runtime: ${i + 1}/${125} | ${Math.round((i + 1)/125 * 100)}%`)
     }
 
     process.stdout.write('\n')
@@ -49,7 +49,7 @@ const verify = async () => {
         accounts.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
-        process.stdout.write(`Verifying account runtime: ${Math.round((i + 1)/125 * 100)}%`)
+        process.stdout.write(`Verifying account runtime: ${i + 1}/${125} | ${Math.round((i + 1)/125 * 100)}%`)
     }
 
     process.stdout.write('\n')
