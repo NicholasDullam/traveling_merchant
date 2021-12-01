@@ -21,7 +21,7 @@ const getGames = (req, res) => {
     let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q'], pipeline = []
     reserved.forEach((el) => delete query[el])
 
-    if (req.query.q) pipeline.push({ $search: { index: 'gameSearch', text: { query: req.query.q, path: { wildcard: '*' }}}})
+    if (req.query.q) pipeline.push({ $search: { index: 'gameSearch', text: { query: req.query.q, path: { wildcard: '*' }, fuzzy: {} }}})
     pipeline.push({ $match: query })
     if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
     if (req.query.skip) pipeline.push({ $skip: Number(req.query.skip) })

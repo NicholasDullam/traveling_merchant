@@ -1,5 +1,6 @@
 const Order = require('../models/order')
 const Product = require('../models/product')
+const mongoose = require('mongoose')
 
 const { transferToSellerFromOrder, createPaymentIntentFromOrder, verifyPaymentIntent } = require('./stripeController')
 const { addJob, removeJob } = require('../cron')
@@ -156,7 +157,10 @@ const getSort = (sortString) => {
 }
 
 const getOrders = async (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit'], pipeline = []
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit'], indices=['buyer', 'seller'], pipeline = []
+    indices.forEach((el) => {
+        if (query[el]) query[el] = mongoose.Types.ObjectId(query[el])
+    })
     reserved.forEach((el) => delete query[el])
 
     pipeline.push({ $match: query })
@@ -206,7 +210,7 @@ console.log("queryPromise: " + queryPromise);
         queryPromise = queryPromise.select('unit_price created_at');
     
         queryPromise.then((response) => {
-            if (response[0].createdAt < last_updated) {
+            if (response[0].created_at < last_updated) {
                 returnJSON.points.push({"price":current_price,"time":last_updated});
             }
             response.forEach((el) => {

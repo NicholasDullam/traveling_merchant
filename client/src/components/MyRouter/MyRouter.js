@@ -13,10 +13,10 @@ const MyRouter = (props) =>{
     const location= useLocation();
 
     return (
-        <AnimatePresence exitBeforeEnter>
+        <div>
         { props.isLoggedIn ? <Messenger/> : null }
         { props.isLoggedIn ? <Notifications/> : null }
-        <Switch location={location} key={location.pathname}>
+        <Switch location={location}>
           { !props.isLogging ? <Switch>
               {/* Do not contain sub-routes */}
               <Route path="/login" exact component={Login}/>
@@ -36,7 +36,7 @@ const MyRouter = (props) =>{
               <Route component={NotFoundPage} />
             </Switch> : null }
         </Switch>
-        </AnimatePresence>
+        </div>
     )
 }
 
