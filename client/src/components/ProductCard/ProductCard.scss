@@ -1,31 +1,26 @@
 $color: #8baf83;
+
 .card {
     background-color: transparent;
 }
 
 .btn-primary {
     background-color: var(--color-green);
-    border-color:  var(--color-green);
     border-radius: 2em;
-  }
+    border: none;
+}
+
 .btn-primary:hover{
     background-color: #44524E;
-    border-color:  44524E;
-    border-radius: 2em;
-    border:none;
     box-shadow:none;
 }
+
 .btn-primary:focus{
     background-color: #44524E;
-    border-color:  44524E;
-    border-radius: 2em;
-    border:none;
     box-shadow:none;
 }
+
 .btn-primary:active{
     background-color: #44524E;
-    border-color:  44524E;
-    border-radius: 2em;
-    border:none;
     box-shadow:none;
 }
