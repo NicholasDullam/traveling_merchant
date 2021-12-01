@@ -107,6 +107,10 @@ const Game = (props) => {
         })
     }
 
+const getSeller = () => {
+    
+}
+
     const handleSearch = () => {
         let params = { game: game_id, limit, skip: (page - 1) ? (page - 1) * limit : 0 }, queryString = generateQueryString()
 

@@ -10,6 +10,9 @@ const Order = (props) => {
     const [order, setOrder] = useState(null)
     const [affiliate, setAffiliate] = useState(null)
 
+    const [newExp, setNewExp] = useState(0);
+    const [userLevel, setUserLevel] = useState(0);
+
     const auth = useContext(AuthContext)
     const messenger = useContext(MessengerContext)
     const history = useHistory()
@@ -38,6 +41,36 @@ const Order = (props) => {
         }).catch((error) => {
             console.log(error)
         })
+
+        const increment = order.total_cost * 100;
+console.log("increment:" + increment);
+        //TODO: increment must not be 1, it must be proportional to price
+        api.updateUserById(order.seller, { $inc: {exp:increment}}).then((res)=> {
+console.log(res.data);
+        }).catch((error)=> {
+            console.log(error);
+        })
+        
+//This may be useless if the previous call returns the updated doc instead of the original doc, but oh well
+        api.getUserById(order.seller).then((res) => {
+            setNewExp(res.data.exp);
+        }).catch((error)=> {
+            console.log(error);
+        })
+
+        console.log(newExp)
+
+       setUserLevel(Math.floor(newExp/1000));
+
+       console.log(userLevel);
+
+       api.updateUserById(order.seller, {lvl: userLevel}).then((res) => {
+           console.log(res.data);
+       }).catch((error)=> {
+        console.log(error);
+    })
+
+
     }
 
     const denyOrder = () => {
