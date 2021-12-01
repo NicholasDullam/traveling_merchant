@@ -11,7 +11,7 @@ const Orders = (props) => {
     const [sellOrders, setSellOrders] = useState([])
 
     useEffect(() => {
-        api.getOrders({ params: { buyer: auth.user._id, sort: '-created_at', limit: 5 }}).then((response) => {
+        api.getOrders({ params: { buyer: auth.user._id, sort: 'created_at', limit: 5 }}).then((response) => {
             setBuyOrders(response.data.data)
         }).catch((error) => {
             console.log(error)
@@ -19,7 +19,7 @@ const Orders = (props) => {
     }, [])
 
     useEffect(() => {
-        api.getOrders({ params: { seller: auth.user._id, sort: '-created_at', limit: 5 }}).then((response) => {
+        api.getOrders({ params: { seller: auth.user._id, sort: 'created_at', limit: 5 }}).then((response) => {
             setSellOrders(response.data.data)
         }).catch((error) => {
             console.log(error)
