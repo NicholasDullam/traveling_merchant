@@ -17,13 +17,21 @@ const ViewGallery = (props) => {
         })
     }, [])
 
+    var viewComponent = "";
+
+   if(views.length > 0) {
+    viewComponent =   views.map((view, i) => {
+        return <ProductCard key={i} product={view.product}/>
+    })
+   }
+  
+
     return (
         <div>
-            {
-                views.map((view, i) => {
-                    return <ProductCard key={i} product={view.product}/>
-                })
-            }
+            {console.log(views.length)}
+            {viewComponent}
+      
+
         </div>
     )
 }

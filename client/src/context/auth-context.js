@@ -6,7 +6,9 @@ import { createContext } from 'react';
   user: null,
   token: null,
   login: () => {},
-  logout: () => {}
+  logout: () => {},
+  changeCookies: ()=> {},
+  hasCookies: false
 });
 
 export default AuthContext;
