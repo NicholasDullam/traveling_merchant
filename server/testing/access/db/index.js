@@ -19,7 +19,7 @@ const verify = async () => {
 
     for (i = 0; i < 125; i++) {
         let start = Date.now()
-        await Product.find({}, { limit: 1 })
+        await Product.find({}).limit(1)
         products.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
@@ -30,7 +30,7 @@ const verify = async () => {
 
     for (i = 0; i < 125; i++) {
         let start = Date.now()
-        await Order.find({}, { limit: 1 })
+        await Order.find({}).limit(1)
         orders.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
@@ -41,7 +41,7 @@ const verify = async () => {
 
     for (i = 0; i < 125; i++) {
         let start = Date.now()
-        await Game.find({}, { limit: 1 })
+        await Game.find({}).limit(1)
         games.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
@@ -52,7 +52,7 @@ const verify = async () => {
 
     for (i = 0; i < 125; i++) {
         let start = Date.now()
-        await User.find({}, { limit: 1 })
+        await User.find({}).limit(1)
         users.push(Date.now() - start)
         process.stdout.clearLine()
         process.stdout.cursorTo(0)

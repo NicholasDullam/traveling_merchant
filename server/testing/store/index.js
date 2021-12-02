@@ -8,7 +8,7 @@ const db = require('../../db')
 db.on('error', console.error.bind(console, 'MongoDB Connection Error:'))
 
 const verify = async () => {
-    let ids = [], sampleInstance = [], iterations = 10000, batch = 100, samples = 5
+    let ids = [], sampleInstance = [], iterations = 50000, batch = 100, samples = 5
 
     console.clear()
 

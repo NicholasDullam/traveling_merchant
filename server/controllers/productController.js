@@ -219,11 +219,7 @@ const getViewModes = async (user_id) => {
         }
     ])
 
-    if (!type[0]) {
-        return {};
-    }
-
-    return { type: type[0]._id, platform: platform[0]._id, server: server[0]._id }
+    return { type: type[0] ? type[0]._id : null, platform: platform[0] ? platform[0]._id : null, server: server[0] ? server[0]._id : null }
 }
 
 const getRecommended = async (req, res) => {
