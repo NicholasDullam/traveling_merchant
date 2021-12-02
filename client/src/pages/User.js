@@ -183,6 +183,9 @@ const User = (props) => {
                         <div style={{ display: 'flex', alignItems: 'center' }}>
                             <Ratings user_id={user._id}/>
                         </div>
+                        <br/>
+                        <a style={{backgroundColor: 'black', color:'white', padding:'10px', borderRadius: '14px', margin:'10px'}}>  level {user.lvl?user.lvl: 0}</a>
+
                     </div>
                     <div style={{ marginLeft: 'auto' }} >
                         { user._id != auth.userId && auth.userId ? <div>
