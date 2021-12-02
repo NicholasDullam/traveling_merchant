@@ -121,6 +121,7 @@ const User = (props) => {
 
     const [follower, setFollower] = useState(null)
     const { user_id } = useParams()
+    const [orderCount, setOrderCount] = useState(-1)
 
     useEffect(() => {
         api.getUserById(user_id).then((response) => {
@@ -142,6 +143,8 @@ const User = (props) => {
             console.log(error)
         })
     }, [user])
+
+
 
     const handleMessage = () => {
         messenger.open(user_id)

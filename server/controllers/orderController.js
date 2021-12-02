@@ -194,7 +194,7 @@ const getOrders = async (req, res) => {
     })
 }
 
-const getPricing = async (req, res) => {
+const getPricing = async (req, res) => {  // getPricing is used to create the graph
     let { _id } = req.params;
     if (!_id) return res.status(400).json({error:"No product"})
     var current_price;
@@ -205,7 +205,7 @@ const getPricing = async (req, res) => {
         current_price = doc.unit_price;
         last_updated = doc.updated_at;
         let queryPromise = Order.find({product:_id});
-    
+console.log("queryPromise: " + queryPromise);
         queryPromise = queryPromise.sort('-created_at');
         queryPromise = queryPromise.select('unit_price created_at');
     
