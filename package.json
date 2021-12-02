@@ -19,5 +19,6 @@
   "bugs": {
     "url": "https://github.com/NicholasDullam/traveling_merchant/issues"
   },
-  "homepage": "https://github.com/NicholasDullam/traveling_merchant#readme"
+  "homepage": "https://github.com/NicholasDullam/traveling_merchant#readme",
+  "dependencies": {}
 }
