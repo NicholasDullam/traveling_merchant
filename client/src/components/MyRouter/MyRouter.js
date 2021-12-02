@@ -1,6 +1,5 @@
-import react from 'react';
-import { AnimatePresence } from 'framer-motion';
-import { BrowserRouter as Router, Switch, Route, useLocation  } from "react-router-dom";
+import React from 'react';
+import { Switch, Route, useLocation  } from "react-router-dom";
 import { Messenger, Notifications } from '../../components'
 import NotFoundPage from "../../pages/404";
 import Profile from '../../pages/Profile';
@@ -9,9 +8,7 @@ import { Home, Login, Signup, Product, Checkout, Admin, Game, User, Games, Order
 
 
 const MyRouter = (props) =>{
-
     const location= useLocation();
-
     return (
         <div>
         { props.isLoggedIn ? <Messenger/> : null }
