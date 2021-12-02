@@ -318,8 +318,8 @@ const Product = (props) => {
                         }
                     </div>
 
-                    <div className="price-history" style={{ borderBottom: '1px solid rgba(0,0,0,.1)'}}>
-                            <h4>Price History</h4>
+                    <div className="price-history" style={{ marginTop: '40px' }}>
+                            <h4 style={{ marginBottom: '20px' }}>Price History</h4>
 
 <LineChart
   width={400}
