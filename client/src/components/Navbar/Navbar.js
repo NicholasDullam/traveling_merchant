@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 
 import { Link, useHistory, useLocation } from "react-router-dom";
 
@@ -6,9 +6,6 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 import 'bootstrap/dist/js/bootstrap.js';
-import $ from 'jquery';
-import Popper from 'popper.js';
-
 import AuthContext from "../../context/auth-context";
 
 import MessengerContext from "../../context/messenger-context";
@@ -20,6 +17,7 @@ import api from "../../api";
 import NotificationContext from "../../context/notification-context";
 import { IoIosNotifications } from 'react-icons/io'
 import { RiMessage3Fill } from 'react-icons/ri'
+import { BiMenuAltRight } from 'react-icons/bi'
 
 const NavElement = (props) => {
     return (
@@ -37,6 +35,7 @@ const Divider = (props) => {
 
 const Navbar = (props) => {
   const [profileExpanded, setProfileExpanded] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
 
   const auth = useContext(AuthContext);
   const messenger = useContext(MessengerContext)
@@ -44,6 +43,7 @@ const Navbar = (props) => {
   const history = useHistory()
   const location = useLocation()
   const profileRef = useRef()
+  const mobileRef = useRef()
 
   const handleLogout = () => {
     api.logout().then((response) => {
@@ -80,12 +80,12 @@ const Navbar = (props) => {
   return (
     <nav style={{ position: 'sticky', top: '0px', width: '100%', zIndex: '2', backgroundColor: 'black', padding: '7px', userSelect: 'none' }}>
       <div style={{ display: 'flex', alignItems: 'center', userSelect: 'none' }}>
-        <Link to="/" style={{ textDecoration: 'none' }}>
+        <Link to="/" style={{ textDecoration: 'none', padding: '10px' }}>
           <h1 style={{ marginLeft: '10px', marginBottom: '0px' }} className="navbar-brand">
               TM
           </h1>
         </Link>
-        <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+        { window.innerWidth > 600 ? <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
             <SearchBar/>
             { auth.isLoggedIn && auth.user.admin ? <Link to='/admin/users' style={{ outline: 'none', color: 'white', textDecoration: 'none' }}>
                 <NavElement> <p style={{ marginBottom: '0px', fontWeight: 'bold' }}> Admin </p> </NavElement>
@@ -107,8 +107,10 @@ const Navbar = (props) => {
                     </Link>
                 </div> }
             </div>
-        </div>
-      </div>
+        </div> : <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }} onClick={() => setMobileOpen(!mobileOpen)}>
+            <BiMenuAltRight style={{ color: 'white', fontSize: '24px', marginRight: '20px' }}/>
+        </div> }
+      </div> 
       { auth.isLoggedIn && profileExpanded ? <div className="profile-toggle"  style={{ position: 'absolute', top: getClientBoundingRect().bottom + 10, left: getClientBoundingRect().right + 5,  transform: 'translateX(-100%)', boxShadow: '0 0px 20px 10px rgba(0,0,0,.08)', padding: '15px', borderRadius: '10px', width: '200px', zIndex: '4'}} onClick={() => setProfileExpanded(false)}>
           <div className="profile-toggle" style={{ position: 'absolute', transform: 'rotate(45deg)', width: '15px', height: '15px', top: '-3px', right: '12px', borderRadius: '2px' }} />
           <Link to={`/users/${auth.user._id}`} style={{ outline: 'none', color: 'inherit', textDecoration: 'none' }}>
@@ -143,6 +145,19 @@ const Navbar = (props) => {
           <h6 style={{ marginBottom: '5px', cursor: 'pointer' }} onClick={handleLogout}> Sign Out </h6>
       </div> : null }
       { auth.isLoggedIn && profileExpanded ? <div onClick={() => setProfileExpanded(false)} style={{ width: '100%', height: '100%', position: 'fixed', zIndex: '3' }}/> : null }
+      { window.innerWidth < 600 ? <div style={{ height: mobileOpen ? mobileRef.current.getBoundingClientRect().height + 30 : '0px', transition: 'height 300ms ease', overflow: 'hidden' }}>
+            <div ref={mobileRef}>
+              { auth.user && auth.isLoggedIn ? <div>
+                  <p style={{ marginBottom: '0px', fontWeight: 'bold', textAlign: 'center', outline: 'none', color: 'white', textDecoration: 'none', padding: '2px', cursor: 'pointer' }} onClick={handleMessengerClick}> Messages </p>
+                  <p style={{ marginBottom: '0px', fontWeight: 'bold', textAlign: 'center', outline: 'none', color: 'white', textDecoration: 'none', padding: '2px', cursor: 'pointer' }} onClick={handleNotificationsClick}> Notifications </p>
+                  <p style={{  marginBottom: '0px', fontWeight: 'bold', textAlign: 'center', outline: 'none', color: 'white', textDecoration: 'none', padding: '2px', cursor: 'pointer' }} onClick={() => history.push('/profile/info')}> Profile </p>
+                  <p style={{  marginBottom: '0px', fontWeight: 'bold', textAlign: 'center', outline: 'none', color: 'white', textDecoration: 'none', padding: '2px', cursor: 'pointer' }} onClick={handleLogout}> Logout </p>
+                </div> : <div>
+                  <p style={{  marginBottom: '0px', fontWeight: 'bold', textAlign: 'center', outline: 'none', color: 'white', textDecoration: 'none', padding: '2px', cursor: 'pointer' }} onClick={() => history.push('/login')}> Login </p>
+                  <p style={{  marginBottom: '0px', fontWeight: 'bold', textAlign: 'center', outline: 'none', color: 'white', textDecoration: 'none', padding: '2px', cursor: 'pointer' }} onClick={() => history.push('/signup')}> Sign Up </p>
+                </div> }       
+            </div>
+        </div> : null }
     </nav>
   );
 };
