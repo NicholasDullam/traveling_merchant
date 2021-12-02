@@ -43,25 +43,28 @@ const getProducts = (req, res) => {
     
     pipeline.push({ $match: query })
 
-    if (req.query.expand) req.query.expand.forEach((instance) => {
-        instance = instance.split('.')
-        pipeline.push(
-            { 
-                $lookup: {
-                    from: "users",
-                    localField: "user",
-                    foreignField: "_id",
-                    as: "user"
+    if (req.query.expand) {
+        let expansion = typeof req.query.expand == 'string' ? JSON.parse(req.query.expand) : req.query.expand
+        expansion.forEach((instance) => {
+            instance = instance.split('.')
+            pipeline.push(
+                { 
+                    $lookup: {
+                        from: "users",
+                        localField: "user",
+                        foreignField: "_id",
+                        as: "user"
+                    }
                 }
-            }
-        )
+            )
 
-        pipeline.push(
-            {
-                $unwind: "$user"
-            }
-        )
-    })    
+            pipeline.push(
+                {
+                    $unwind: "$user"
+                }
+            )
+        })    
+    }
 
     pipeline.push({ $sort: { ...getSort(req.query.sort), "user.lvl": -1 } })
     
