@@ -96,78 +96,20 @@ const Game = (props) => {
         if (game) handleSearch()
     }, [game, page, limit, sort, productType, server, platform])
 
-
-
-    //sort products based on user level
-const sortProducts = (data) => {
-    if(data.length <2) {
-        return;
-    }
-    console.log(data);
-var productAndLevel = [];
-    data.forEach(product => {
-        console.log(product)
-        api.getUserById(product.user).then((response) => {
-           console.log(response.data.lvl)
-            const obj = new Object();
-            obj.product = product;
-            obj.level = response.data.lvl;
-            productAndLevel.push (obj);
-               
-        })
-    })
-
-    console.log(productAndLevel);
-
-for(var i = 0 ; i < productAndLevel.length; i++) {
-    for(var j  = 1; j < productAndLevel.length; j++) {
-        if(productAndLevel[i].level > productAndLevel[j].level) {
-            var temp = productAndLevel[j];
-            productAndLevel[j] = productAndLevel[i];
-            productAndLevel[i] = temp;
-        }
-    }
-}
-var sortedProducts = [];
-var count = 0;
-
-console.log(productAndLevel.length)
-for(var k = 0; k < productAndLevel.length; k++) {
-    console.log("yo pls print: " + productAndLevel[i]);
-    // var obj = productAndLevel[i];
-    //  console.log("product: "+ obj.product  +  ", level: " + obj.level);
-    //  sortedProducts.push(obj.product)
-}
-
- console.log(sortedProducts);
-
-
-}
-
-
-
-async function getProducts (req) {
-    const data = await api.getProducts({ params: req }).then((response) => {
+    const getProducts = async (req) => {
+        await api.getProducts({ params: req }).then((response) => {
             let { data, results } = response.data
             setProducts(data)
             setHasMore(results.has_more)
             setCount(results.count)
-            console.log("sort products");
             return data;
         }).catch((error) => {
             console.log(error)
         })
-
-        sortProducts(data)
-
     }
 
-const getSeller = () => {
-
-}
-
     const handleSearch = () => {
-        let params = { game: game_id, limit, skip: (page - 1) ? (page - 1) * limit : 0 }, queryString = generateQueryString()
+        let params = { game: game_id, limit, skip: (page - 1) ? (page - 1) * limit : 0, expand: ['seller'] }, queryString = generateQueryString()
 
         if (name.length) params.q = name 
         if (productType.length) params.type = productType
