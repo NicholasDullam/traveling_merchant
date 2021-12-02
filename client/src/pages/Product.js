@@ -11,6 +11,8 @@ import { VscRemote, VscGraphLine } from 'react-icons/vsc'
 import { MdOutlineMarkEmailUnread } from 'react-icons/md'
 import MessengerContext from '../context/messenger-context'
 
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec']
+
 const DeliverySelector = (props) => {
     const [refs, setRefs] = useState({})
     const [selectedRef, setSelectedRef] = useState(null)
@@ -140,8 +142,14 @@ const Product = (props) => {
 
     useEffect(() => {
         api.getPricing(product_id).then((response) => {
-            setPricing(JSON.parse(response).points)
-            console.log(pricing) // TODO : Does this work? Does it display anything in the console (i.e, if you open localhost:3000 on your browser and right click and go to inspect > console ?  
+            setPricing(response.data.points.map((point) => {
+                let date = new Date(point.time)
+                return {
+                    price: point.price,
+                    time: `${months[date.getMonth()]} ${date.getDate()}`
+                }
+            }))
+            console.log(response.data.points) // TODO : Does this work? Does it display anything in the console (i.e, if you open localhost:3000 on your browser and right click and go to inspect > console ?  
         }).catch((error) => {
             console.log(error)
         })
@@ -316,12 +324,12 @@ const Product = (props) => {
 <LineChart
   width={400}
   height={400}
-  data={data}
+  data={pricing}
 >
 
   <Tooltip />
   <Line type="monotone" dataKey="price" stroke="#ff7300" isAnimationActive={false} />
-  <XAxis dataKey="name" />
+  <XAxis dataKey="time" />
   <YAxis/>
   
 

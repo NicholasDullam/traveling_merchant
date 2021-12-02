@@ -196,28 +196,27 @@ const getOrders = async (req, res) => {
 
 const getPricing = async (req, res) => {  // getPricing is used to create the graph
     let { _id } = req.params;
-    if (!_id) return res.status(400).json({error:"No product"})
-    var current_price;
-    var last_updated;
-    var returnJSON = { "points": []};
-    Product.findById(_id).then((doc) => {
-        if (!doc) return res.status(400).json({error:"No product found"})
-        current_price = doc.unit_price;
-        last_updated = doc.updated_at;
-        let queryPromise = Order.find({product:_id});
-console.log("queryPromise: " + queryPromise);
-        queryPromise = queryPromise.sort('-created_at');
-        queryPromise = queryPromise.select('unit_price created_at');
+    if (!_id) return res.status(400).json({ error: "No product" })
+
+    let current_price
+    let last_updated
+    let points = []
     
-        queryPromise.then((response) => {
-            if (response[0].created_at < last_updated) {
-                returnJSON.points.push({"price":current_price,"time":last_updated});
-            }
-            response.forEach((el) => {
-                returnJSON.points.push({"price":el.unit_price,"time":el.created_at});
-            })
-            res.status(200).json(returnJSON)
-        })
+    Product.findById(_id).then((response) => {
+        if (!response) return res.status(400).json({ error: "No product found" })
+        current_price = response.unit_price;
+        last_updated = response.updated_at;
+
+        let queryPromise = Order.find({ product: _id });
+        queryPromise = queryPromise.sort('created_at');
+        queryPromise = queryPromise.select('unit_price created_at');
+        return queryPromise
+    }).then((response) => {
+        response.forEach((el) => points.push({ "price": el.unit_price, "time": el.created_at }))
+        points.push({ "price": current_price, "time": Date.now() });
+        res.status(200).json({ points })
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
     })
 }
 
