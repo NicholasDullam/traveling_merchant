@@ -38,7 +38,9 @@ const Login = (props) => {
         return new URLSearchParams(props.location.search).get("redirect_uri")
     }
 
+
     return (
+   
         <div style={{ display: 'flex', alignItems: 'center' }}>
             <div style={{ width: window.innerWidth < 600 ? '100%' : '800px', padding: '5%', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white', borderRadius: '0px 50px 50px 0px', zIndex: '1', boxShadow: '0 0px 20px 10px rgba(255,255,255,.1)'}}>
                 <Link to="/" style={{ textDecoration: 'none', position: 'absolute', top: '50px', left: '50px', backgroundColor: 'black', padding: '12px', borderRadius: '15px' }}>
@@ -62,6 +64,7 @@ const Login = (props) => {
                 <img alt='gamer sidebar' src={gamer2} style={{ width: '100%', height: '100vh', objectFit: 'cover' }}/>
             </div> : null }
         </div>
+   
     )
 }
 

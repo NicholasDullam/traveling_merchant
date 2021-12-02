@@ -1,5 +1,6 @@
 const Order = require('../models/order')
 const Product = require('../models/product')
+const mongoose = require('mongoose')
 
 const { transferToSellerFromOrder, createPaymentIntentFromOrder, verifyPaymentIntent } = require('./stripeController')
 const { addJob, removeJob } = require('../cron')
@@ -26,7 +27,7 @@ const handlePastDueConfirmations = () => {
 }
 
 const createOrder = async (req, res) => {
-    let { product, quantity, requirements } = req.body
+    let { product, quantity, requirements, delivery_type } = req.body
     
     if (!product) return res.status(400).json({ error: 'No products in order'})
     product = await Product.findById(product)
@@ -40,6 +41,7 @@ const createOrder = async (req, res) => {
         seller: product.user,
         status: 'payment_pending',
         product: product._id,
+        delivery_type,
         requirements,
         quantity,
         unit_price: product.unit_price,
@@ -155,7 +157,10 @@ const getSort = (sortString) => {
 }
 
 const getOrders = async (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit'], pipeline = []
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit'], indices=['buyer', 'seller'], pipeline = []
+    indices.forEach((el) => {
+        if (query[el]) query[el] = mongoose.Types.ObjectId(query[el])
+    })
     reserved.forEach((el) => delete query[el])
 
     pipeline.push({ $match: query })
@@ -183,36 +188,35 @@ const getOrders = async (req, res) => {
     })
 
     Order.aggregate(pipeline).then((response) => {
-        return res.status(200).json({ ...response[0], results: { ...response[0].results, has_more: (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < response[0].results.count }})    
+        return res.status(200).json({ ...response[0], results: { count: response[0].results ? response[0].results.count : 0, has_more: (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < (response[0].results ? response[0].results.count : 0) }})    
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })
 }
 
-const getPricing = async (req, res) => {
+const getPricing = async (req, res) => {  // getPricing is used to create the graph
     let { _id } = req.params;
-    if (!_id) return res.status(400).json({error:"No product"})
-    var current_price;
-    var last_updated;
-    var returnJSON = { "points": []};
-    Product.findById(_id).then((doc) => {
-        if (!doc) return res.status(400).json({error:"No product found"})
-        current_price = doc.unit_price;
-        last_updated = doc.updated_at;
-        let queryPromise = Order.find({product:_id});
+    if (!_id) return res.status(400).json({ error: "No product" })
+
+    let current_price
+    let last_updated
+    let points = []
     
-        queryPromise = queryPromise.sort('-created_at');
+    Product.findById(_id).then((response) => {
+        if (!response) return res.status(400).json({ error: "No product found" })
+        current_price = response.unit_price;
+        last_updated = response.updated_at;
+
+        let queryPromise = Order.find({ product: _id });
+        queryPromise = queryPromise.sort('created_at');
         queryPromise = queryPromise.select('unit_price created_at');
-    
-        queryPromise.then((response) => {
-            if (response[0].createdAt < last_updated) {
-                returnJSON.points.push({"price":current_price,"time":last_updated});
-            }
-            response.forEach((el) => {
-                returnJSON.points.push({"price":el.unit_price,"time":el.created_at});
-            })
-            res.status(200).json(returnJSON)
-        })
+        return queryPromise
+    }).then((response) => {
+        response.forEach((el) => points.push({ "price": el.unit_price, "time": el.created_at }))
+        points.push({ "price": current_price, "time": Date.now() });
+        res.status(200).json({ points })
+    }).catch((error) => {
+        return res.status(400).json({ error: error.message })
     })
 }
 

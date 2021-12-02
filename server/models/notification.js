@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const User = require('./user');
 const nodeMailer = require('nodemailer')
 
-// Notification Schema
 const Notification = new mongoose.Schema({
     sender: { type: mongoose.Types.ObjectId, ref: 'User' },
     receiver: { type: mongoose.Types.ObjectId, ref: 'User' },
@@ -35,7 +34,7 @@ Notification.post('save', async (doc, next) => {
         html : '<h1>You have a new notification :D</h1>'
     }
 
-    await transport.sendMail(mailer)
+    transport.sendMail(mailer)
     next()
 })
 

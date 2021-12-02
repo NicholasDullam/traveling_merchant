@@ -185,9 +185,7 @@ const CheckoutInterface = (props) => {
                         </div>
                     </div> 
                 </div>
-                <div style={{ backgroundColor: '#68B2A0', width: '100%', height: '40px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer'}} onClick={handleSubmit}>
-                    <h6 style={{ color: 'white', textAlign: 'center', marginBottom: '0px' }}> Place Order </h6>
-                </div>
+                <button style={{ width: '100%', marginTop: '10px', borderRadius: '10px' }} className="btn btn-primary" onClick={handleSubmit}> Create Order </button>
             </div>
         </div>
     )

@@ -1,18 +1,17 @@
 const Product = require('../models/product')
 const View = require('../models/view')
 const mongoose = require('mongoose')
-const order = require('../models/order')
+const Order = require('../models/order')
 
 const createProduct = async (req, res) => {
-    let { name, type, delivery_type, delivery_speed, description, unit_price, min_quantity, stock, game } = req.body
-    if (!name || !type || !delivery_type || !delivery_speed || !description || !unit_price || !min_quantity || !stock || !game) return res.status(400).json({ error: "Invalid input"})
+    let { name, type, delivery_types, description, unit_price, min_quantity, stock, game } = req.body
+    if (!name || !type || !delivery_types || !description || !unit_price || !min_quantity || !stock || !game) return res.status(400).json({ error: "Invalid input"})
     let product = new Product({
         user: req.user.id,
         game,
         name,
         type,
-        delivery_type,
-        delivery_speed,
+        delivery_types,
         description,
         unit_price,
         min_quantity,
@@ -28,20 +27,43 @@ const createProduct = async (req, res) => {
 
 const getSort = (sortString) => {
     let direction = 1
+    if (!sortString) return {}
     if (sortString.indexOf('-')) direction = -1
     return { [sortString.replace('-', '')]: direction }
 }
 
 const getProducts = (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q', 'online'], indices = ['game', 'user'], pipeline = []
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q', 'online', 'expand'], indices = ['game', 'user'], pipeline = []
     indices.forEach((el) => {
         if (query[el]) query[el] = mongoose.Types.ObjectId(query[el])
     })
     reserved.forEach((el) => delete query[el])
 
     if (req.query.q) pipeline.push({ $search: { index: 'productSearch', text: { query: req.query.q, path: { wildcard: '*' }}}})
+    
     pipeline.push({ $match: query })
-    if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
+
+    if (req.query.expand) req.query.expand.forEach((instance) => {
+        instance = instance.split('.')
+        pipeline.push(
+            { 
+                $lookup: {
+                    from: "users",
+                    localField: "user",
+                    foreignField: "_id",
+                    as: "user"
+                }
+            }
+        )
+
+        pipeline.push(
+            {
+                $unwind: "$user"
+            }
+        )
+    })    
+
+    pipeline.push({ $sort: { ...getSort(req.query.sort), "user.lvl": -1 } })
     
     // paginate pipeline facet
     pipeline.push({
@@ -65,7 +87,7 @@ const getProducts = (req, res) => {
     })
 
     Product.aggregate(pipeline).then((response) => {
-        return res.status(200).json({ ...response[0], results: { ...response[0].results, has_more: (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < response[0].results.count }})    
+        return res.status(200).json({ ...response[0], results: { count: response[0].results ? response[0].results.count : 0, has_more: (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < (response[0].results ? response[0].results.count : 0) }})    
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })
@@ -73,7 +95,16 @@ const getProducts = (req, res) => {
 
 const getProductById = (req, res) => {
     let { _id } = req.params
-    Product.findById(_id).then((response) => {
+    let queryPromise = Product.findById(_id)
+
+
+    if (req.query.expand) req.query.expand.forEach((instance) => {
+        instance = instance.split('.')
+        if (instance.length > 1) return queryPromise.populate({ path: instance[0], populate: { path: instance[1] }})
+        return queryPromise.populate(instance)
+    })
+
+    queryPromise.then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(200).json({ error: error.message })
@@ -234,32 +265,49 @@ const getSimilar = async (req, res) => {
 
 const getOthersPurchase = async (req, res) => {
     let { _id } = req.params
-    const filter = { product: _id };
-    let users = await order.find(filter).select('buyer');
-    if (!users) return res.status(400).json({ error: 'no other users found'});
-    users = users.map(function(el) { return mongoose.Types.ObjectId(el.buyer)});
 
-    let orders = await order.aggregate([
-        {$match: {'buyer': { $in: users}}},
+    let buyers = await Order.aggregate([
+        { 
+            $match: {
+                product: mongoose.Types.ObjectId(_id) 
+            } 
+        },
+        {
+            $group: {
+                _id: '$buyer'
+            }
+        }
+    ])
+
+    if (!buyers.length) return res.status(400).json({ error: 'No other buyers found' });
+
+    let products = await Order.aggregate([
+        {
+            $match: {
+                'buyer': { 
+                    $in: buyers.map((buyer) => buyer._id)
+                }
+            }
+        },
+        {
+            $group: {
+                _id: '$product'
+            }
+        },
         { 
             $lookup: {
                 from: "products",
-                localField: "product",
+                localField: "_id",
                 foreignField: "_id",
                 as: "product"
             }
+        },
+        {
+            $limit: 5
         }
-
     ]);
-    var products = []
-    for (var i = 0; i < orders.length; i++) {
-        for (var j = 0; j < orders[i].product.length; j++) {
-            products.push(orders[i].product[j]);
-            if (orders[i].product[j]._id != _id) {
-                products.push(orders[i].product[j])
-            }
-        }
-    }
+
+    products = products.map((product) => product.product[0])
     return res.status(200).json(products)
 }
 

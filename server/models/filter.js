@@ -1,6 +1,4 @@
-var mongoose = require('mongoose');
-
-// Filter Schema
+const mongoose = require('mongoose');
 
 const Filter = new mongoose.Schema({
     word: String

@@ -19,11 +19,11 @@ const Ratings = (props) => {
     const generateStars = (count) => {
         let arr = []
         for (let i = 0; i < count; i++) {
-            arr[i] = <FaStar key={i}/>
+            arr[i] = <FaStar key={i} style={{ display: 'block' }}/>
         }
 
         for (let i = count; i < 5; i++) {
-            arr[i] = <FaStar key={i} style={{ opacity: '.2' }}/>
+            arr[i] = <FaStar key={i} style={{ opacity: '.2', display: 'block' }}/>
         }
 
         return arr
@@ -31,15 +31,15 @@ const Ratings = (props) => {
 
     let arr = generateStars(count)
 
-    if (props.count) return <div> {arr} </div>
+    if (props.count) return <div style={{ display: 'flex' }}> {arr} </div>
 
     return (
-        reviewRating !== null ? <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div>
+        reviewRating !== null ? <div style={{ display: 'flex', alignItems: 'center', ...props.style }}>
+            <div style={{ display: 'flex' }}>
                 {arr}
             </div>
             <p style={{ marginLeft: '5px', marginBottom: '-3px' }}> {reviewRating}% </p>
-        </div> : <p style={{ marginBottom: '0px' }}> No Reviews </p>
+        </div> : <p style={{ marginBottom: '0px', ...props.style }}> No Reviews </p>
     )
 
 }

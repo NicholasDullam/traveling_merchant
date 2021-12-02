@@ -10,9 +10,9 @@ const Admin = (props) => {
 
     return (
         <Layout navbar>
-            <h1> Admin </h1>
-            <div style={{ display: 'flex', flexGrow: '1', position: 'relative', marginTop: '10px' }}>
-                <TabSelector style={{ marginRight: '50px' }} selected={location.pathname} handleRouter={(pathname) => history.push(pathname)} tabs={[
+            <h1 style={{ marginBottom: '20px'}}> Admin </h1>
+            <div style={{ display: 'flex', flexDirection: window.innerWidth < 600 ? 'column' : 'row', flexGrow: '1', position: 'relative' }}>
+                <TabSelector horizontal={window.innerWidth < 600} style={{ marginRight: '50px', marginBottom: '20px' }} selected={location.pathname} handleRouter={(pathname) => history.push(pathname)} tabs={[
                     {
                         name: 'Users',
                         pathname: '/admin/users'

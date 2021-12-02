@@ -74,7 +74,7 @@ const getUsers = async (req, res) => {
     })
 
     User.aggregate(pipeline).then((response) => {
-        return res.status(200).json({ ...response[0], results: { ...response[0].results, has_more: (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < response[0].results.count }})    
+        return res.status(200).json({ ...response[0], results: { count: response[0].results ? response[0].results.count : 0, has_more: (Number(req.query.skip) || 0) + (Number(req.query.limit) || 0) < (response[0].results ? response[0].results.count : 0) }})    
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
     })
@@ -92,6 +92,9 @@ const getUserById = async (req, res) => {
 
 const updateUserById = async (req, res) => {
     let { _id } = req.params 
+    console.log("updateUseById _id: " + _id);
+
+    console.log("updateUseById Req body: " + req.body);
     User.findByIdAndUpdate(_id, req.body, { new: true }).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {

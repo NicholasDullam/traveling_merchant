@@ -9,6 +9,9 @@ import MessengerContext from '../context/messenger-context'
 const Order = (props) => {
     const [order, setOrder] = useState(null)
     const [affiliate, setAffiliate] = useState(null)
+    const [isOrderConfirmed, setIsOrderConfirmed] = useState(false);
+    const [newExp, setNewExp] = useState(0);
+    const [userLevel, setUserLevel] = useState(0);
 
     const auth = useContext(AuthContext)
     const messenger = useContext(MessengerContext)
@@ -32,12 +35,45 @@ const Order = (props) => {
         }) 
     }, [order_id])
 
-    const confirmOrder = () => {
-        api.confirmOrder(order._id).then((response) => {
-            setOrder(response.data)
-        }).catch((error) => {
-            console.log(error)
+async function confirmOrder() {
+      
+
+        const increment = order.total_cost * 100;
+console.log("increment:" + increment);
+console.log("order.seller " + order.seller._id);
+        //TODO: increment must not be 1, it must be proportional to price
+   await     api.updateUserById(order.seller._id, { $inc: {exp:increment}}).then((res)=> {
+console.log(res.data);
+        }).catch((error)=> {
+            console.log(error);
         })
+        
+//This may be useless if the previous call returns the updated doc instead of the original doc, but oh well
+    var newExp =  await   api.getUserById(order.seller._id).then((res) => {
+           console.log(res.data.exp);
+           return res.data.exp
+        }).catch((error)=> {
+            console.log(error);
+        })
+
+        console.log(newExp)
+
+     var userLevel = Math.floor(newExp/1000);
+
+       console.log(userLevel);
+
+    await   api.updateUserById(order.seller._id, {lvl: userLevel}).then((res) => {
+           console.log(res.data);
+       }).catch((error)=> {
+        console.log(error);
+    })
+
+    api.confirmOrder(order._id).then((response) => {
+        setOrder(response.data)
+        setIsOrderConfirmed(true)
+    }).catch((error) => {
+        console.log(error)
+    })
     }
 
     const denyOrder = () => {
@@ -60,13 +96,16 @@ const Order = (props) => {
         switch(order.status) {
             case ('confirmation_pending') : {
                 return (
+                    <>
+                    {!isOrderConfirmed?
                     <div style={{ backgroundColor: 'rgba(0,0,0,.05)', borderRadius: '15px', display: 'flex', alignItems: 'center', padding: '20px' }}>
                         <h6 style={{ marginBottom: '0px' }}> Would you like to confirm your order? </h6>
                         <div style={{ marginLeft: 'auto', marginRight: '10px' }}>
                             <button className="btn btn-primary" style={{ marginRight: '20px' }} onClick={confirmOrder}> Confirm </button>
                             <button className="btn btn-primary" onClick={denyOrder}> Deny </button>
                         </div>
-                    </div>
+                    </div>: <p> Order confirmed </p>}
+                    </>
                 )
             }
 

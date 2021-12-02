@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Notification = require('./notification')
 
-// Order Schema
 const Order = new mongoose.Schema({
     buyer: { type: mongoose.Types.ObjectId, ref: 'User' },
     seller: { type: mongoose.Types.ObjectId, ref: 'User' },
@@ -18,6 +17,7 @@ const Order = new mongoose.Schema({
     quantity: Number,
     total_cost: Number,
     commission_fees: Number,
+    delivery_type: String,
     requirements: Object,
     metadata: Object
 }, { 

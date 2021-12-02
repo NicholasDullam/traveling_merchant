@@ -1,8 +1,6 @@
 const mongoose = require('mongoose')
 const Notification = require('./notification') 
 
-// Follower Schema
-
 const Follower = new mongoose.Schema({
     follower: { type:mongoose.Types.ObjectId, ref: 'User' },
     following: { type:mongoose.Types.ObjectId, ref: 'User' },
