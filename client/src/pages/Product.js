@@ -221,11 +221,11 @@ const Product = (props) => {
                 <div style={{ width: '100%', display: 'flex', flexDirection: window.innerWidth < 600 ? 'column' : 'row' }}>
                     { /* Media column */ }
                     <div style={{ width: '60%', marginRight: '50px' }}>
-                        <img src={product.media[selectedMedia]} style={{ height: '600px', width: '100%', backgroundColor: 'grey', borderRadius: '15px' }}/>
+                        <img src={product.media[selectedMedia]} style={{ height: '600px', width: '100%', backgroundColor: 'grey', borderRadius: '15px', objectFit: 'cover' }}/>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             {
                                 product.media.map((image, i) => {
-                                    return <img key={i} src={image} style={{ height: '50px', width: '50px', backgroundColor: 'grey', borderRadius: '10px', margin: '10px', boxShadow: i === selectedMedia ? '0px 0px 0px 4px #68B2A0' : null, transition: 'box-shadow 300ms ease', cursor: 'pointer' }} onClick={() => setSelectedMedia(i)}/>
+                                    return <img key={i} src={image} style={{ height: '50px', width: '50px', backgroundColor: 'grey', borderRadius: '10px', margin: '10px', boxShadow: i === selectedMedia ? '0px 0px 0px 4px #68B2A0' : null, transition: 'box-shadow 300ms ease', cursor: 'pointer', objectFit: 'cover' }} onClick={() => setSelectedMedia(i)}/>
                                 })
                             }
                         </div>   
