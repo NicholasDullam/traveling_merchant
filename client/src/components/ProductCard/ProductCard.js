@@ -29,7 +29,7 @@ const ProductCard = (props) => {
     return (
         props.product ? <div style={{ borderRadius: '25px', cursor: 'pointer', marginBottom: '10px', backgroundColor: 'rgba(0,0,0,.05)' }} onClick={handleClick}>
             <div style={{ padding: '25px', display: 'flex', alignItems: 'center' }}>
-                <img alt='product thumbnail' src={props.product.media.length ? props.product.media[0] : null} style={{ backgroundColor: 'grey', height: '70px', width: '70px', borderRadius: '15px' }} />
+                {/* <img alt='product thumbnail' src={props.product.media.length ? props.product.media[0] : null} style={{ backgroundColor: 'grey', height: '70px', width: '70px', borderRadius: '15px' }} /> */}
                 <div style={{ marginLeft: '20px' }}>
                     <h5 style={{ marginBottom: '0px' }}> {props.product.name} ({props.product.type}) </h5>
                     <h6 style={{ marginBottom: '0px'}}> ${props.product.unit_price / 100} per unit </h6>

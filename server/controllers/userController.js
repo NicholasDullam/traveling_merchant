@@ -91,6 +91,9 @@ const getUserById = async (req, res) => {
 
 const updateUserById = async (req, res) => {
     let { _id } = req.params 
+    console.log("updateUseById _id: " + _id);
+
+    console.log("updateUseById Req body: " + req.body);
     User.findByIdAndUpdate(_id, req.body, { new: true }).then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
