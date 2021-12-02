@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 
 // assume request has product
 const createView = async (req, res) => {
-    if (req.user.id) if (!req.user.cookies) return res.status(200).json({error: "User does not want cookies"})
+    if (req.user.id) if (!req.user.cookies) return res.status(400).json({error: "User does not want cookies"})
     let { product } = req.body;
     if (!product) return res.status(400).json({ error: "Invalid input"})
     token = req.cookies.view_history
