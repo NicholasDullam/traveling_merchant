@@ -145,7 +145,7 @@ const Navbar = (props) => {
           <h6 style={{ marginBottom: '5px', cursor: 'pointer' }} onClick={handleLogout}> Sign Out </h6>
       </div> : null }
       { auth.isLoggedIn && profileExpanded ? <div onClick={() => setProfileExpanded(false)} style={{ width: '100%', height: '100%', position: 'fixed', zIndex: '3' }}/> : null }
-      { window.innerWidth < 600 ? <div style={{ height: mobileOpen ? mobileRef.current.getBoundingClientRect().height + 30 : '0px', transition: 'height 300ms ease', overflow: 'hidden' }}>
+      { window.innerWidth < 600 ? <div style={{ height: mobileOpen && mobileRef && mobileRef.current ? mobileRef.current.getBoundingClientRect().height + 30 : '0px', transition: 'height 300ms ease', overflow: 'hidden' }}>
             <div ref={mobileRef}>
               { auth.user && auth.isLoggedIn ? <div>
                   <p style={{ marginBottom: '0px', fontWeight: 'bold', textAlign: 'center', outline: 'none', color: 'white', textDecoration: 'none', padding: '2px', cursor: 'pointer' }} onClick={handleMessengerClick}> Messages </p>

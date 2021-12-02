@@ -259,7 +259,7 @@ const Messenger = (props) => {
             { rendered ? <div style={{ position: 'fixed', height: '100%', width: '100%', backgroundColor: 'black', opacity: backdrop ? '.7' : '0', zIndex: '1', transition: 'opacity 400ms ease-out' }} onClick={handleClose}/> : null }
             <div style={{ position: 'fixed', height: '100%', width: (window.innerWidth < 800 ? 'calc(100%)' : 'calc(50%)'), right: messenger.isOpen && rendered ? '0' : (window.innerWidth < 800 ? 'calc(-100%)' : 'calc(-50%)'), backgroundColor: 'black', transition: 'right 400ms ease, width 400ms ease', zIndex: '1' }}>
                 <div style={{ padding: '105px 40px 40px 40px', height: '100%', position: 'relative' }}>
-                    <div style={{ position: 'absolute', display: 'flex', top: '64px', left: '40px', alignItems: 'center', backgroundColor: 'rgba(255,255,255,.1)', padding: '6px 9px 6px 9px', borderRadius: '25px' }}>
+                    <div style={{ position: 'absolute', display: 'flex', top: '70px', left: '40px', alignItems: 'center', backgroundColor: 'rgba(255,255,255,.1)', padding: '6px 9px 6px 9px', borderRadius: '25px' }}>
                         <div style={{ backgroundColor: messenger.isConnected ? 'green' : 'orange', height: '10px', width: '10px', borderRadius: '50%' }}/>
                         <p style={{ marginBottom: '0px', color: 'white', marginLeft: '8px', fontSize: '12px' }}> { messenger.isConnected ? 'Connected' : 'Disconnected' } </p>
                     </div>
