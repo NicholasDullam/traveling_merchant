@@ -19,13 +19,5 @@
   "bugs": {
     "url": "https://github.com/NicholasDullam/traveling_merchant/issues"
   },
-  "homepage": "https://github.com/NicholasDullam/traveling_merchant#readme",
-  "dependencies": {
-    "framer-motion": "^4.1.17",
-    "highcharts": "^9.3.1",
-    "highcharts-react-official": "^3.1.0",
-    "node-sass": "^6.0.1",
-    "react-icons": "^4.3.1",
-    "recharts": "^2.1.6"
-  }
+  "homepage": "https://github.com/NicholasDullam/traveling_merchant#readme"
 }
