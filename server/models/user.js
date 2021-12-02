@@ -12,6 +12,7 @@ const User = new mongoose.Schema({
     admin: Boolean,
     banned: Boolean,
     status: String,
+    cookies: Boolean,
     exp: { type: Number, default: 0 },
     lvl: { type: Number, default: 0 },
     settings: {
