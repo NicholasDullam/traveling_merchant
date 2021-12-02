@@ -8,17 +8,24 @@ const db = require('../../db')
 db.on('error', console.error.bind(console, 'MongoDB Connection Error:'))
 
 const verify = async () => {
-    let ids = [], sampleInstance = [], iterations = 50000, samples = 5
+    let ids = [], sampleInstance = [], iterations = 10000, batch = 100, samples = 5
 
     console.clear()
 
-    for (let i = 0; i < iterations; i++) {
-        let user = new User({ first: 'storage', last: 'test', email: `st${i}@${Date.now()}.com` })
-        user = await user.save()
-        ids.push(user._id.toString())
+    process.stdout.write('Initializing creation')
+    for (let i = 0; i < iterations / batch; i++) {
+        let temp = []
+        for (let j = 0; j < batch; j++) {
+            temp.push({ first: 'storage', last: 'test', email: `st${i*j}@${Date.now()}.com` })
+        }
+
+        let users = await User.create(temp);
+        let userIds = users.map((user) => user._id)
+        ids = [...ids, ...userIds]
+
         process.stdout.clearLine()
         process.stdout.cursorTo(0)
-        process.stdout.write(`Creating users: ${i + 1}/${iterations} | ${Math.round((i + 1)/iterations * 100)}%`)
+        process.stdout.write(`Creating users: ${ids.length}/${iterations} | ${Math.round(ids.length/iterations * 100)}%`)
     }
 
     process.stdout.write('\n')
@@ -34,9 +41,16 @@ const verify = async () => {
 
     console.log('-----------------------------')
 
-    await User.deleteMany({ _id: { $in: ids }})
 
-    console.log(`${ids.length} users deleted`)
+    process.stdout.write('Initializing deletion')
+    for (let i = 0; i < iterations / batch; i++) {
+        let remove = ids.slice(batch * i, batch * (i + 1))
+        await User.deleteMany({ _id: { $in: remove }})
+
+        process.stdout.clearLine()
+        process.stdout.cursorTo(0)
+        process.stdout.write(`Deleting users: ${batch * (i + 1)}/${iterations} | ${Math.round(batch * (i + 1)/iterations * 100)}%`)
+    }
 }
 
 verify().then((response) => {
