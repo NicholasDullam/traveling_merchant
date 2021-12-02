@@ -19,6 +19,7 @@ function App() {
   const [userId, setUserId] = useState(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLogging, setIsLogging] = useState(true)
+  const [hasCookies, setHasCookies] = useState(false);
 
   // Messenger attributes
   const [messengerOpen, setMessengerOpen] = useState(false)
@@ -58,6 +59,15 @@ function App() {
   }, [])
 
 
+  const changeCookies = useCallback(()=> {
+    if(hasCookies) {
+      setHasCookies(false);
+    }
+    else {
+      setHasCookies(true);
+    }
+  })
+
   // auth provider functions
   const login = useCallback((token, user) => {
       setToken(token)
@@ -87,7 +97,7 @@ function App() {
   }
 
   return (
-      <AuthContext.Provider value={{ token, user, userId, isLoggedIn, login, logout }}>
+      <AuthContext.Provider value={{ token, user, userId, isLoggedIn, login, logout, changeCookies, hasCookies}}>
         <NotificationContext.Provider value={{ isOpen: notificationsOpen, notifications: notifications, open: () => setNotificationsOpen(true), close: () => setNotificationsOpen(false), setNotifications }}>
           <MessengerContext.Provider value={{
             isOpen: messengerOpen,
