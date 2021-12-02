@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Switch, Route, useLocation  } from "react-router-dom";
 import React, { useState, useCallback, useEffect} from 'react';
-import { AnimatePresence } from 'framer-motion';
 import api from './api'
 import "./App.scss";
 

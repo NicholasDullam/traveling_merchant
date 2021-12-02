@@ -1,7 +1,6 @@
 import {React, useState, useContext} from 'react'
 import { Link, useHistory } from "react-router-dom";
 import api from '../api'
-import { motion } from 'framer-motion';
 
 import gamer2 from '../images/gamer_2.png'
 
