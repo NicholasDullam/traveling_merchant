@@ -131,7 +131,7 @@ const User = (props) => {
     }, [user_id])
 
     useEffect(() => {
-        if (!user) return
+        if (!user || !auth.user) return
         api.getFollowers({ params: { following: user._id, follower: auth.user._id, expand: ["follower"] }}).then((response) => {
             let follower = response.data.find((follower) => follower.follower._id === auth.user._id)
             if (follower) {
@@ -182,7 +182,7 @@ const User = (props) => {
                         </div>
                     </div>
                     <div style={{ marginLeft: 'auto' }} >
-                        { user._id != auth.userId ? <div>
+                        { user._id != auth.userId && auth.userId ? <div>
                             <button className="btn btn-primary" onClick={() => isFollowing ? handleUnfollow() : handleFollow()}> { isFollowing ? 'Unfollow' : 'Follow' } </button>
                             <button className="btn btn-primary" style={{ marginLeft: '20px' }} onClick={handleMessage}> Message </button>
                         </div> : null }
