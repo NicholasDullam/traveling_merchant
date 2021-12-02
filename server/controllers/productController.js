@@ -27,20 +27,43 @@ const createProduct = async (req, res) => {
 
 const getSort = (sortString) => {
     let direction = 1
+    if (!sortString) return {}
     if (sortString.indexOf('-')) direction = -1
     return { [sortString.replace('-', '')]: direction }
 }
 
 const getProducts = (req, res) => {
-    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q', 'online'], indices = ['game', 'user'], pipeline = []
+    let query = { ...req.query }, reserved = ['sort', 'skip', 'limit', 'q', 'online', 'expand'], indices = ['game', 'user'], pipeline = []
     indices.forEach((el) => {
         if (query[el]) query[el] = mongoose.Types.ObjectId(query[el])
     })
     reserved.forEach((el) => delete query[el])
 
     if (req.query.q) pipeline.push({ $search: { index: 'productSearch', text: { query: req.query.q, path: { wildcard: '*' }}}})
+    
     pipeline.push({ $match: query })
-    if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
+
+    if (req.query.expand) req.query.expand.forEach((instance) => {
+        instance = instance.split('.')
+        pipeline.push(
+            { 
+                $lookup: {
+                    from: "users",
+                    localField: "user",
+                    foreignField: "_id",
+                    as: "user"
+                }
+            }
+        )
+
+        pipeline.push(
+            {
+                $unwind: "$user"
+            }
+        )
+    })    
+
+    pipeline.push({ $sort: { ...getSort(req.query.sort), "user.lvl": -1 } })
     
     // paginate pipeline facet
     pipeline.push({
