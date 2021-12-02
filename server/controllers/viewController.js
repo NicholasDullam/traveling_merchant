@@ -24,7 +24,7 @@ const createView = async (req, res) => {
 }
 
 const getViews = (req, res) => {
-    if (req.user.id) if (!req.user.cookies) return res.status(400).json({ error: "User does not want cookies" })
+    if (req.user.id) if (!req.user.cookies) return res.status(200).json({ error: "User does not want cookies" })
     let query = { ...req.query }, reserved = ['sort', 'skip', 'limit']
     if (req.cookies.view_history && !req.user.id) query.token = req.cookies.view_history
     reserved.forEach((el) => delete query[el])
