@@ -16,7 +16,8 @@ const createUser = async (req, res) => {
     if (!email || !first || !last || !password) return res.status(400).json({ error: "Invalid input"})
     let existing = await User.find({ email })
     if (existing.length) return res.status(500).json({ error: "USER EXISTS WITH THAT EMAIL"})
-    const user = new User({ email, first, last, admin })
+    var cookies = true
+    const user = new User({ email, first, last, admin, cookies })
       
     let salt = await bcrypt.genSalt(10)
     user.password = await bcrypt.hash(password, salt)
@@ -30,7 +31,7 @@ const createUser = async (req, res) => {
             console.log(error)
             return res.status(400).json({ error: error.message })
         })
-        token = jwt.sign({ id: response._id, acct_id: response.acct_id, cust_id: response.cust_id, admin: response.admin, banned: response.banned }, process.env.TOKEN_SECRET)
+        token = jwt.sign({ id: response._id, acct_id: response.acct_id, cust_id: response.cust_id, admin: response.admin, banned: response.banned, cookies: response.cookies }, process.env.TOKEN_SECRET)
         return res.cookie('access_token', token, { httpOnly: true, secure:process.env.NODE_ENV === "production" }).status(200).json({ token, user: response })
     }).catch((error) => {
         console.log(error)
@@ -50,6 +51,11 @@ const getUsers = async (req, res) => {
 
     pipeline.push({ $match: query })
     if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
+    pipeline.push({ 
+        $project: {
+            password: 0
+        }
+    })
     
     // paginate pipeline facet
     pipeline.push({
@@ -82,7 +88,7 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     let { _id } = req.params
-    User.findById(_id).then((response) => {
+    User.findById(_id).select('-password -email -acct_id -cust_id').then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
