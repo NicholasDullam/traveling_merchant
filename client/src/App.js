@@ -62,9 +62,22 @@ function App() {
   const changeCookies = useCallback(()=> {
     if(hasCookies) {
       setHasCookies(false);
+
+    //   api.updateUserById(userId, { cookies:false }).then((response) => {
+    //     console.log("cookies were removed");
+    // }).catch((error) => {
+    //     console.log(error)
+    // })
+
     }
     else {
       setHasCookies(true);
+    //   api.updateUserById(userId, { cookies:true }).then((response) => {
+    //     console.log("cookies were added");
+    // }).catch((error) => {
+    //     console.log(error)
+    // })
+
     }
   })
 
