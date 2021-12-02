@@ -50,6 +50,11 @@ const getUsers = async (req, res) => {
 
     pipeline.push({ $match: query })
     if (req.query.sort) pipeline.push({ $sort: getSort(req.query.sort) })
+    pipeline.push({ 
+        $project: {
+            password: 0
+        }
+    })
     
     // paginate pipeline facet
     pipeline.push({
@@ -82,7 +87,7 @@ const getUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
     let { _id } = req.params
-    User.findById(_id).then((response) => {
+    User.findById(_id).select('-password -email -acct_id -cust_id').then((response) => {
         return res.status(200).json(response)
     }).catch((error) => {
         return res.status(400).json({ error: error.message })
