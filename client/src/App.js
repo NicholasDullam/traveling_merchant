@@ -37,7 +37,7 @@ function App() {
   const [clientWidth, setClientWidth] = useState(0)
   const [clientHeight, setClientHeight] = useState(0)
   // const location = useLocation();
-  useEffect(() => {
+  useEffect() => {
     setIsLogging(true)
     api.verifyToken().then((response) => {
         let { token, user } = response.data
