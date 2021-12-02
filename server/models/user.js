@@ -12,8 +12,8 @@ const User = new mongoose.Schema({
     admin: Boolean,
     banned: Boolean,
     status: String,
-    exp: Number,
-    lvl: Number,
+    exp: { type: Number, default: 0 },
+    lvl: { type: Number, default: 0 },
     settings: {
         /* ... */
     }
