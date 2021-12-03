@@ -28,8 +28,8 @@ const Order = (props) => {
         if (!order_id) return
         api.getOrderById(order_id, { params: { expand: ['buyer', 'seller', 'product'] }}).then((response) => {
             setOrder(response.data)
-            if (response.data.buyer._id === auth.userId) return setAffiliate(response.data.buyer)
-            setAffiliate(response.data.seller)
+            if (response.data.buyer._id === auth.userId) return setAffiliate(response.data.seller)
+            setAffiliate(response.data.buyer)
         }).catch((error) => {
             console.log(error)
         }) 
