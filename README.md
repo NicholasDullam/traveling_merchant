@@ -2,10 +2,10 @@
 ### What is this?
 ### Getting started
 To prepare the production build and install relevant dependencies run...
-To run the client run...
 ```
 npm install
 ```
+To run the client run...
 ```
 cd client
 npm start
