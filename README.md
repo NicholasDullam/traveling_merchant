@@ -1,22 +1,17 @@
 # Traveling Merchant
 ### What is this?
 ### Getting started
-To run the client
-```
-cd client
-npm start
-```
-To run the server
-```
-cd server
-npm start
-```
-To create production build
+To prepare the production build and install relevant dependencies run...
+To run the client run...
 ```
 npm install
 ```
-Or
 ```
 cd client
-npm build
+npm start
+```
+To run the server run...
+```
+cd server
+npm start
 ```
